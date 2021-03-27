@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,15 @@ namespace LocalDatabase_Client
         public MainWindow()
         {
             InitializeComponent();
+            Thread t = new Thread(new ThreadStart(newThread));
+            t.Start();
+        }
+
+        private void newThread()
+        {
+            ClientConnection cc = new ClientConnection(text, "127.0.0.1");
+            cc.Start();
         }
     }
+
 }
