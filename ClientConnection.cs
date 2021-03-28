@@ -53,7 +53,7 @@ namespace LocalDatabase_Client
             switch (task)
             {
                 case "Login":
-                    Features.LoginRecognizer(data);
+                    ClientCom.LoginRecognizer(data);
                     break;
                 case "ChechLogin":
                     Features.CheckLoginRecognizer(data);
@@ -74,7 +74,7 @@ namespace LocalDatabase_Client
                 case "SendDir": //kiedy wysylane jest zadanie wyslania biblioteki
                     dm = new DirectoryManager();
                     dm.ProcessDirectory(@"C:\Directory_test");
-                    Com.SendDirectory(dm.directoryElements);
+                    ClientCom.SendDirectory(dm.directoryElements);
                     break;
                 case "DownloadDir":
                     downloadMessage(client);
