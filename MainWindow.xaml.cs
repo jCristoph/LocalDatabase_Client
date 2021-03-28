@@ -24,7 +24,7 @@ namespace LocalDatabase_Client
         public MainWindow()
         {
             InitializeComponent();
-            Thread t = new Thread(new ThreadStart(newThread));
+            Task t = new Task(() => newThread());
             t.Start();
         }
 
@@ -32,6 +32,11 @@ namespace LocalDatabase_Client
         {
             ClientConnection cc = new ClientConnection(text, "127.0.0.1");
             cc.Start();
+        }
+
+        private void buttonAction(object sender, RoutedEventArgs e)
+        {
+            button = sender as Button;
         }
     }
 

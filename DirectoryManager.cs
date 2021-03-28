@@ -1,36 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Windows.Controls;
 
 namespace LocalDatabase_Client
 {
-    class DirectoryManager
+    public class DirectoryManager
     {
-        private List<DirectoryElement> directoryElements;
-        private List<DirectoryElement> directoryElementsResponse;
+        public List<DirectoryElement> directoryElements { get; set; }
 
-        public DirectoryManager(string targetDirectory)
+        public DirectoryManager()
         {
             directoryElements = new List<DirectoryElement>();
-            directoryElementsResponse = new List<DirectoryElement>();
-            DirectoryElement de = new DirectoryElement("\\Main_Folder", 0, "None", true);
-            directoryElements.Add(de);
-            ProcessDirectory(targetDirectory);
-            //foreach (var de in directoryElements)
-            //    Console.WriteLine(de.ToString());
-            foreach (var dirEl in directoryElements)
-                PrintFolderContent(dirEl);
-            //Console.WriteLine("__________________________________________________________");
-            var coms = Com.SendDirectory(directoryElements);
-            //foreach (var c in coms)
-            //    Console.WriteLine(c);
-            foreach (var c in coms)
-                ProcessPath(c);
-            //Console.WriteLine("__________________________________________________________");
-            //foreach (var de in directoryElementsResponse)
-            //    Console.WriteLine(de.ToString());
-            foreach (var dirEl in directoryElementsResponse)
-                PrintFolderContent(dirEl);
         }
         public DirectoryManager(List<DirectoryElement> directoryElements)
         {
@@ -80,7 +62,7 @@ namespace LocalDatabase_Client
                 string lwr = s.Substring(lwrIndexHome, lwrIndexEnd - lwrIndexHome);
 
                 DirectoryElement de = new DirectoryElement(path, name, long.Parse(size), lwr, isFolder);
-                directoryElementsResponse.Add(de);
+                directoryElements.Add(de);
             }
             catch (Exception e)
             {
@@ -88,23 +70,28 @@ namespace LocalDatabase_Client
             }
 
         }
-        private void PrintFolderContent(DirectoryElement dirEl)
+        public string PrintFolderContent()
         {
-            if (dirEl.isFolder)
+            StringBuilder looooongString = new StringBuilder();
+            foreach(var dirEl in directoryElements)
             {
-                Console.WriteLine("Inside {0} are:", dirEl.name);
-                foreach (var de in directoryElements)
+                if (dirEl.isFolder)
                 {
-                    if (de.pathArray.Count > 1)
+                    looooongString.Append("Inside " + dirEl.name + " are:\n");
+                    foreach (var de in directoryElements)
                     {
-                        if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name) && de.pathArray[de.pathArray.Count - 2].Equals(dirEl.pathArray[dirEl.pathArray.Count - 1]))
-                            Console.WriteLine("\t" + de.name + " path of subfolder: " + dirEl.pathArray[dirEl.pathArray.Count - 1]);
+                        if (de.pathArray.Count > 1)
+                        {
+                            if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name) && de.pathArray[de.pathArray.Count - 2].Equals(dirEl.pathArray[dirEl.pathArray.Count - 1]))
+                                looooongString.Append("\t" + de.name + " path of subfolder: " + dirEl.pathArray[dirEl.pathArray.Count - 1] + "\n");
+                        }
+                        else
+                            if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name))
+                            looooongString.Append("\t" + de.name + "\n");
                     }
-                    else
-                        if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name))
-                        Console.WriteLine("\t" + de.name);
                 }
             }
+            return looooongString.ToString();
         }
     }
 }

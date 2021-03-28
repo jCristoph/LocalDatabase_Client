@@ -67,6 +67,7 @@
     <Compile Include="Com.cs" />
     <Compile Include="DirectoryElement.cs" />
     <Compile Include="DirectoryManager.cs" />
+    <Compile Include="Features.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

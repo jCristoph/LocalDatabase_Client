@@ -7,7 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="355,203,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Name ="text"/>
-
+        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="26" Margin="88,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="26" Margin="371,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
+        <Button x:Name="button" Content="Wyślij" HorizontalAlignment="Left" Margin="651,359,0,0" VerticalAlignment="Top" Width="75"/>
+        <ScrollViewer HorizontalAlignment="Left" Height="223" Margin="88,69,0,0" VerticalAlignment="Top" Width="620">
+            <TextBlock HorizontalAlignment="Left" Margin="0" TextWrapping="Wrap" VerticalAlignment="Top" x:Name ="text" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"><Run Text="T"/><Run Text="extBlock"/></TextBlock>
+        </ScrollViewer>
     </Grid>
 </Window>
