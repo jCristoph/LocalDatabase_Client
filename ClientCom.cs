@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace LocalDatabase_Client
 {
@@ -11,7 +13,7 @@ namespace LocalDatabase_Client
         /// <param name="login"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public static string Login(string login, string password)
+        public static string LoginMessage(string login, string password)
         {
             return "<Task=Login><Login>" + login + "</Login><Pass>" + password + "</Pass></Task><#>";
         }
@@ -20,7 +22,7 @@ namespace LocalDatabase_Client
         /// For client usage. Sent when user ends work.
         /// </summary>
         /// <returns></returns>
-        public static string Logout()
+        public static string LogoutMessage()
         {
             return "<Task=Logout></Task><#>";
         }
@@ -30,9 +32,9 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string Download()
+        public static string SendOrderMessage(string path)
         {
-            return "<Task=Download></Task><#>";
+            return "<Task=Send><Path>" + path + "</Path></Task><#>";
         }
 
         /// <summary>
@@ -40,16 +42,16 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string Send(string path)
+        public static string ReadOrderMessage()
         {
-            return "<Task=Send><Path>" + path + "</Path></Task><#>";
+            return "<Task=ReadOrder></Task><#>";
         }
 
         /// <summary>
         /// For Client usage. Is order for server to send directory.
         /// </summary>
         /// <returns></returns>
-        public static string SendDirectoryOrder()
+        public static string SendDirectoryOrderMessage()
         {
             return "<Task=SendDir></Task><#>";
         }
@@ -59,7 +61,7 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string Delete(string path)
+        public static string DeleteMessage(string path)
         {
             return "<Task=Delete><Path>" + path + "</Path></Task><#>";
         }
@@ -71,27 +73,30 @@ namespace LocalDatabase_Client
         /// <param name="goesWrong"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string response(bool goesWrong, string content)
+        public static string ResponseMessage(bool goesWrong, string content)
         {
             return "<Task=Response><Content>" + content + "</Content></Task><#>";
         }
         #endregion
 
         #region message recognizer methods
+
+
+
         /// <summary>
         /// Only for client usage. Client checks if his login parameters are good. If they are, change view to logged user.
         /// param s is message sent from Server ie. <Task=CheckLogin><isLogged>Yes</isLogged><Login>
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static bool CheckLoginRecognizer(string s)
+        public static void CheckLoginRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<isLogged>") + "<isLogged>".Length;
             int IndexEnd = s.LastIndexOf("</isLogged>");
             if (s.Substring(IndexHome, IndexEnd - IndexHome).Equals("Yes"))
-                return true;
+                MessageBox.Show("You are logged in!");
             else
-                return false;
+                MessageBox.Show("Your login or password is valid!");
         }
 
         /// <summary>
@@ -100,7 +105,7 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Download(string s)
+        public static string DownloadRecognizer(string s)
         {
             return "";
         }
@@ -112,7 +117,7 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Send(string s)
+        public static string SendRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
             int IndexEnd = s.LastIndexOf("</Path>");
@@ -128,7 +133,7 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static DirectoryManager SendDirectory(string data)
+        public static DirectoryManager SendDirectoryRecognizer(string data)
         {
             DirectoryManager dm = new DirectoryManager();
             foreach (var a in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
@@ -143,7 +148,7 @@ namespace LocalDatabase_Client
         /// Only For Client usage. Server sends this message and Client has to update his directory by downloading them. 
         /// </summary>
         /// <returns></returns>
-        public static string UpdateDirectoryOrder()
+        public static string UpdateDirectoryOrderRecognizer()
         {
             return "";
         }
@@ -156,8 +161,8 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static string responseRecognizer(string s)
         {
-            int IndexHome = s.IndexOf("<Path>") + "<Path>".Length;
-            int IndexEnd = s.LastIndexOf("</Path>");
+            int IndexHome = s.IndexOf("<Content>") + "<Content>".Length;
+            int IndexEnd = s.LastIndexOf("</Content>");
             return s.Substring(IndexHome, IndexEnd - IndexHome); ;
         }
         #endregion

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,9 @@ namespace LocalDatabase_Client
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TcpClient client;
+        private ClientConnection cc;
+        private bool isLogged;
         public MainWindow()
         {
             InitializeComponent();
@@ -30,13 +34,39 @@ namespace LocalDatabase_Client
 
         private void newThread()
         {
-            ClientConnection cc = new ClientConnection(text, "127.0.0.1");
-            cc.Start();
+            cc = new ClientConnection(text, "127.0.0.1");
+            client = cc.Start();
         }
 
-        private void buttonAction(object sender, RoutedEventArgs e)
+        private void LoggingButton_Click(object sender, RoutedEventArgs e)
         {
-            button = sender as Button;
+            if(client.Connected)
+            {
+                cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, textBoxPassword.Text), client);
+                cc.readMessage(client);
+                cc.sendMessage(ClientCom.SendDirectoryOrderMessage(), client);
+                cc.readMessage(client);
+            }
+
+        }
+
+        private void DownloadFileButton(object sender, RoutedEventArgs e)
+        {
+            if (client.Connected)
+            {
+                cc.sendMessage(ClientCom.SendOrderMessage(@"C:\Directory_test\plik1.txt"), client);
+                cc.downloadFile(client);
+            }
+        }
+
+        private void SendFileButton(object sender, RoutedEventArgs e)
+        {
+            if (client.Connected)
+            {
+                cc.sendMessage(ClientCom.ReadOrderMessage(), client);
+                cc.readMessage(client);
+                cc.sendFile(client, @"E:\music.mp3");
+            }
         }
     }
 

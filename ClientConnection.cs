@@ -26,24 +26,25 @@ namespace LocalDatabase_Client
             this.port = 25000;
         }
 
-        public void Start()
+        public TcpClient Start()
         {
-            try
+            Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Waiting for a connection..."; }));
+            TcpClient client = new TcpClient();
+            do
             {
-                Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Waiting for a connection..."; }));
-                TcpClient client = new TcpClient(serverIP, port);
-                Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Connected!!!"; }));
-                //sendMessage(client);
-                //downloadMessage(client);
-                downloadFile(client);
-                client.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception: {0}", e);
-            }
+                try
+                {
+                    client.Connect(serverIP, port);
+                }
+                catch (Exception e)
+                {
+
+                }
+            } while (!client.Connected);
+            Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Connected!!!"; }));
+            return client;
         }
-        private void recognizeMessage(string data, TcpClient client)
+        public void recognizeMessage(string data, TcpClient client)
         {
             int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
             int taskIndexEnd = data.IndexOf(">");
@@ -52,54 +53,32 @@ namespace LocalDatabase_Client
             Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = task; }));
             switch (task)
             {
-                case "Login":
-                    ClientCom.LoginRecognizer(data);
-                    break;
-                case "ChechLogin":
-                    Features.CheckLoginRecognizer(data);
-                    break;
-                case "Logout":
-                    Features.LogoutRecognizer(data);
+                case "CheckLogin":
+                    ClientCom.CheckLoginRecognizer(data);
                     break;
                 case "Download": //kiedy wysylane jest zadanie pobrania pliku
                     downloadFile(client);
                     break;
                 case "Send": ////kiedy wysylane jest zadanie wyslania pliku
-                    sendFile(client, Features.Send(data));
+                    sendFile(client, ClientCom.SendRecognizer(data));
                     break;
                 case "SendingDir": //kiedy wysylana jest zawartosc biblioteki
-                    dm = Features.SendDirectory(data);
+                    dm = ClientCom.SendDirectoryRecognizer(data);
                     Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = dm.PrintFolderContent(); }));
-                    break;
-                case "SendDir": //kiedy wysylane jest zadanie wyslania biblioteki
-                    dm = new DirectoryManager();
-                    dm.ProcessDirectory(@"C:\Directory_test");
-                    ClientCom.SendDirectory(dm.directoryElements);
-                    break;
-                case "DownloadDir":
-                    downloadMessage(client);
                     break;
                 case "Delete":
                     break;
                 case "Response":
-                    MessageBox.Show(Features.response(data));
+                    //MessageBox.Show(ClientCom.responseRecognizer(data));
                     break;
-
             }
-            //DirectoryManager dm = new DirectoryManager();
-            //foreach (var a in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
-            //{
-            //    dm.ProcessPath(a);
-            //}
-            //Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = dm.PrintFolderContent(); }));
         }
-        private void downloadMessage(TcpClient client)
+        public void readMessage(TcpClient client)
         {
             var stream = client.GetStream();
             Byte[] bytes = new Byte[1024];
             int i;
             string data = "";
-            int err = 0;
             do
             {
                 i = stream.Read(bytes, 0, bytes.Length);
@@ -109,19 +88,18 @@ namespace LocalDatabase_Client
             } while (stream.DataAvailable);
             recognizeMessage(data, client);
         }
-        private void sendMessage(string str, TcpClient client)
+        public void sendMessage(string str, TcpClient client)
         {
-            //var stream = new TcpClient("127.0.0.1", 25000).GetStream();
-            var stream = new NetworkStream(client.Client);
+            var stream = client.GetStream();
             Byte[] reply = System.Text.Encoding.UTF8.GetBytes(str);
             stream.Write(reply, 0, reply.Length);
-            stream.Close();
         }
 
-        private void downloadFile(TcpClient client)
+        public void downloadFile(TcpClient client)
         {
-            try
-            {
+           // try
+            //{
+                client.GetStream().Flush();
                 Socket handlerSocket = client.Client;
                 if (handlerSocket.Connected)
                 {
@@ -141,26 +119,26 @@ namespace LocalDatabase_Client
                         fileStream.Write(dataByte, 4 + fileNameLen, (1024 - (4 + fileNameLen)));
                         do
                         {
-                            thisRead = networkStream.Read(dataByte, 0, blockSize);
+                            thisRead = networkStream.Read(dataByte, 0, blockSize);//problem gdy  plik jest mniejszy od bufora
                             fileStream.Write(dataByte, 0, thisRead);
                             if (!networkStream.DataAvailable)
-                                Thread.Sleep(10);
+                                Thread.Sleep(1);
                         } while (networkStream.DataAvailable);
                         fileStream.Close();
                     }
                     Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloaded"; }));
                     handlerSocket = null;
                 }
-            }
-            catch
-            {
+            //}
+            //catch
+            //{
 
-            }
+            //}
         }
-        private void sendFile(TcpClient client, string path)
+        public void sendFile(TcpClient client, string path)
         {
-            string shortFileName = path;
-            string longFileName = shortFileName;
+            string shortFileName = "music.mp3";
+            string longFileName = @"E:\music.mp3";
             try
             {
                 byte[] fileNameByte = Encoding.ASCII.GetBytes(shortFileName);
@@ -172,7 +150,7 @@ namespace LocalDatabase_Client
                 fileData.CopyTo(clientData, 4 + fileNameByte.Length);
                 NetworkStream networkStream = client.GetStream();
                 networkStream.Write(clientData, 0, clientData.GetLength(0));
-                networkStream.Close();
+                //networkStream.Close();
             }
             catch
             {

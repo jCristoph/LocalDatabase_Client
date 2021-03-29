@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LocalDatabase_Client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Klient" Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="26" Margin="88,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="26" Margin="371,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
-        <Button x:Name="button" Content="Wyślij" HorizontalAlignment="Left" Margin="651,359,0,0" VerticalAlignment="Top" Width="75"/>
-        <ScrollViewer HorizontalAlignment="Left" Height="223" Margin="88,69,0,0" VerticalAlignment="Top" Width="620">
+        <TextBox x:Name="textBoxLogin" HorizontalAlignment="Left" Height="26" Margin="88,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
+        <TextBox x:Name="textBoxPassword" HorizontalAlignment="Left" Height="26" Margin="371,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
+        <Button x:Name="LoggingButton" Content="Loguj" HorizontalAlignment="Left" Margin="651,359,0,0" VerticalAlignment="Top" Width="75" Click="LoggingButton_Click"/>
+        <ScrollViewer HorizontalAlignment="Left" Height="223" Margin="88,69,0,0" VerticalAlignment="Top" Width="510">
             <TextBlock HorizontalAlignment="Left" Margin="0" TextWrapping="Wrap" VerticalAlignment="Top" x:Name ="text" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"><Run Text="T"/><Run Text="extBlock"/></TextBlock>
         </ScrollViewer>
+        <Button Content="Wyślij plik" HorizontalAlignment="Left" Margin="651,67,0,0" VerticalAlignment="Top" Width="75" Click="SendFileButton"/>
+        <Button Content="Pobierz plik" HorizontalAlignment="Left" Margin="651,144,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.173,0.2" Click="DownloadFileButton"/>
     </Grid>
 </Window>
