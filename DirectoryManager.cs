@@ -70,28 +70,28 @@ namespace LocalDatabase_Client
             }
 
         }
-        public string PrintFolderContent()
+        public List<string> PrintFolderContent()
         {
-            StringBuilder looooongString = new StringBuilder();
+            List<string> folderContent = new List<string>();
             foreach(var dirEl in directoryElements)
             {
                 if (dirEl.isFolder)
                 {
-                    looooongString.Append("Inside " + dirEl.name + " are:\n");
+                    folderContent.Add("Inside " + dirEl.name + " are:");
                     foreach (var de in directoryElements)
                     {
                         if (de.pathArray.Count > 1)
                         {
                             if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name) && de.pathArray[de.pathArray.Count - 2].Equals(dirEl.pathArray[dirEl.pathArray.Count - 1]))
-                                looooongString.Append("\t" + de.name + " path of subfolder: " + dirEl.pathArray[dirEl.pathArray.Count - 1] + "\n");
+                                folderContent.Add("\t" + de.name + " path of subfolder: " + dirEl.pathArray[dirEl.pathArray.Count - 1]);
                         }
                         else
                             if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name))
-                            looooongString.Append("\t" + de.name + "\n");
+                            folderContent.Add("\t" + de.name);
                     }
                 }
             }
-            return looooongString.ToString();
+            return folderContent;
         }
     }
 }

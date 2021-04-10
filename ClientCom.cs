@@ -89,14 +89,14 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static void CheckLoginRecognizer(string s)
+        public static int CheckLoginRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<isLogged>") + "<isLogged>".Length;
             int IndexEnd = s.LastIndexOf("</isLogged>");
             if (s.Substring(IndexHome, IndexEnd - IndexHome).Equals("Yes"))
-                MessageBox.Show("You are logged in!");
+                return 1;
             else
-                MessageBox.Show("Your login or password is valid!");
+                return 0;
         }
 
         /// <summary>
