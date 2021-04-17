@@ -15,12 +15,14 @@ namespace LocalDatabase_Client
 {
     class ClientConnection
     {
+        public bool isBusy { get; set;}
         private String serverIP = null;
         ListBox listBox = null;
         private int port = 0;
 
         public ClientConnection(ListBox listBox, String serverIP)
         {
+            isBusy = false;
             this.listBox = listBox;
             this.serverIP = serverIP;
             this.port = 25000;
@@ -71,6 +73,7 @@ namespace LocalDatabase_Client
         }
         public int readMessage(TcpClient client)
         {
+            isBusy = true;
             var stream = client.GetStream();
             Byte[] bytes = new Byte[1024];
             int i;
@@ -82,17 +85,28 @@ namespace LocalDatabase_Client
                 if(!stream.DataAvailable)
                     Thread.Sleep(1);
             } while (stream.DataAvailable);
+            isBusy = false;
             return recognizeMessage(data, client);
         }
         public void sendMessage(string str, TcpClient client)
         {
-            var stream = client.GetStream();
-            Byte[] reply = System.Text.Encoding.UTF8.GetBytes(str);
-            stream.Write(reply, 0, reply.Length);
+            isBusy = true;
+            try
+            {
+                var stream = client.GetStream();
+                Byte[] reply = System.Text.Encoding.UTF8.GetBytes(str);
+                stream.Write(reply, 0, reply.Length);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error");
+            }
+            isBusy = false;
         }
 
         public void downloadFile(TcpClient client)
         {
+            isBusy = true;
             try
             {
                 client.GetStream().Flush();
@@ -132,11 +146,15 @@ namespace LocalDatabase_Client
             {
 
             }
+            isBusy = false;
         }
         public void sendFile(TcpClient client, string path)
         {
-            string shortFileName = "music.mp3";
-            string longFileName = @"E:\music.mp3";
+            isBusy = true;
+            int IndexHome = path.LastIndexOf("\\") + "\\".Length;
+            int IndexEnd = path.Length;
+            string shortFileName = path.Substring(IndexHome, IndexEnd - IndexHome);
+            string longFileName = path;
             try
             {
                 byte[] fileNameByte = Encoding.ASCII.GetBytes(shortFileName);
@@ -146,14 +164,15 @@ namespace LocalDatabase_Client
                 fileNameLen.CopyTo(clientData, 0);
                 fileNameByte.CopyTo(clientData, 4);
                 fileData.CopyTo(clientData, 4 + fileNameByte.Length);
-                NetworkStream networkStream = client.GetStream();
+                NetworkStream networkStream = new NetworkStream(client.Client);
                 networkStream.Write(clientData, 0, clientData.GetLength(0));
-                //networkStream.Close();
+                networkStream.Close();
             }
             catch
             {
 
             }
+            isBusy = false;
         }
     }
 }

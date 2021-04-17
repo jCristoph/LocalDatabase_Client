@@ -28,11 +28,31 @@ namespace LocalDatabase_Client
         public MainWindow()
         {
             InitializeComponent();
-            Task t = new Task(() => newThread());
-            t.Start();
+            Task t1 = new Task(() => Connection());
+            Task t2 = new Task(() => refreshingList());
+            t1.Start();
+            t2.Start();
         }
 
-        private void newThread()
+        private void refreshingList()
+        {
+            while(true)
+            {
+                if (client != null && isLogged)
+                {
+                    if(!cc.isBusy)
+                    {
+                        cc.sendMessage(ClientCom.SendDirectoryOrderMessage(), client);
+                        cc.readMessage(client);
+                        MessageBox.Show("Refresh");
+                    }
+
+                }
+                Thread.Sleep(5*1000);
+            }
+        }
+
+        private void Connection()
         {
             cc = new ClientConnection(listBox, "127.0.0.1");
             client = cc.Start();
@@ -69,11 +89,19 @@ namespace LocalDatabase_Client
 
         private void SendFileButton(object sender, RoutedEventArgs e)
         {
-            if (client.Connected && isLogged)
-            {
-                cc.sendMessage(ClientCom.ReadOrderMessage(), client);
-                cc.readMessage(client);
-                cc.sendFile(client, @"E:\music.mp3");
+           if (client.Connected && isLogged)
+           {
+                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                Nullable<bool> result = dlg.ShowDialog();
+                string filename = dlg.FileName;
+                if (result == true)
+                {
+                    cc.sendMessage(ClientCom.ReadOrderMessage(), client);
+                    cc.readMessage(client);
+                    cc.sendFile(client, filename);
+                }
+                else
+                    MessageBox.Show("Error");
             }
             else
                 MessageBox.Show("Error");
