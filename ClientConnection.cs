@@ -101,6 +101,7 @@ namespace LocalDatabase_Client
             //{
                 client.GetStream().Flush();
                 Socket handlerSocket = client.Client;
+                
                 if (handlerSocket.Connected)
                 {
                     string fileName = string.Empty;

@@ -40,33 +40,57 @@ namespace LocalDatabase_Client
 
         private void LoggingButton_Click(object sender, RoutedEventArgs e)
         {
-            if(client.Connected)
-            {
-                cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, textBoxPassword.Text), client);
-                cc.readMessage(client);
-                cc.sendMessage(ClientCom.SendDirectoryOrderMessage(), client);
-                cc.readMessage(client);
-            }
-
+            if (client.Connected)
+                {
+                    cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, textBoxPassword.Text), client);
+                    cc.readMessage(client);
+                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(), client);
+                    cc.readMessage(client);
+                }
         }
 
         private void DownloadFileButton(object sender, RoutedEventArgs e)
         {
-            if (client.Connected)
+            
+            try
             {
-                cc.sendMessage(ClientCom.SendOrderMessage(@"C:\Directory_test\plik1.txt"), client);
-                cc.downloadFile(client);
+                if (client.Connected)
+                {
+                    cc.sendMessage(ClientCom.SendOrderMessage(@"C:\Directory_test\plik1.txt"), client);
+                    progressBar.IsIndeterminate = true;
+                    progressBar.Visibility = Visibility.Visible;
+                    cc.downloadFile(client);
+                  
+                }
+            }
+            catch (Exception exception)
+            {
+                progressBar.IsIndeterminate = false;
+                progressBar.Visibility = Visibility.Hidden;
+                Console.WriteLine(exception.Message);
             }
         }
 
         private void SendFileButton(object sender, RoutedEventArgs e)
         {
-            if (client.Connected)
+            try
             {
-                cc.sendMessage(ClientCom.ReadOrderMessage(), client);
-                cc.readMessage(client);
-                cc.sendFile(client, @"E:\music.mp3");
+                if (client.Connected)
+                {
+                    cc.sendMessage(ClientCom.ReadOrderMessage(), client);
+                    cc.readMessage(client);
+                    progressBar.IsIndeterminate = true;
+                    progressBar.Visibility = Visibility.Visible;
+                    cc.sendFile(client, @"E:\music.mp3");
+                }
             }
+            catch (Exception exception)
+            {
+                progressBar.IsIndeterminate = false;
+                progressBar.Visibility = Visibility.Hidden;
+                Console.WriteLine(exception.Message);
+            }
+
         }
     }
 
