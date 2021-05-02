@@ -1,20 +1,30 @@
-﻿<Window x:Class="LocalDatabase_Client.MainWindow"
+﻿<Window x:Class="PZ_Panel_Logowania.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LocalDatabase_Client"
+        xmlns:local="clr-namespace:PZ_Panel_Logowania"
         mc:Ignorable="d"
-        Title="Klient" Height="450" Width="800">
-	<Grid>
-		<TextBox x:Name="textBoxLogin" HorizontalAlignment="Left" Height="26" Margin="629,253,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
-		<TextBox x:Name="textBoxPassword" HorizontalAlignment="Left" Height="26" Margin="629,304,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
-		<Button x:Name="LoggingButton" Content="Loguj" HorizontalAlignment="Left" Margin="663,349,0,0" VerticalAlignment="Top" Width="75" Click="LoggingButton_Click" RenderTransformOrigin="0.612,-1.227"/>
-		<ScrollViewer HorizontalAlignment="Left" Height="223" Margin="88,69,0,0" VerticalAlignment="Top" Width="510">
-			<TextBlock HorizontalAlignment="Left" Margin="0" TextWrapping="Wrap" VerticalAlignment="Top" x:Name ="text" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"><Run Text="T"/><Run Text="extBlock"/></TextBlock>
-		</ScrollViewer>
-		<Button Content="Wyślij plik" HorizontalAlignment="Left" Margin="651,67,0,0" VerticalAlignment="Top" Width="75" Click="SendFileButton"/>
-		<Button Content="Pobierz plik" HorizontalAlignment="Left" Margin="651,144,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.173,0.2" Click="DownloadFileButton"/>
-		<ProgressBar x:Name="progressBar" Minimum ="0" Maximum ="100" IsIndeterminate="false" Visibility="Hidden" HorizontalAlignment="Left" Height="32" Margin="30,332,0,0" VerticalAlignment="Top" Width="257"/>
-	</Grid>
+        Title="Panel_Logowania" Height="450" Width="800">
+    <Grid>
+        <Viewbox Stretch="Fill">
+            <Grid Height="450" Width="800">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5"/>
+            </Grid.RowDefinitions>
+            <DockPanel Margin="0,0,0,-644">
+                <Menu Foreground="White" Background="#282828" IsMainMenu="True" Grid.Row="0" DockPanel.Dock="Top">
+                    <MenuItem x:Name="Logowanie" Header="Logowanie" Click="log">
+            </MenuItem>
+            <MenuItem x:Name="Rejestracja" Header="Rejestracja" Click="rej"/>
+            <StackPanel Height="10" Width="10"/>
+
+
+        </Menu>
+        <WrapPanel x:Name="MainContainer" Grid.Row="1" Margin="0,0.4,0,194.6" ></WrapPanel>
+            </DockPanel>
+
+        </Grid>
+        </Viewbox>
+    </Grid>
 </Window>

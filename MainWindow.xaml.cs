@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,84 +12,80 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data.SqlClient;
+using System.Data;
 
-namespace LocalDatabase_Client
+
+namespace PZ_Panel_Logowania
 {
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private TcpClient client;
-        private ClientConnection cc;
-        private bool isLogged;
         public MainWindow()
-        {
+        { 
             InitializeComponent();
-            Task t = new Task(() => newThread());
-            t.Start();
+            MainContainer.Children.Add(new Logowanie());
         }
 
-        private void newThread()
+
+
+        /*private void Des_Click(object sender, RoutedEventArgs e)
         {
-            cc = new ClientConnection(text, "127.0.0.1");
-            client = cc.Start();
+            MainContainer.Children.Clear();
+            MainContainer.Children.Add(new Rejestracja());
+
+        }
+        */
+        int i = 0;
+
+        private void log(object sender, RoutedEventArgs e)
+        {
+            MainContainer.Children.Clear();
+            MainContainer.Children.Add(new Logowanie());
         }
 
-        private void LoggingButton_Click(object sender, RoutedEventArgs e)
+        private void rej(object sender, RoutedEventArgs e)
         {
-            if (client.Connected)
+            MainContainer.Children.Clear();
+            MainContainer.Children.Add(new Rejestracja());
+        }
+
+
+        //
+        /*        private void Txt_nazwa_TextChanged(object sender, EventArgs e)
                 {
-                    cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, textBoxPassword.Text), client);
-                    cc.readMessage(client);
-                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(), client);
-                    cc.readMessage(client);
-                }
-        }
 
-        private void DownloadFileButton(object sender, RoutedEventArgs e)
-        {
-            
-            try
-            {
-                if (client.Connected)
+                }
+
+        private void btn_zaloguj_Click(object sender, RoutedEventArgs e)
                 {
-                    cc.sendMessage(ClientCom.SendOrderMessage(@"C:\Directory_test\plik1.txt"), client);
-                    progressBar.IsIndeterminate = true;
-                    progressBar.Visibility = Visibility.Visible;
-                    cc.downloadFile(client);
-                  
-                }
-            }
-            catch (Exception exception)
-            {
-                progressBar.IsIndeterminate = false;
-                progressBar.Visibility = Visibility.Hidden;
-                Console.WriteLine(exception.Message);
-            }
-        }
+                    SqlConnection polaczenie = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\krzem\source\repos\PZ_Panel_Logowania\PZ_Panel_Logowania\Baza_Danych\PZ_BD.mdf;Integrated Security=True;Connect Timeout=30");
+                    SqlCommand zapytanie = new SqlCommand();
+                    zapytanie.Connection = polaczenie;
+                    zapytanie.CommandText = "SELECT * FROM [User] WHERE Login = '" + Txt_nazwa.Text.Trim()+ "' and Password = '" + Txt_haslo.Password.Trim()+"'";
+                    SqlDataAdapter adapter = new SqlDataAdapter(zapytanie);
+                    DataTable tabela = new DataTable();
 
-        private void SendFileButton(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (client.Connected)
+                    adapter.Fill(tabela);
+                    if (tabela.Rows.Count == 1)
+                    {
+                        MessageBox.Show("zalogowano");
+                    }
+                    else
+                    {
+                        MessageBox.Show("błędny login lub hasło");
+                    }
+                }
+
+                private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
                 {
-                    cc.sendMessage(ClientCom.ReadOrderMessage(), client);
-                    cc.readMessage(client);
-                    progressBar.IsIndeterminate = true;
-                    progressBar.Visibility = Visibility.Visible;
-                    cc.sendFile(client, @"E:\music.mp3");
                 }
-            }
-            catch (Exception exception)
-            {
-                progressBar.IsIndeterminate = false;
-                progressBar.Visibility = Visibility.Hidden;
-                Console.WriteLine(exception.Message);
-            }
 
-        }
+                private void PasswordBox_TextChanged(object sender, TextChangedEventArgs e)
+                {
+
+                }*/
     }
-
 }
