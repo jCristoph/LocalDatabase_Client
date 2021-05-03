@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,17 +14,17 @@ using System.Windows.Controls;
 
 namespace LocalDatabase_Client
 {
-    class ClientConnection
+    public class ClientConnection
     {
         public bool isBusy { get; set;}
         private String serverIP = null;
-        ListBox listBox = null;
+        public ListBox listBox { get; set; }
         private int port = 0;
 
-        public ClientConnection(ListBox listBox, String serverIP)
+        public ClientConnection(String serverIP)
         {
+            listBox = null;
             isBusy = false;
-            this.listBox = listBox;
             this.serverIP = serverIP;
             this.port = 25000;
         }
@@ -42,8 +43,33 @@ namespace LocalDatabase_Client
 
                 }
             } while (!client.Connected);
-            MessageBox.Show("Connected");
             return client;
+        }
+        public ObservableCollection<DirectoryElement> getDirectory(TcpClient client)
+        {
+            isBusy = true;
+            var stream = client.GetStream();
+            Byte[] bytes = new Byte[1024];
+            int i;
+            string data = "";
+            do
+            {
+                i = stream.Read(bytes, 0, bytes.Length);
+                data += Encoding.UTF8.GetString(bytes, 0, i);
+                if (!stream.DataAvailable)
+                    Thread.Sleep(1);
+            } while (stream.DataAvailable);
+            isBusy = false;
+            int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
+            int taskIndexEnd = data.IndexOf(">");
+            string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
+            DirectoryManager dm;
+            if(task.Equals("SendingDir"))
+            {
+                dm = ClientCom.SendDirectoryRecognizer(data);
+                return dm.directoryElements;
+            }
+            return null;
         }
         public int recognizeMessage(string data, TcpClient client)
         {
@@ -120,31 +146,35 @@ namespace LocalDatabase_Client
                     Byte[] dataByte = new Byte[blockSize];
                     lock (this)
                     {
-                        MessageBox.Show("Downloading...");
+                        //MessageBox.Show("Downloading...");
                         //Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloading!!!"; }));
-                        string folderPath = @"e:\";
+                        string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
                         handlerSocket.Receive(dataByte);
                         int fileNameLen = BitConverter.ToInt32(dataByte, 0);
-                        fileName = Encoding.ASCII.GetString(dataByte, 4, fileNameLen);
+                        fileName = Encoding.UTF8.GetString(dataByte, 4, fileNameLen);
                         Stream fileStream = File.OpenWrite(folderPath + fileName);
                         fileStream.Write(dataByte, 4 + fileNameLen, (1024 - (4 + fileNameLen)));
+                        ProgressBar.ProgressBar p = new ProgressBar.ProgressBar();
+                        p.Show();
                         do
                         {
-                            thisRead = networkStream.Read(dataByte, 0, blockSize);//problem gdy plik jest mniejszy od bufora
+                            p.progress++;
+                            thisRead = networkStream.Read(dataByte, 0, blockSize);
                             fileStream.Write(dataByte, 0, thisRead);
                             if (!networkStream.DataAvailable)
                                 Thread.Sleep(1);
                         } while (networkStream.DataAvailable);
+                        p.Close();
                         fileStream.Close();
                     }
-                    MessageBox.Show("Downloaded");
+                    //MessageBox.Show("Downloaded");
                     //Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloaded"; }));
                     handlerSocket = null;
                 }
             }
-            catch
+            catch (Exception e)
             {
-
+                MessageBox.Show(e.ToString());
             }
             isBusy = false;
         }
@@ -157,7 +187,7 @@ namespace LocalDatabase_Client
             string longFileName = path;
             try
             {
-                byte[] fileNameByte = Encoding.ASCII.GetBytes(shortFileName);
+                byte[] fileNameByte = Encoding.UTF8.GetBytes(shortFileName);
                 byte[] fileData = File.ReadAllBytes(longFileName);
                 byte[] clientData = new byte[4 + fileNameByte.Length + fileData.Length];
                 byte[] fileNameLen = BitConverter.GetBytes(fileNameByte.Length);

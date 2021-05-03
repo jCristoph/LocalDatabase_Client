@@ -7,12 +7,46 @@
         mc:Ignorable="d"
         Title="Klient" Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="textBoxLogin" HorizontalAlignment="Left" Height="26" Margin="88,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
-        <TextBox x:Name="textBoxPassword" HorizontalAlignment="Left" Height="26" Margin="371,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="143"/>
-        <Button x:Name="LoggingButton" Content="Loguj" HorizontalAlignment="Left" Margin="651,359,0,0" VerticalAlignment="Top" Width="75" Click="LoggingButton_Click"/>
-        <ListBox x:Name="listBox" Margin="88,67,212,133"/>
-        <Button Content="Wyślij plik" HorizontalAlignment="Left" Margin="651,67,0,0" VerticalAlignment="Top" Width="75" Click="SendFileButton"/>
-        <Button Content="Pobierz plik" HorizontalAlignment="Left" Margin="651,144,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.173,0.2" Click="DownloadFileButton"/>
-        <Button Content="Usuń plik" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="651,209,0,0" Click="DeleteFileButton"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <Button Content="Wyślij plik" Click="SendFileButton"  Height="40" Margin="20"/>
+            <Button Content="Cofnij" Grid.Column="1" Grid.Row="1" Height="40" Margin="20" Click="ReturnButton"/>
+            <Button Content="Wyloguj"  Grid.Column="1" Grid.Row="1" Height="40" Margin="20"/>
+        </StackPanel>
+        <TextBlock Name="refreshTextBlock" Width="263" Grid.Column="0" Grid.Row="2"/>
+        <ListView Grid.Column="0" Grid.Row="1" Name="listView">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Folder">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Path=image}" Width="20" Height="20"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Nazwa"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Ostatnia edycja"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=size}" Header="Rozmiar"/>
+                    <GridViewColumn Header="Akcja">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
+                                    <Button Content="{Binding Path=buttonName}" Click="DownloadOrOpenButton" Margin="10"/>
+                                    <Button Content="Usuń" Click="DeleteFileButton" Margin="10"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>

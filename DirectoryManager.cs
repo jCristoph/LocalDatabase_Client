@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows.Controls;
@@ -8,13 +9,13 @@ namespace LocalDatabase_Client
 {
     public class DirectoryManager
     {
-        public List<DirectoryElement> directoryElements { get; set; }
+        public ObservableCollection<DirectoryElement> directoryElements { get; set; }
 
         public DirectoryManager()
         {
-            directoryElements = new List<DirectoryElement>();
+            directoryElements = new ObservableCollection<DirectoryElement>();
         }
-        public DirectoryManager(List<DirectoryElement> directoryElements)
+        public DirectoryManager(ObservableCollection<DirectoryElement> directoryElements)
         {
             this.directoryElements = directoryElements;
         }

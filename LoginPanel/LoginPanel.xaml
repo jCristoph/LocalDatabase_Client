@@ -1,0 +1,17 @@
+﻿<Window x:Class="LocalDatabase_Client.LoginPanel.LoginPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocalDatabase_Client.LoginPanel"
+        mc:Ignorable="d"
+        Title="LoginPanel" Height="450" Width="800">
+    <Grid>
+        <TextBox HorizontalAlignment="Left" Margin="317,110,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="26" Width="182" Name="textBoxLogin"/>
+        <PasswordBox  HorizontalAlignment="Left" Margin="317,166,0,0" VerticalAlignment="Top" Width="182" RenderTransformOrigin="0.526,-1.667" Height="26" Name="textBoxPassword"/>
+        <TextBlock HorizontalAlignment="Left" Margin="202,110,0,0" TextWrapping="Wrap" Text="Login" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="202,166,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top"/>
+        <Button Content="Log In" HorizontalAlignment="Left" Margin="339,255,0,0" VerticalAlignment="Top" Width="120" Height="35" Name="loginButton" Click="loginButton_Click"/>
+        <Button Content="Help" HorizontalAlignment="Left" Margin="55,341,0,0" VerticalAlignment="Top" Width="120" Height="35"/>
+    </Grid>
+</Window>

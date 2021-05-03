@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -24,72 +25,88 @@ namespace LocalDatabase_Client
     {
         private TcpClient client;
         private ClientConnection cc;
-        private bool isLogged = false;
-        public MainWindow()
+        private ObservableCollection<DirectoryElement> directory;
+        private ObservableCollection<DirectoryElement> currentDirectory;
+        private DirectoryElement currentFolder;
+        
+        public MainWindow(TcpClient client, ClientConnection cc)
         {
+            
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
-            Task t1 = new Task(() => Connection());
-            Task t2 = new Task(() => refreshingList());
-            t1.Start();
-            t2.Start();
+            this.client = client;
+            this.cc = cc;
+            currentDirectory = new ObservableCollection<DirectoryElement>();
+            currentFolder = new DirectoryElement("\\Main_Folder", 0, "None", true);
+            listView.ItemsSource = currentDirectory;
+            DataContext = this;
+            Task t = new Task(() => refreshingList());
+            t.Start();
         }
 
         private void refreshingList()
         {
-            while(true)
+            Thread.Sleep(10);
+            while (true)
             {
-                if (client != null && isLogged)
+                if (client != null)
                 {
                     if(!cc.isBusy)
                     {
                         cc.sendMessage(ClientCom.SendDirectoryOrderMessage(), client);
-                        cc.readMessage(client);
-                        MessageBox.Show("Refresh");
+                        directory = cc.getDirectory(client);
+                        Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); }));
+                        foreach(var a in directory)
+                        {
+                            if (a.pathArray[a.pathArray.Count -1] == currentFolder.name)
+                                Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
+                        }
+                        Application.Current.Dispatcher.Invoke(new Action(() => { refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now; }));
                     }
-
                 }
                 Thread.Sleep(5*1000);
             }
         }
 
-        private void Connection()
-        {
-            cc = new ClientConnection(listBox, "127.0.0.1");
-            client = cc.Start();
-        }
 
-        private void LoggingButton_Click(object sender, RoutedEventArgs e)
+        private void DownloadOrOpenButton(object sender, RoutedEventArgs e)
         {
-            if(client.Connected)
+            Button btn = ((Button)sender);
+            if (btn.Content.Equals("Pobierz"))
             {
-                cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, textBoxPassword.Text), client);
-                if (cc.readMessage(client) == 1)
+                if (client.Connected)
                 {
-                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(), client);
-                    cc.readMessage(client);
-                    MessageBox.Show("You are logged in");
-                    isLogged = true;
+                    try
+                    {
+                        cc.sendMessage(ClientCom.SendOrderMessage(((DirectoryElement)btn.DataContext).path + ((DirectoryElement)btn.DataContext).name), client);
+                        cc.downloadFile(client);
+                    }
+                    catch (Exception err)
+                    {
+                        MessageBox.Show("Wybierz plik do pobrania!");
+                    }
                 }
                 else
-                    MessageBox.Show("Wrong login or password");
+                    MessageBox.Show("Error");
             }
-
-        }
-
-        private void DownloadFileButton(object sender, RoutedEventArgs e)
-        {
-            if (client.Connected && isLogged)
+            else if (btn.Content.Equals("Otwórz"))
             {
-                cc.sendMessage(ClientCom.SendOrderMessage(((DirectoryElement)listBox.SelectedItem).path + ((DirectoryElement)listBox.SelectedItem).name), client);
-                cc.downloadFile(client);
+                currentFolder = ((DirectoryElement)btn.DataContext);
+                currentDirectory.Clear();
+                foreach (var a in directory)
+                {
+                    if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
+                        currentDirectory.Add(a);
+                }
             }
             else
                 MessageBox.Show("Error");
+           
         }
 
         private void SendFileButton(object sender, RoutedEventArgs e)
         {
-           if (client.Connected && isLogged)
+           if (client.Connected)
            {
                 Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
                 Nullable<bool> result = dlg.ShowDialog();
@@ -109,14 +126,31 @@ namespace LocalDatabase_Client
 
         private void DeleteFileButton(object sender, RoutedEventArgs e)
         {
-            if (client.Connected && isLogged)
+            if (client.Connected)
             {
-                string deletedElement = ((DirectoryElement)listBox.SelectedItem).path + ((DirectoryElement)listBox.SelectedItem).name;
+                Button btn = ((Button)sender);
+                string deletedElement = ((DirectoryElement)btn.DataContext).path + ((DirectoryElement)btn.DataContext).name;
                 cc.sendMessage(ClientCom.DeleteMessage(deletedElement), client);
                 cc.readMessage(client);
             }
             else
                 MessageBox.Show("Error");
+        }
+
+        private void ReturnButton(object sender, RoutedEventArgs e)
+        {
+            if (!currentFolder.name.Equals("Main_Folder"))
+            {
+                currentFolder = directory.First(x => x.name.Equals(currentFolder.pathArray[currentFolder.pathArray.Count - 1]));
+                currentDirectory.Clear();
+                foreach (var a in directory)
+                {
+                    if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
+                        currentDirectory.Add(a);
+                }
+            }
+            else
+                MessageBox.Show("Jesteś w głównym folderze");
         }
     }
 
