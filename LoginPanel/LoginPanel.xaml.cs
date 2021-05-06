@@ -49,8 +49,11 @@ namespace LocalDatabase_Client.LoginPanel
                     cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, passwordBoxPassword.Password), client);
                     if (cc.readMessage(client) == 1)
                     {
+                        bool isPasswordChanged = false;
                         MessageBox.Show("You are logged in");
-                        MainWindow mw = new MainWindow(client, cc);
+                        if (cc.token.Equals(passwordBoxPassword.Password))
+                            isPasswordChanged = true;
+                        MainWindow mw = new MainWindow(client, cc, isPasswordChanged);
                         isLogged = true;
                         textBoxLogin.Text = "";
                         passwordBoxPassword.Password = "";

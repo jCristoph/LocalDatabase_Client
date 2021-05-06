@@ -30,8 +30,10 @@ namespace LocalDatabase_Client
         private DirectoryElement currentFolder;
         private string token;
         
-        public MainWindow(TcpClient client, ClientConnection cc)
+        public MainWindow(TcpClient client, ClientConnection cc, bool isPasswordChanged)
         {
+            if (isPasswordChanged)
+                MessageBox.Show("Zmień hasło");
             token = cc.token;
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
