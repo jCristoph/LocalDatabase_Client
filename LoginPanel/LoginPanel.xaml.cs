@@ -46,14 +46,17 @@ namespace LocalDatabase_Client.LoginPanel
             {
                 if (client.Connected)
                 {
-                    cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, textBoxPassword.Password), client);
+                    cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, passwordBoxPassword.Password), client);
                     if (cc.readMessage(client) == 1)
                     {
                         MessageBox.Show("You are logged in");
                         MainWindow mw = new MainWindow(client, cc);
                         isLogged = true;
+                        textBoxLogin.Text = "";
+                        passwordBoxPassword.Password = "";
                         mw.Show();
-                        this.Close();
+                        mw.Owner = this;
+                        this.Hide();
                     }
                     else
                         MessageBox.Show("Wrong login or password");
@@ -61,14 +64,9 @@ namespace LocalDatabase_Client.LoginPanel
             }
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void PasswordBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
+            this.Close();
         }
     }
 }

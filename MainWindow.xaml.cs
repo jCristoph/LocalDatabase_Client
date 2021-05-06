@@ -28,10 +28,11 @@ namespace LocalDatabase_Client
         private ObservableCollection<DirectoryElement> directory;
         private ObservableCollection<DirectoryElement> currentDirectory;
         private DirectoryElement currentFolder;
+        private string token;
         
         public MainWindow(TcpClient client, ClientConnection cc)
         {
-            
+            token = cc.token;
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
             this.client = client;
@@ -53,7 +54,7 @@ namespace LocalDatabase_Client
                 {
                     if(!cc.isBusy)
                     {
-                        cc.sendMessage(ClientCom.SendDirectoryOrderMessage(), client);
+                        cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), client);
                         directory = cc.getDirectory(client);
                         Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); }));
                         foreach(var a in directory)
@@ -151,6 +152,12 @@ namespace LocalDatabase_Client
             }
             else
                 MessageBox.Show("Jesteś w głównym folderze");
+        }
+
+        private void LogOutButton(object sender, RoutedEventArgs e)
+        {
+            Owner.Show();
+            this.Close();
         }
     }
 

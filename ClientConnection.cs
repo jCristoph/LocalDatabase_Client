@@ -18,6 +18,7 @@ namespace LocalDatabase_Client
     {
         public bool isBusy { get; set;}
         private String serverIP = null;
+        public string token { get; set; }
         public ListBox listBox { get; set; }
         private int port = 0;
 
@@ -80,7 +81,11 @@ namespace LocalDatabase_Client
             switch (task)
             {
                 case "CheckLogin":
-                    return ClientCom.CheckLoginRecognizer(data);
+                    token = ClientCom.CheckLoginRecognizer(data);
+                    if (token.Equals("ERROR"))
+                        return 0;
+                    else
+                        return 1;
                 case "Download": //kiedy wysylane jest zadanie pobrania pliku
                     downloadFile(client);
                     return 0;

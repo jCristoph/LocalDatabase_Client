@@ -51,9 +51,9 @@ namespace LocalDatabase_Client
         /// For Client usage. Is order for server to send directory.
         /// </summary>
         /// <returns></returns>
-        public static string SendDirectoryOrderMessage()
+        public static string SendDirectoryOrderMessage(string token)
         {
-            return "<Task=SendDir></Task><#>";
+            return "<Task=SendDir><Token>" + token + "</Token></Task><#>";
         }
 
         /// <summary>
@@ -89,14 +89,14 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static int CheckLoginRecognizer(string s)
+        public static string CheckLoginRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<isLogged>") + "<isLogged>".Length;
             int IndexEnd = s.LastIndexOf("</isLogged>");
-            if (s.Substring(IndexHome, IndexEnd - IndexHome).Equals("Yes"))
-                return 1;
+            if (s.Substring(IndexHome, IndexEnd - IndexHome).Equals("ERROR"))
+                return "ERROR";
             else
-                return 0;
+                return s.Substring(IndexHome, IndexEnd - IndexHome);
         }
 
         /// <summary>

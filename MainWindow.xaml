@@ -5,48 +5,58 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LocalDatabase_Client"
         mc:Ignorable="d"
-        Title="Klient" Height="450" Width="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="8*"/>
-            <ColumnDefinition Width="2*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="8*"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Column="1" Grid.Row="1">
-            <Button Content="Wyślij plik" Click="SendFileButton"  Height="40" Margin="20"/>
-            <Button Content="Cofnij" Grid.Column="1" Grid.Row="1" Height="40" Margin="20" Click="ReturnButton"/>
-            <Button Content="Wyloguj"  Grid.Column="1" Grid.Row="1" Height="40" Margin="20"/>
-        </StackPanel>
-        <TextBlock Name="refreshTextBlock" Width="263" Grid.Column="0" Grid.Row="2"/>
-        <ListView Grid.Column="0" Grid.Row="1" Name="listView">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Folder">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding Path=image}" Width="20" Height="20"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Nazwa"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Ostatnia edycja"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=size}" Header="Rozmiar"/>
-                    <GridViewColumn Header="Akcja">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
-                                    <Button Content="{Binding Path=buttonName}" Click="DownloadOrOpenButton" Margin="10"/>
-                                    <Button Content="Usuń" Click="DeleteFileButton" Margin="10"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </Grid>
+        Title="Klient"
+        Height="600"
+        Width="1000"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True">
+
+    <Border Background="#272537"
+            CornerRadius="20">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Column="1" Grid.Row="1">
+                <Button Content="Wyślij plik" Click="SendFileButton"  Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,0,10,0"/>
+                <Button Content="Cofnij" Grid.Column="1" Grid.Row="1" Height="40" Click="ReturnButton" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0"/>
+                <Button Content="Wyloguj"  Grid.Column="1" Grid.Row="1" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="LogOutButton"/>
+            </StackPanel>
+            <TextBlock Width="263" Grid.Column="0" Grid.Row="0" Foreground="White" Text="Filebase.local" FontSize="36" HorizontalAlignment="Left" Margin="10,10,0,0" FontFamily="Lucida Sans" />
+            <TextBlock Text="Ostatnie odświeżenie: " Name="refreshTextBlock" Width="263" Grid.Column="0" Grid.Row="2" Foreground="White" FontFamily="Lucida Sans" Margin="0,5,0,0"/>
+            <ListView Margin="10,0,0,0" Grid.Column="0" Grid.Row="1" Name="listView" Background="Aquamarine">
+                <ListView.View>
+                    <GridView ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle1}">
+                        <GridViewColumn Header="Folder">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Path=image}" Width="20" Height="20"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Nazwa"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Ostatnia edycja"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=size}" Header="Rozmiar"/>
+                        <GridViewColumn Header="Akcja">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
+                                        <Button Content="{Binding Path=buttonName}" Click="DownloadOrOpenButton" Margin="10" Style="{StaticResource MenuButtonTheme}" Width="80"/>
+                                        <Button Content="Usuń" Click="DeleteFileButton" Margin="10" Style="{StaticResource MenuButtonTheme}" Width="80"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </Border>
 </Window>
