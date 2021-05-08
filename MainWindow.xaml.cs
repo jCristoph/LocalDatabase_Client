@@ -41,6 +41,7 @@ namespace LocalDatabase_Client
             this.cc = cc;
             currentDirectory = new ObservableCollection<DirectoryElement>();
             currentFolder = new DirectoryElement("\\Main_Folder", 0, "None", true);
+            currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
             listView.ItemsSource = currentDirectory;
             DataContext = this;
             Task t = new Task(() => refreshingList());
@@ -81,7 +82,7 @@ namespace LocalDatabase_Client
                 {
                     try
                     {
-                        cc.sendMessage(ClientCom.SendOrderMessage(((DirectoryElement)btn.DataContext).path + ((DirectoryElement)btn.DataContext).name), client);
+                        cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name), client);
                         cc.downloadFile(client);
                     }
                     catch (Exception err)
@@ -101,6 +102,7 @@ namespace LocalDatabase_Client
                     if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
                         currentDirectory.Add(a);
                 }
+                currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
             }
             else
                 MessageBox.Show("Error");
@@ -116,7 +118,7 @@ namespace LocalDatabase_Client
                 string filename = dlg.FileName;
                 if (result == true)
                 {
-                    cc.sendMessage(ClientCom.ReadOrderMessage(), client);
+                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token), client);
                     cc.readMessage(client);
                     cc.sendFile(client, filename);
                 }
@@ -131,9 +133,10 @@ namespace LocalDatabase_Client
         {
             if (client.Connected)
             {
+                
                 Button btn = ((Button)sender);
-                string deletedElement = ((DirectoryElement)btn.DataContext).path + ((DirectoryElement)btn.DataContext).name;
-                cc.sendMessage(ClientCom.DeleteMessage(deletedElement), client);
+                string deletedElement = (((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name;
+                cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder), client);
                 cc.readMessage(client);
             }
             else
@@ -154,12 +157,29 @@ namespace LocalDatabase_Client
             }
             else
                 MessageBox.Show("Jesteś w głównym folderze");
+            currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
         }
 
         private void LogOutButton(object sender, RoutedEventArgs e)
         {
             Owner.Show();
             this.Close();
+        }
+
+        private void CreateFolderButton(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ExitButton(object sender, RoutedEventArgs e)
+        {
+            Owner.Close();
+            this.Close();
+        }
+
+        private void ChangePasswordButton(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

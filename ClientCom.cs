@@ -42,9 +42,16 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string ReadOrderMessage()
+        public static string ReadOrderMessage(DirectoryElement currentFolderPath, string token)
         {
-            return "<Task=ReadOrder></Task><#>";
+            if (currentFolderPath.path.Equals("\\"))
+            {
+                return "<Task=ReadOrder><Path>Main_Folder\\" + token + "</Path></Task><#>";
+            }
+            else
+            {
+                return "<Task=ReadOrder><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "</Path></Task><#>";
+            }
         }
 
         /// <summary>
@@ -61,9 +68,9 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string DeleteMessage(string path)
+        public static string DeleteMessage(string path, bool isFolder)
         {
-            return "<Task=Delete><Path>" + path + "</Path></Task><#>";
+            return "<Task=Delete><Path>" + path + "</Path><isFolder>" + isFolder.ToString() + "</isFolder></Task><#>";
         }
 
         /// <summary>

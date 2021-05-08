@@ -34,7 +34,7 @@ namespace LocalDatabase_Client.LoginPanel
 
         private void Connection()
         {
-            cc = new ClientConnection("192.168.1.19");
+            cc = new ClientConnection("192.168.1.204");
             client = cc.Start();
         }
 
@@ -57,9 +57,9 @@ namespace LocalDatabase_Client.LoginPanel
                         isLogged = true;
                         textBoxLogin.Text = "";
                         passwordBoxPassword.Password = "";
-                        mw.Show();
                         mw.Owner = this;
                         this.Hide();
+                        mw.Show();
                     }
                     else
                         MessageBox.Show("Wrong login or password");

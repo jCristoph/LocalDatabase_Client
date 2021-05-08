@@ -97,7 +97,10 @@ namespace LocalDatabase_Client
                     Application.Current.Dispatcher.Invoke(new Action(() => { listBox.ItemsSource = dm.directoryElements; }));
                     return 0;
                 case "Response":
-                    MessageBox.Show(ClientCom.responseRecognizer(data));
+                    Task t = Task.Run(() =>
+                    {
+                        MessageBox.Show(ClientCom.responseRecognizer(data));
+                    });
                     return 0;
             }
             return 0;
@@ -151,29 +154,25 @@ namespace LocalDatabase_Client
                     Byte[] dataByte = new Byte[blockSize];
                     lock (this)
                     {
-                        //MessageBox.Show("Downloading...");
-                        //Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloading!!!"; }));
                         string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
                         handlerSocket.Receive(dataByte);
                         int fileNameLen = BitConverter.ToInt32(dataByte, 0);
                         fileName = Encoding.UTF8.GetString(dataByte, 4, fileNameLen);
                         Stream fileStream = File.OpenWrite(folderPath + fileName);
                         fileStream.Write(dataByte, 4 + fileNameLen, (1024 - (4 + fileNameLen)));
-                        ProgressBar.ProgressBar p = new ProgressBar.ProgressBar();
-                        p.Show();
-                        do
+                        //ProgressBar.ProgressBar p = new ProgressBar.ProgressBar();
+                        //p.Show();
+                        while (networkStream.DataAvailable)
                         {
-                            p.progress++;
+                            //p.progress++;
                             thisRead = networkStream.Read(dataByte, 0, blockSize);
                             fileStream.Write(dataByte, 0, thisRead);
                             if (!networkStream.DataAvailable)
                                 Thread.Sleep(1);
-                        } while (networkStream.DataAvailable);
-                        p.Close();
+                        } 
+                        //p.Close();
                         fileStream.Close();
                     }
-                    //MessageBox.Show("Downloaded");
-                    //Application.Current.Dispatcher.Invoke(new Action(() => { text.Text = "Downloaded"; }));
                     handlerSocket = null;
                 }
             }
