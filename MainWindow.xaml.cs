@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -32,11 +33,14 @@ namespace LocalDatabase_Client
         
         public MainWindow(TcpClient client, ClientConnection cc, bool isPasswordChanged)
         {
-            if (isPasswordChanged)
-                MessageBox.Show("Zmień hasło");
-            token = cc.token;
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+            if (isPasswordChanged)
+            {
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zmień hasło", false);
+                mp.ShowDialog();
+            }
+            token = cc.token;
             this.client = client;
             this.cc = cc;
             currentDirectory = new ObservableCollection<DirectoryElement>();
@@ -57,15 +61,23 @@ namespace LocalDatabase_Client
                 {
                     if(!cc.isBusy)
                     {
+                        DirectoryRequest:
                         cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), client);
                         directory = cc.getDirectory(client);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); }));
-                        foreach(var a in directory)
+                        if(directory != null)
                         {
-                            if (a.pathArray[a.pathArray.Count -1] == currentFolder.name)
-                                Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
+                            Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); }));
+                            foreach (var a in directory)
+                            {
+                                if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
+                                    Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
+                            }
+                            Application.Current.Dispatcher.Invoke(new Action(() => { refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now; }));
                         }
-                        Application.Current.Dispatcher.Invoke(new Action(() => { refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now; }));
+                        else
+                        {
+                            goto DirectoryRequest;
+                        }
                     }
                 }
                 Thread.Sleep(5*1000);
@@ -87,11 +99,16 @@ namespace LocalDatabase_Client
                     }
                     catch (Exception err)
                     {
-                        MessageBox.Show("Wybierz plik do pobrania!");
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Wybierz plik do pobrania", false);
+                        mp.ShowDialog();
                     }
                 }
                 else
-                    MessageBox.Show("Error");
+                {
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                    mp.ShowDialog();
+                }
+
             }
             else if (btn.Content.Equals("Otwórz"))
             {
@@ -105,7 +122,10 @@ namespace LocalDatabase_Client
                 currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
             }
             else
-                MessageBox.Show("Error");
+            {
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                mp.ShowDialog();
+            }
            
         }
 
@@ -116,33 +136,61 @@ namespace LocalDatabase_Client
                 Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
                 Nullable<bool> result = dlg.ShowDialog();
                 string filename = dlg.FileName;
-                if (result == true)
+                if (currentDirectory.Any(x => x.name == dlg.SafeFileName))
+                {
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy na pewno chcesz nadpisać plik?", true);
+                    mp.ShowDialog();
+                    if(mp.answear.Equals(true))
+                    {
+                        if (result == true)
+                        {
+                            cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token), client);
+                            cc.readMessage(client);
+                            cc.sendFile(client, filename);
+                        }
+                        else
+                        {
+                            mp = new MessagePanel.MessagePanel("Błąd", false);
+                            mp.ShowDialog();
+                        }
+                    }
+                }
+                else if (result == true)
                 {
                     cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token), client);
                     cc.readMessage(client);
                     cc.sendFile(client, filename);
                 }
                 else
-                    MessageBox.Show("Error");
+                {
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                    mp.ShowDialog();
+                }
             }
             else
-                MessageBox.Show("Error");
+            {
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                mp.ShowDialog();
+            }
         }
 
         private void DeleteFileButton(object sender, RoutedEventArgs e)
         {
-            if (client.Connected)
+            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy jesteś pewien, że chcesz usunąć ten element?", true);
+            mp.ShowDialog();
+            if (client.Connected && mp.answear)
             {
-                
                 Button btn = ((Button)sender);
                 string deletedElement = (((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name;
                 cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder), client);
                 cc.readMessage(client);
             }
             else
-                MessageBox.Show("Error");
+            {
+                mp = new MessagePanel.MessagePanel("Błąd", false);
+                mp.ShowDialog();
+            }
         }
-
         private void ReturnButton(object sender, RoutedEventArgs e)
         {
             if (!currentFolder.name.Equals("Main_Folder"))
@@ -156,23 +204,39 @@ namespace LocalDatabase_Client
                 }
             }
             else
-                MessageBox.Show("Jesteś w głównym folderze");
+            {
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Jesteś w głównym folderze", false);
+                mp.ShowDialog();
+            }
             currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
         }
 
         private void LogOutButton(object sender, RoutedEventArgs e)
         {
+            cc.sendMessage(ClientCom.LogoutMessage(), client);
             Owner.Show();
             this.Close();
         }
 
         private void CreateFolderButton(object sender, RoutedEventArgs e)
         {
-
+            CreateFolderPanel.CreateFolderPanel cfp = new CreateFolderPanel.CreateFolderPanel();
+            cfp.ShowDialog();
+            if (client.Connected)
+            {
+                cc.sendMessage(ClientCom.CreateFolderMessage(currentFolder, token, cfp.folderName), client);
+                cc.readMessage(client);
+            }
+            else
+            {
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                mp.ShowDialog();
+            }
         }
 
         private void ExitButton(object sender, RoutedEventArgs e)
         {
+            cc.sendMessage(ClientCom.LogoutMessage(), client);
             Owner.Close();
             this.Close();
         }
@@ -180,6 +244,17 @@ namespace LocalDatabase_Client
         private void ChangePasswordButton(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void HelpButton(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void ShareFileButton(object sender, RoutedEventArgs e)
+        {
+            Button btn = sender as Button;
+            SharePanel.ShareFilePanel sp = new SharePanel.ShareFilePanel(cc, client, token, ((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name));
+            sp.Show();
         }
     }
 

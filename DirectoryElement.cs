@@ -34,12 +34,12 @@ namespace LocalDatabase_Client
             if (isFolder)
             {
                 buttonName = "Otwórz";
-                image = @"C:\Users\PC\source\repos\LocalDatabase_Client\folder_icon.png";
+                image = @"C:\Users\thekr\source\repos\LocalDatabase_Client\folder_icon.png";
             }
             else
             {
                 buttonName = "Pobierz";
-                image = @"C:\Users\PC\source\repos\LocalDatabase_Client\file_icon.png";
+                image = @"C:\Users\thekr\source\repos\LocalDatabase_Client\file_icon.png";
             }
         }
 

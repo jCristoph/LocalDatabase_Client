@@ -34,14 +34,17 @@ namespace LocalDatabase_Client.LoginPanel
 
         private void Connection()
         {
-            cc = new ClientConnection("192.168.1.204");
+            cc = new ClientConnection("127.0.0.1");
             client = cc.Start();
         }
 
         private void loginButton_Click(object sender, RoutedEventArgs e)
         {
             if (client == null)
-                MessageBox.Show("Błąd połączenia z serwerem");
+            {
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd połączenia z serwerem", false);
+                mp.ShowDialog();
+            }
             else
             {
                 if (client.Connected)
@@ -50,7 +53,8 @@ namespace LocalDatabase_Client.LoginPanel
                     if (cc.readMessage(client) == 1)
                     {
                         bool isPasswordChanged = false;
-                        MessageBox.Show("You are logged in");
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zalogowano", false);
+                        mp.ShowDialog();
                         if (cc.token.Equals(passwordBoxPassword.Password))
                             isPasswordChanged = true;
                         MainWindow mw = new MainWindow(client, cc, isPasswordChanged);
@@ -62,7 +66,10 @@ namespace LocalDatabase_Client.LoginPanel
                         mw.Show();
                     }
                     else
-                        MessageBox.Show("Wrong login or password");
+                    {
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Złe hasło lub nazwa użytkownika", false);
+                        mp.ShowDialog();
+                    }
                 }
             }
         }

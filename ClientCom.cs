@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace LocalDatabase_Client
@@ -54,6 +55,17 @@ namespace LocalDatabase_Client
             }
         }
 
+        public static string CreateFolderMessage(DirectoryElement currentFolderPath, string token, string newFolderName)
+        {
+            if (currentFolderPath.path.Equals("\\"))
+            {
+                return "<Task=CreateFolder><Path>Main_Folder\\" + token + "\\" + newFolderName + "</Path></Task><#>";
+            }
+            else
+            {
+                return "<Task=CreateFolder><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "\\" + newFolderName + "</Path></Task><#>";
+            }
+        }
         /// <summary>
         /// For Client usage. Is order for server to send directory.
         /// </summary>
@@ -63,6 +75,23 @@ namespace LocalDatabase_Client
             return "<Task=SendDir><Token>" + token + "</Token></Task><#>";
         }
 
+        public static string ShareMessage(string senderToken, string recipientToken, string path, string permissions)
+        {
+            return "<Task=Share><From>" + senderToken + "</From><To>" +
+                recipientToken + "</To><Path>" +
+                path + "</Path><Permissions>" +
+                permissions + "</Permissions></Task><#>";
+        }
+
+        public static string UsersSharingMessage(string path)
+        {
+            return "<Task=UsersSharing><Path>" + path + "</Path>/Task><#>";
+        }
+
+        public static string SendUsersOrderMessage(string token)
+        {
+            return "<Task=SendUsers><Token>" + token + "</Token></Task><#>";
+        }
         /// <summary>
         /// For Client Usage. Is order to delete from server file of param path.
         /// </summary>
@@ -148,7 +177,60 @@ namespace LocalDatabase_Client
                 dm.ProcessPath(a);
             }
             return dm;
+        }
 
+        public static ObservableCollection<User> SendUsersRecognizer(string data)
+        {
+            ObservableCollection<User> users = new ObservableCollection<User>();
+            foreach (var s in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
+            {
+                try
+                {
+                    int isFolderIndexHome = s.IndexOf("<Surname>") + "<Surname>".Length;
+                    int isFolderIndexEnd = s.LastIndexOf("</Surname>");
+                    string surname = s.Substring(isFolderIndexHome, isFolderIndexEnd - isFolderIndexHome);
+
+                    int nameIndexHome = s.IndexOf("<Name>") + "<Name>".Length;
+                    int nameIndexEnd = s.LastIndexOf("</Name>");
+                    string name = s.Substring(nameIndexHome, nameIndexEnd - nameIndexHome);
+
+                    int sizeIndexHome = s.IndexOf("<Token>") + "<Token>".Length;
+                    int sizeIndexEnd = s.LastIndexOf("</Token>");
+                    string token = s.Substring(sizeIndexHome, sizeIndexEnd - sizeIndexHome);
+
+                    users.Add(new User(surname, name, token));
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+            return users;
+        }
+
+        public static ObservableCollection<User> SharingUsersRecognizer(string data)
+        {
+            ObservableCollection<User> users = new ObservableCollection<User>();
+            foreach (var s in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
+            {
+                try
+                {
+                    int isFolderIndexHome = s.IndexOf("<Surname>") + "<Surname>".Length;
+                    int isFolderIndexEnd = s.LastIndexOf("</Surname>");
+                    string surname = s.Substring(isFolderIndexHome, isFolderIndexEnd - isFolderIndexHome);
+
+                    int nameIndexHome = s.IndexOf("<Name>") + "<Name>".Length;
+                    int nameIndexEnd = s.LastIndexOf("</Name>");
+                    string name = s.Substring(nameIndexHome, nameIndexEnd - nameIndexHome);
+
+                    users.Add(new User(surname, name, "EMPTY"));
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+            return users;
         }
 
         /// <summary>
