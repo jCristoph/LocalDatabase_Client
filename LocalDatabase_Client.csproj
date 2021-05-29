@@ -70,10 +70,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
+      <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SharePanel\ShareFilePanel.xaml.cs">
       <DependentUpon>ShareFilePanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="User.cs" />
+    <Page Include="ChangePasswordPanel\ChangePasswordPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CreateFolderPanel\CreateFolderPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

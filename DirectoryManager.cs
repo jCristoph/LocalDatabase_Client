@@ -64,6 +64,7 @@ namespace LocalDatabase_Client
 
                 DirectoryElement de = new DirectoryElement(path, name, long.Parse(size), lwr, isFolder);
                 directoryElements.Add(de);
+                    
             }
             catch (Exception e)
             {

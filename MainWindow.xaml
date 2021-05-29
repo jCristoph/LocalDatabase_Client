@@ -68,7 +68,18 @@
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
                                             <Button Content="{Binding Path=buttonName}" Click="DownloadOrOpenButton" Margin="10" Style="{StaticResource MenuButtonTheme}" Width="80"/>
                                             <Button Content="Usuń" Click="DeleteFileButton" Margin="10" Style="{StaticResource MenuButtonTheme}" Width="80"/>
-                                            <Button Content="Udostępnij" Click="ShareFileButton" Margin="10" Style="{StaticResource MenuButtonTheme}" Width="80"/>
+                                            <Button Content="Udostępnij" Click="ShareFileButton" Margin="10"  Width="80">
+                                                <Button.Style>
+                                                    <Style BasedOn ="{StaticResource MenuButtonTheme}" TargetType="Button">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Path=isFolder}" Value="True">
+                                                                <Setter Property="Visibility" Value="Hidden"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button> 
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>

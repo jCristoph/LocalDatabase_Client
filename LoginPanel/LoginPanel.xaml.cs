@@ -22,7 +22,6 @@ namespace LocalDatabase_Client.LoginPanel
     {
         private TcpClient client;
         private ClientConnection cc;
-        private bool isLogged = false;
 
         public LoginPanel()
         {
@@ -58,7 +57,6 @@ namespace LocalDatabase_Client.LoginPanel
                         if (cc.token.Equals(passwordBoxPassword.Password))
                             isPasswordChanged = true;
                         MainWindow mw = new MainWindow(client, cc, isPasswordChanged);
-                        isLogged = true;
                         textBoxLogin.Text = "";
                         passwordBoxPassword.Password = "";
                         mw.Owner = this;

@@ -34,12 +34,12 @@ namespace LocalDatabase_Client
             if (isFolder)
             {
                 buttonName = "Otwórz";
-                image = @"C:\Users\thekr\source\repos\LocalDatabase_Client\folder_icon.png";
+                image = @"Images\folder_icon.png";
             }
             else
             {
                 buttonName = "Pobierz";
-                image = @"C:\Users\thekr\source\repos\LocalDatabase_Client\file_icon.png";
+                image = @"Images\file_icon.png";
             }
         }
 
@@ -56,13 +56,13 @@ namespace LocalDatabase_Client
             {
                 this.isFolder = true;
                 buttonName = "Otwórz";
-                image = @"C:\Users\PC\source\repos\LocalDatabase_Client\folder_icon.png";
+                image = @"Images\folder_icon.png";
             }
             else
             {
                 this.isFolder = false;
                 buttonName = "Pobierz";
-                image = @"C:\Users\PC\source\repos\LocalDatabase_Client\file_icon.png";
+                image = @"Images\file_icon.png";
             }
         }
 

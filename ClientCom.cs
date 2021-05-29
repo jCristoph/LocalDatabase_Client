@@ -176,6 +176,8 @@ namespace LocalDatabase_Client
             {
                 dm.ProcessPath(a);
             }
+            DirectoryElement de = new DirectoryElement(@"Main_Folder\Udostępnione", 0, "None", true);
+            dm.directoryElements.Add(de);
             return dm;
         }
 

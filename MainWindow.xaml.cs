@@ -69,7 +69,12 @@ namespace LocalDatabase_Client
                             Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); }));
                             foreach (var a in directory)
                             {
-                                if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
+                                if(currentFolder.name.Equals("Udostępnione"))
+                                {
+                                    if (!a.pathArray[0].Contains("Main_Folder") && !a.name.Equals("Main_Folder"))
+                                        Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
+                                }
+                                else if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
                                     Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
                             }
                             Application.Current.Dispatcher.Invoke(new Action(() => { refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now; }));
@@ -213,7 +218,7 @@ namespace LocalDatabase_Client
 
         private void LogOutButton(object sender, RoutedEventArgs e)
         {
-            cc.sendMessage(ClientCom.LogoutMessage(), client);
+            //cc.sendMessage(ClientCom.LogoutMessage(), client);
             Owner.Show();
             this.Close();
         }
@@ -243,7 +248,7 @@ namespace LocalDatabase_Client
 
         private void ChangePasswordButton(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         private void HelpButton(object sender, RoutedEventArgs e)
