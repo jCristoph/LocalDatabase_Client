@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,16 +20,25 @@ namespace LocalDatabase_Client.ChangePasswordPanel
     /// </summary>
     public partial class ChangePasswordPanel : Window
     {
-        public ChangePasswordPanel()
+        ClientConnection cc;
+        TcpClient client;
+        string token;
+
+        public ChangePasswordPanel(ClientConnection cc, TcpClient client, string token)
         {
             InitializeComponent();
+            this.cc = cc;
+            this.client = client;
+            this.token = token;
         }
 
-        private void changePasswordButton(object sender, RoutedEventArgs e)
+        private void changeButton_Click(object sender, RoutedEventArgs e)
         {
             if(passwordBox.Password.Equals(passwordBox2.Password))
             {
-
+                cc.sendMessage(ClientCom.ChangePasswordMessage(passwordBox.Password, token), client);
+                cc.readMessage(client);
+                this.Close();
             }
         }
     }

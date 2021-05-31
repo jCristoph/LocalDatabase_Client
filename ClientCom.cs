@@ -19,6 +19,11 @@ namespace LocalDatabase_Client
             return "<Task=Login><Login>" + login + "</Login><Pass>" + password + "</Pass></Task><#>";
         }
 
+        public static string ChangePasswordMessage(string newPassword, string token)
+        {
+            return "<Task=ChngPass><NewPass>" + newPassword + "</NewPass><Token>" + token + "</Token></Task>";
+        }
+
         /// <summary>
         /// For client usage. Sent when user ends work.
         /// </summary>

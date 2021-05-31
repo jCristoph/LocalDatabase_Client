@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:LocalDatabase_Client"
         mc:Ignorable="d"
         Title="Klient"
-        Height="600"
-        Width="1000"
+        Height="800"
+        Width="1400"
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True">
@@ -16,8 +16,8 @@
             CornerRadius="10">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="8*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="80*"/>
+                <ColumnDefinition Width="15*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"/>
@@ -49,7 +49,7 @@
                     <Button Margin="15,3,10,3" Content="Cofnij"  Width="80" HorizontalAlignment="Left" Click="ReturnButton" Style="{StaticResource MenuButtonTheme}" FontSize="12"/>
                     <TextBlock Text="Obecna lokalizacja: " Name="currentFolderTextBlock" Width="679" Foreground="#353340" FontFamily="Lucida Sans" Margin="10,4,0,4" VerticalAlignment="Center" FontSize="16"/>
                 </StackPanel>
-                <ListView Margin="10,10,0,0" Grid.Column="0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}">
+                <ListView Margin="10,10,0,0" Grid.Column="0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                     <ListView.View>
                         <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                             <GridViewColumn Header="Folder">
@@ -66,9 +66,9 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
-                                            <Button Content="{Binding Path=buttonName}" Click="DownloadOrOpenButton" Margin="10" Style="{StaticResource MenuButtonTheme}" Width="80"/>
-                                            <Button Content="Usuń" Click="DeleteFileButton" Margin="10" Style="{StaticResource MenuButtonTheme}" Width="80"/>
-                                            <Button Content="Udostępnij" Click="ShareFileButton" Margin="10"  Width="80">
+                                            <Button Content="{Binding Path=buttonName}" Click="DownloadOrOpenButton" Margin="10" Height="20" Style="{StaticResource MenuButtonTheme}" Width="80"/>
+                                            <Button Content="Usuń" Click="DeleteFileButton" Margin="10" Style="{StaticResource MenuButtonTheme}" Width="80" Height="20"/>
+                                            <Button Content="Udostępnij" Click="ShareFileButton" Margin="10" Width="80" Height="20">
                                                 <Button.Style>
                                                     <Style BasedOn ="{StaticResource MenuButtonTheme}" TargetType="Button">
                                                         <Setter Property="Visibility" Value="Visible"/>

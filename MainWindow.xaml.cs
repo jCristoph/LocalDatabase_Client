@@ -29,6 +29,7 @@ namespace LocalDatabase_Client
         private ObservableCollection<DirectoryElement> directory;
         private ObservableCollection<DirectoryElement> currentDirectory;
         private DirectoryElement currentFolder;
+        private bool isLogged;
         private string token;
         
         public MainWindow(TcpClient client, ClientConnection cc, bool isPasswordChanged)
@@ -40,6 +41,7 @@ namespace LocalDatabase_Client
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zmień hasło", false);
                 mp.ShowDialog();
             }
+            isLogged = true;
             token = cc.token;
             this.client = client;
             this.cc = cc;
@@ -55,7 +57,7 @@ namespace LocalDatabase_Client
         private void refreshingList()
         {
             Thread.Sleep(10);
-            while (true)
+            while (isLogged)
             {
                 if (client != null)
                 {
@@ -85,7 +87,7 @@ namespace LocalDatabase_Client
                         }
                     }
                 }
-                Thread.Sleep(5*1000);
+                Thread.Sleep(2*1000);
             }
         }
 
@@ -220,6 +222,7 @@ namespace LocalDatabase_Client
         {
             //cc.sendMessage(ClientCom.LogoutMessage(), client);
             Owner.Show();
+            isLogged = false;
             this.Close();
         }
 
@@ -248,7 +251,8 @@ namespace LocalDatabase_Client
 
         private void ChangePasswordButton(object sender, RoutedEventArgs e)
         {
-            
+            ChangePasswordPanel.ChangePasswordPanel chp = new ChangePasswordPanel.ChangePasswordPanel(cc, client, token);
+            chp.Show();
         }
 
         private void HelpButton(object sender, RoutedEventArgs e)
