@@ -38,9 +38,9 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string SendOrderMessage(string path)
+        public static string SendOrderMessage(string path, string token)
         {
-            return "<Task=Send><Path>" + path + "</Path></Task><#>";
+            return "<Task=Send><Path>" + path + "</Path><Token>" + token + "</Token></Task><#>";
         }
 
         /// <summary>
@@ -48,15 +48,15 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string ReadOrderMessage(DirectoryElement currentFolderPath, string token)
+        public static string ReadOrderMessage(DirectoryElement currentFolderPath, string token, string filename)
         {
             if (currentFolderPath.path.Equals("\\"))
             {
-                return "<Task=ReadOrder><Path>Main_Folder\\" + token + "</Path></Task><#>";
+                return "<Task=ReadOrder><Path>Main_Folder\\" + token + "</Path><Token>" + token + "</Token><Name>" + filename + "</Name></Task><#>";
             }
             else
             {
-                return "<Task=ReadOrder><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "</Path></Task><#>";
+                return "<Task=ReadOrder><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "</Path><Token>" + token + "</Token><Name>" + filename + "</Name></Task><#>";
             }
         }
 
@@ -102,9 +102,9 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string DeleteMessage(string path, bool isFolder)
+        public static string DeleteMessage(string path, bool isFolder, string token)
         {
-            return "<Task=Delete><Path>" + path + "</Path><isFolder>" + isFolder.ToString() + "</isFolder></Task><#>";
+            return "<Task=Delete><Path>" + path + "</Path><isFolder>" + isFolder.ToString() + "</isFolder><Token>" + token + "</Token></Task><#>";
         }
 
         /// <summary>

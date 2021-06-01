@@ -101,7 +101,7 @@ namespace LocalDatabase_Client
                 {
                     try
                     {
-                        cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name), client);
+                        cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), client);
                         cc.downloadFile(client);
                     }
                     catch (Exception err)
@@ -151,33 +151,33 @@ namespace LocalDatabase_Client
                     {
                         if (result == true)
                         {
-                            cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token), client);
+                            cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client);
                             cc.readMessage(client);
                             cc.sendFile(client, filename);
                         }
                         else
                         {
                             mp = new MessagePanel.MessagePanel("Błąd", false);
-                            mp.ShowDialog();
+                            mp.Show();
                         }
                     }
                 }
                 else if (result == true)
                 {
-                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token), client);
+                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client);
                     cc.readMessage(client);
                     cc.sendFile(client, filename);
                 }
                 else
                 {
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
-                    mp.ShowDialog();
+                    mp.Show();
                 }
             }
             else
             {
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
-                mp.ShowDialog();
+                mp.Show();
             }
         }
 
@@ -188,14 +188,15 @@ namespace LocalDatabase_Client
             if (client.Connected && mp.answear)
             {
                 Button btn = ((Button)sender);
-                string deletedElement = (((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name;
-                cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder), client);
+                DirectoryElement temp = (DirectoryElement)btn.DataContext;
+                string deletedElement = temp.path.Replace("Main_Folder", "Main_Folder\\" + token) + temp.name;
+                cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder, token), client);
                 cc.readMessage(client);
             }
             else
             {
                 mp = new MessagePanel.MessagePanel("Błąd", false);
-                mp.ShowDialog();
+                mp.Show();
             }
         }
         private void ReturnButton(object sender, RoutedEventArgs e)

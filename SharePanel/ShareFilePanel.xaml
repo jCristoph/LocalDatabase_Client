@@ -25,9 +25,9 @@
                 <Button Content="Udostępnij" Grid.Row="3" Style="{StaticResource MenuButtonTheme}" FontSize="14" Margin="10,15,10,15" Click="ShareButton" Width="90"/>
             </StackPanel>
             <Button Content="Powrót"  Grid.Column="2" Grid.Row="3" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10" Click="BackButton" HorizontalAlignment="Right" Width="100"/>
-            <ListView Grid.Row="2" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" Margin="100,10,100,10">
+            <ListView Grid.Row="2" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" Margin="100,10,100,10" ItemContainerStyle="{StaticResource ContainerStyle}">
                 <ListView.View>
-                    <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
+                    <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}" >
                         <GridViewColumn DisplayMemberBinding="{Binding Path=surname}" Header="Imię"/>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Nazwisko"/>
                     </GridView>

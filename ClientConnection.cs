@@ -19,12 +19,10 @@ namespace LocalDatabase_Client
         public bool isBusy { get; set;}
         private String serverIP = null;
         public string token { get; set; }
-        public ListBox listBox { get; set; }
         private int port = 0;
 
         public ClientConnection(String serverIP)
         {
-            listBox = null;
             isBusy = false;
             this.serverIP = serverIP;
             this.port = 25000;
@@ -48,36 +46,39 @@ namespace LocalDatabase_Client
         }
         public ObservableCollection<DirectoryElement> getDirectory(TcpClient client)
         {
-            isBusy = true;
-            var stream = client.GetStream();
-            Byte[] bytes = new Byte[1024];
-            int i;
-            string data = "";
-            Thread.Sleep(10);
-            do
+            if(!isBusy)
             {
-                i = stream.Read(bytes, 0, bytes.Length);
-                data += Encoding.UTF8.GetString(bytes, 0, i);
-                if (!stream.DataAvailable)
-                    Thread.Sleep(1);
-            } while (stream.DataAvailable);
-            isBusy = false;
-            int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
-            int taskIndexEnd = data.IndexOf(">");
-            if(taskIndexEnd < 0)
-            {
-                getDirectory(client);
-            }
-            else
-            {
-                string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
-                DirectoryManager dm;
-                if (task.Equals("SendingDir"))
+                isBusy = true;
+                var stream = client.GetStream();
+                Byte[] bytes = new Byte[1024];
+                int i;
+                string data = "";
+                Thread.Sleep(1000);
+                do
                 {
-                    dm = ClientCom.SendDirectoryRecognizer(data);
-                    return dm.directoryElements;
+                    i = stream.Read(bytes, 0, bytes.Length);
+                    data += Encoding.UTF8.GetString(bytes, 0, i);
+                    if (!stream.DataAvailable)
+                        Thread.Sleep(1);
+                } while (stream.DataAvailable);
+                isBusy = false;
+                int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
+                int taskIndexEnd = data.IndexOf(">");
+                if (taskIndexEnd - taskIndexHome <= 0)
+                {
+                    return null;
                 }
-                return null;
+                else
+                {
+                    string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
+                    DirectoryManager dm;
+                    if (task.Equals("SendingDir"))
+                    {
+                        dm = ClientCom.SendDirectoryRecognizer(data);
+                        return dm.directoryElements;
+                    }
+                    return null;
+                }
             }
             return null;
         }
@@ -130,13 +131,9 @@ namespace LocalDatabase_Client
                     case "Send": ////kiedy wysylane jest zadanie wyslania pliku
                         sendFile(client, ClientCom.SendRecognizer(data));
                         return 0;
-                    case "SendingDir": //kiedy wysylana jest zawartosc biblioteki
-                        dm = ClientCom.SendDirectoryRecognizer(data);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { listBox.ItemsSource = dm.directoryElements; }));
-                        return 0;
                     case "Response":
-                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel(ClientCom.responseRecognizer(data), false);
-                        mp.Show();
+                       // MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel(ClientCom.responseRecognizer(data), false);
+                        //mp.Show();
                         return 0;
                 }
             }
