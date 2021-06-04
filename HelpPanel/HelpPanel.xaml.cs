@@ -12,25 +12,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace LocalDatabase_Client.CreateFolderPanel
+namespace LocalDatabase_Client.HelpPanel
 {
     /// <summary>
-    /// Logika interakcji dla klasy CreateFolderPanel.xaml
+    /// Logika interakcji dla klasy HelpPanel.xaml
     /// </summary>
-    public partial class CreateFolderPanel : Window
+    public partial class HelpPanel : Window
     {
-        public string folderName;
-        public CreateFolderPanel()
+        public HelpPanel()
         {
             InitializeComponent();
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
         }
 
-        private void createButton_Click(object sender, RoutedEventArgs e)
-        {
-            folderName = textBox.Text;
-            this.Close();
-        }
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

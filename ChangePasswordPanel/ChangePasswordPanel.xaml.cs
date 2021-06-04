@@ -26,6 +26,7 @@ namespace LocalDatabase_Client.ChangePasswordPanel
 
         public ChangePasswordPanel(ClientConnection cc, TcpClient client, string token)
         {
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
             this.cc = cc;
             this.client = client;
@@ -40,6 +41,10 @@ namespace LocalDatabase_Client.ChangePasswordPanel
                 cc.readMessage(client);
                 this.Close();
             }
+        }
+        private void backButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

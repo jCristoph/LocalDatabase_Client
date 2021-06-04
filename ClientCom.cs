@@ -130,14 +130,18 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string CheckLoginRecognizer(string s)
+        public static string[] CheckLoginRecognizer(string s)
         {
             int IndexHome = s.IndexOf("<isLogged>") + "<isLogged>".Length;
             int IndexEnd = s.LastIndexOf("</isLogged>");
-            if (s.Substring(IndexHome, IndexEnd - IndexHome).Equals("ERROR"))
-                return "ERROR";
+            string token = s.Substring(IndexHome, IndexEnd - IndexHome);
+            IndexHome = s.IndexOf("<Limit>") + "<Limit>".Length;
+            IndexEnd = s.LastIndexOf("</Limit>");
+            string limit = s.Substring(IndexHome, IndexEnd - IndexHome);
+            if (token.Equals("ERROR"))
+                return new string[] { "ERROR", "0"};
             else
-                return s.Substring(IndexHome, IndexEnd - IndexHome);
+                return new string[] { token, limit}; ;
         }
 
         /// <summary>
@@ -174,16 +178,18 @@ namespace LocalDatabase_Client
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static DirectoryManager SendDirectoryRecognizer(string data)
+        public static void SendDirectoryRecognizer(string data, DirectoryManager directoryManager)
         {
             DirectoryManager dm = new DirectoryManager();
+           Application.Current.Dispatcher.Invoke(new Action(() => { directoryManager.directoryElements.Clear(); })); 
             foreach (var a in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
             {
                 dm.ProcessPath(a);
+                directoryManager.ProcessPath(a);
             }
             DirectoryElement de = new DirectoryElement(@"Main_Folder\Udostępnione", 0, "None", true);
+            Application.Current.Dispatcher.Invoke(new Action(() => { directoryManager.directoryElements.Add(de); })); 
             dm.directoryElements.Add(de);
-            return dm;
         }
 
         public static ObservableCollection<User> SendUsersRecognizer(string data)

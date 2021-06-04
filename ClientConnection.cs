@@ -19,6 +19,7 @@ namespace LocalDatabase_Client
         public bool isBusy { get; set;}
         private String serverIP = null;
         public string token { get; set; }
+        public double limit { get; set; }
         private int port = 0;
 
         public ClientConnection(String serverIP)
@@ -44,7 +45,7 @@ namespace LocalDatabase_Client
             } while (!client.Connected);
             return client;
         }
-        public ObservableCollection<DirectoryElement> getDirectory(TcpClient client)
+        public void getDirectory(TcpClient client, DirectoryManager directoryManager)
         {
             if(!isBusy)
             {
@@ -66,21 +67,19 @@ namespace LocalDatabase_Client
                 int taskIndexEnd = data.IndexOf(">");
                 if (taskIndexEnd - taskIndexHome <= 0)
                 {
-                    return null;
+                    
                 }
                 else
                 {
                     string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
                     DirectoryManager dm;
+                    Application.Current.Dispatcher.Invoke(new Action(() => { directoryManager.directoryElements.Clear(); })); 
                     if (task.Equals("SendingDir"))
                     {
-                        dm = ClientCom.SendDirectoryRecognizer(data);
-                        return dm.directoryElements;
+                        ClientCom.SendDirectoryRecognizer(data, directoryManager);
                     }
-                    return null;
                 }
             }
-            return null;
         }
         public ObservableCollection<User> readUsers(TcpClient client)
         {
@@ -120,7 +119,9 @@ namespace LocalDatabase_Client
                 switch (task)
                 {
                     case "CheckLogin":
-                        token = ClientCom.CheckLoginRecognizer(data);
+                        string[] temp = ClientCom.CheckLoginRecognizer(data);
+                        token = temp[0];
+                        limit = Double.Parse(temp[1]);
                         if (token.Equals("ERROR"))
                             return 0;
                         else

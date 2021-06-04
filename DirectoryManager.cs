@@ -72,28 +72,14 @@ namespace LocalDatabase_Client
             }
 
         }
-        public List<string> PrintFolderContent()
+        public double usedSpace()
         {
-            List<string> folderContent = new List<string>();
-            foreach(var dirEl in directoryElements)
+            long usedSpaceCounter = 0;
+            for(int i = 0; i < directoryElements.Count; i++)
             {
-                if (dirEl.isFolder)
-                {
-                    folderContent.Add("Inside " + dirEl.name + " are:");
-                    foreach (var de in directoryElements)
-                    {
-                        if (de.pathArray.Count > 1)
-                        {
-                            if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name) && de.pathArray[de.pathArray.Count - 2].Equals(dirEl.pathArray[dirEl.pathArray.Count - 1]))
-                                folderContent.Add("\t" + de.name + " path of subfolder: " + dirEl.pathArray[dirEl.pathArray.Count - 1]);
-                        }
-                        else
-                            if (de.pathArray[de.pathArray.Count - 1].Equals(dirEl.name))
-                            folderContent.Add("\t" + de.name);
-                    }
-                }
+                usedSpaceCounter += directoryElements[i].size;
             }
-            return folderContent;
+            return (double)(usedSpaceCounter / 1000000000.0);
         }
     }
 }

@@ -73,6 +73,9 @@
     <Compile Include="ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HelpPanel\HelpPanel.xaml.cs">
+      <DependentUpon>HelpPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SharePanel\ShareFilePanel.xaml.cs">
       <DependentUpon>ShareFilePanel.xaml</DependentUpon>
     </Compile>
@@ -82,6 +85,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CreateFolderPanel\CreateFolderPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HelpPanel\HelpPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -146,6 +153,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\TextBoxTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ToggleButtonTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

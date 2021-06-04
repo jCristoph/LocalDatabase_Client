@@ -26,7 +26,8 @@ namespace LocalDatabase_Client
     {
         private TcpClient client;
         private ClientConnection cc;
-        private ObservableCollection<DirectoryElement> directory;
+        private DirectoryManager directoryManager;
+        private double limit;
         private ObservableCollection<DirectoryElement> currentDirectory;
         private DirectoryElement currentFolder;
         private bool isLogged;
@@ -39,12 +40,14 @@ namespace LocalDatabase_Client
             if (isPasswordChanged)
             {
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zmień hasło", false);
-                mp.ShowDialog();
+                mp.Show();
             }
             isLogged = true;
             token = cc.token;
             this.client = client;
             this.cc = cc;
+            this.limit = cc.limit;
+            directoryManager = new DirectoryManager();
             currentDirectory = new ObservableCollection<DirectoryElement>();
             currentFolder = new DirectoryElement("\\Main_Folder", 0, "None", true);
             currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
@@ -65,11 +68,11 @@ namespace LocalDatabase_Client
                     {
                         DirectoryRequest:
                         cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), client);
-                        directory = cc.getDirectory(client);
-                        if(directory != null)
+                        cc.getDirectory(client, directoryManager);
+                        if(directoryManager.directoryElements != null)
                         {
                             Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); }));
-                            foreach (var a in directory)
+                            foreach (var a in directoryManager.directoryElements)
                             {
                                 if(currentFolder.name.Equals("Udostępnione"))
                                 {
@@ -79,7 +82,8 @@ namespace LocalDatabase_Client
                                 else if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
                                     Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
                             }
-                            Application.Current.Dispatcher.Invoke(new Action(() => { refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now; }));
+                            Application.Current.Dispatcher.Invoke(new Action(() => { refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now;
+                                                                                     sizeTextBlock.Text = "Zużyto " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB"; }));
                         }
                         else
                         {
@@ -87,7 +91,7 @@ namespace LocalDatabase_Client
                         }
                     }
                 }
-                Thread.Sleep(2*1000);
+                Thread.Sleep(4*1000);
             }
         }
 
@@ -104,7 +108,7 @@ namespace LocalDatabase_Client
                         cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), client);
                         cc.downloadFile(client);
                     }
-                    catch (Exception err)
+                    catch
                     {
                         MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Wybierz plik do pobrania", false);
                         mp.ShowDialog();
@@ -121,7 +125,7 @@ namespace LocalDatabase_Client
             {
                 currentFolder = ((DirectoryElement)btn.DataContext);
                 currentDirectory.Clear();
-                foreach (var a in directory)
+                foreach (var a in directoryManager.directoryElements)
                 {
                     if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
                         currentDirectory.Add(a);
@@ -203,9 +207,9 @@ namespace LocalDatabase_Client
         {
             if (!currentFolder.name.Equals("Main_Folder"))
             {
-                currentFolder = directory.First(x => x.name.Equals(currentFolder.pathArray[currentFolder.pathArray.Count - 1]));
+                currentFolder = directoryManager.directoryElements.First(x => x.name.Equals(currentFolder.pathArray[currentFolder.pathArray.Count - 1]));
                 currentDirectory.Clear();
-                foreach (var a in directory)
+                foreach (var a in directoryManager.directoryElements)
                 {
                     if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
                         currentDirectory.Add(a);
@@ -231,15 +235,18 @@ namespace LocalDatabase_Client
         {
             CreateFolderPanel.CreateFolderPanel cfp = new CreateFolderPanel.CreateFolderPanel();
             cfp.ShowDialog();
-            if (client.Connected)
+            if(cfp.folderName != null)
             {
-                cc.sendMessage(ClientCom.CreateFolderMessage(currentFolder, token, cfp.folderName), client);
-                cc.readMessage(client);
-            }
-            else
-            {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
-                mp.ShowDialog();
+                if (client.Connected)
+                {
+                    cc.sendMessage(ClientCom.CreateFolderMessage(currentFolder, token, cfp.folderName), client);
+                    cc.readMessage(client);
+                }
+                else
+                {
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                    mp.ShowDialog();
+                }
             }
         }
 
@@ -258,7 +265,8 @@ namespace LocalDatabase_Client
 
         private void HelpButton(object sender, RoutedEventArgs e)
         {
-
+            HelpPanel.HelpPanel hp = new HelpPanel.HelpPanel();
+            hp.Show();
         }
         private void ShareFileButton(object sender, RoutedEventArgs e)
         {
