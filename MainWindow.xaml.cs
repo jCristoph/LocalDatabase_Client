@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -147,13 +148,30 @@ namespace LocalDatabase_Client
                 Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
                 Nullable<bool> result = dlg.ShowDialog();
                 string filename = dlg.FileName;
-                if (currentDirectory.Any(x => x.name == dlg.SafeFileName))
+                if(!filename.Equals(""))
                 {
-                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy na pewno chcesz nadpisać plik?", true);
-                    mp.ShowDialog();
-                    if(mp.answear.Equals(true))
+                    if (new FileInfo(filename).Length < 1100000000)
                     {
-                        if (result == true)
+                        if (currentDirectory.Any(x => x.name == dlg.SafeFileName))
+                        {
+                            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy na pewno chcesz nadpisać plik?", true);
+                            mp.ShowDialog();
+                            if (mp.answear.Equals(true))
+                            {
+                                if (result == true)
+                                {
+                                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client);
+                                    cc.readMessage(client);
+                                    cc.sendFile(client, filename);
+                                }
+                                else
+                                {
+                                    mp = new MessagePanel.MessagePanel("Błąd", false);
+                                    mp.Show();
+                                }
+                            }
+                        }
+                        else if (result == true)
                         {
                             cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client);
                             cc.readMessage(client);
@@ -161,27 +179,16 @@ namespace LocalDatabase_Client
                         }
                         else
                         {
-                            mp = new MessagePanel.MessagePanel("Błąd", false);
+                            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
                             mp.Show();
                         }
                     }
+                    else
+                    {
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Plik musi być mniejszy niż 1GB", false);
+                        mp.Show();
+                    }
                 }
-                else if (result == true)
-                {
-                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client);
-                    cc.readMessage(client);
-                    cc.sendFile(client, filename);
-                }
-                else
-                {
-                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
-                    mp.Show();
-                }
-            }
-            else
-            {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
-                mp.Show();
             }
         }
 
