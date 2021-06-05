@@ -76,5 +76,11 @@ namespace LocalDatabase_Client.LoginPanel
         {
             this.Close();
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            HelpPanel.HelpPanel hp = new HelpPanel.HelpPanel();
+            hp.Show();
+        }
     }
 }

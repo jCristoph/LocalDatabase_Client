@@ -132,6 +132,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\LeftArrowButtonTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\RightArrowButtonTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\ListViewHeaderTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -208,6 +216,42 @@
   <ItemGroup>
     <Resource Include="Images\file_icon.png" />
     <Resource Include="Images\folder_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\login_error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\change_password.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\login.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\login_bad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\login_ok.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\new_folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\send_file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\share.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\main_window_1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\main_window_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HelpImages\main_window_3.png" />
+    <Resource Include="Images\HelpImages\main_window_4.png" />
+    <Resource Include="Images\HelpImages\main_window_5.png" />
+    <Resource Include="Images\HelpImages\main_window_6.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -13,6 +13,8 @@
                 <ResourceDictionary Source="Themes/ListViewTheme.xaml"/>
                 <ResourceDictionary Source="Themes/ListViewItemTheme.xaml"/>
                 <ResourceDictionary Source="Themes/ToggleButtonTheme.xaml"/>
+                <ResourceDictionary Source="Themes/LeftArrowButtonTheme.xaml"/>
+                <ResourceDictionary Source="Themes/RightArrowButtonTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
