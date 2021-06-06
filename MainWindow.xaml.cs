@@ -199,10 +199,18 @@ namespace LocalDatabase_Client
             if (client.Connected && mp.answear)
             {
                 Button btn = ((Button)sender);
-                DirectoryElement temp = (DirectoryElement)btn.DataContext;
-                string deletedElement = temp.path.Replace("Main_Folder", "Main_Folder\\" + token) + temp.name;
-                cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder, token), client);
-                cc.readMessage(client);
+                try
+                {
+                    DirectoryElement temp = (DirectoryElement)btn.DataContext;
+                    string deletedElement = temp.path.Replace("Main_Folder", "Main_Folder\\" + token) + temp.name;
+                    cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder, token), client);
+                    cc.readMessage(client);
+                }
+                catch
+                {
+                    mp = new MessagePanel.MessagePanel("Coś poszło nie tak, spróbuj jeszcze raz.", false);
+                    mp.Show();
+                }
             }
             else
             {
