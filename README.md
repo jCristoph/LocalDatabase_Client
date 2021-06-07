@@ -6,3 +6,6 @@ Known bugs:
 - sending file to folder with polish characters
 - refresh files list
 - progress bar
+- sharing file size is added to limit
+- when you delete file you should delete record i sharing db
+- active user should be added when is log in and remove when log out
