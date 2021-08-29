@@ -45,9 +45,9 @@ namespace LocalDatabase_Client
 
         public DirectoryElement(string pathWithoutName, string name, long size, string lwr, string isFolder)
         {
-            this.path = pathWithoutName.Replace(" ", "");
+            //this.path = pathWithoutName.Replace(" ", "");
             //sciezka zostaje podzielona na osobne stringi o nazwach podfolderów w skrócie : C:\Directory_test\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(pusty element)
-            pathArray = path.Split('\\').ToList<String>();
+            pathArray = pathWithoutName.Split('\\').ToList<String>();
             pathArray.RemoveAt(pathArray.Count - 1);
             this.name = name;
             this.size = size;

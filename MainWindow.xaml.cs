@@ -283,12 +283,6 @@ namespace LocalDatabase_Client
             HelpPanel.HelpPanel hp = new HelpPanel.HelpPanel();
             hp.Show();
         }
-        private void ShareFileButton(object sender, RoutedEventArgs e)
-        {
-            Button btn = sender as Button;
-            SharePanel.ShareFilePanel sp = new SharePanel.ShareFilePanel(cc, client, token, ((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name));
-            sp.Show();
-        }
     }
 
 }

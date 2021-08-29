@@ -81,32 +81,7 @@ namespace LocalDatabase_Client
                 }
             }
         }
-        public ObservableCollection<User> readUsers(TcpClient client)
-        {
-            isBusy = true;
-            var stream = client.GetStream();
-            Byte[] bytes = new Byte[1024];
-            int i;
-            string data = "";
-            //Thread.Sleep(1);
-            do
-            {
-                i = stream.Read(bytes, 0, bytes.Length);
-                data += Encoding.UTF8.GetString(bytes, 0, i);
-                if (!stream.DataAvailable)
-                    Thread.Sleep(1);
-            } while (stream.DataAvailable);
-            isBusy = false;
-            int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
-            int taskIndexEnd = data.IndexOf(">");
-            string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
-            if (task.Equals("SendingUsers"))
-                return ClientCom.SendUsersRecognizer(data);
-            else if (task.Equals("SharingUsers"))
-                return ClientCom.SharingUsersRecognizer(data);
-            else
-                return null;
-        }
+        
 
         public int recognizeMessage(string data, TcpClient client)
         {

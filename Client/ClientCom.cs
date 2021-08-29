@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 
+/// <summary>
+/// Client Com is a static class which creates a ready to send messages for server. Also it is needed for recognizing messages from server
+/// </summary>
+
 namespace LocalDatabase_Client
 {
     public static class ClientCom
@@ -60,6 +64,13 @@ namespace LocalDatabase_Client
             }
         }
 
+        /// <summary>
+        /// A method that sends a message with task for server to create a new folder
+        /// </summary>
+        /// <param name="currentFolderPath"> it is needed to know where new folder has to be created</param>
+        /// <param name="token"> it is needed to know witch directory use (where looking for a path) </param>
+        /// <param name="newFolderName"> name of new folder </param>
+        /// <returns></returns>
         public static string CreateFolderMessage(DirectoryElement currentFolderPath, string token, string newFolderName)
         {
             if (currentFolderPath.path.Equals("\\"))
@@ -80,23 +91,6 @@ namespace LocalDatabase_Client
             return "<Task=SendDir><Token>" + token + "</Token></Task><#>";
         }
 
-        public static string ShareMessage(string senderToken, string recipientToken, string path, string permissions)
-        {
-            return "<Task=Share><From>" + senderToken + "</From><To>" +
-                recipientToken + "</To><Path>" +
-                path + "</Path><Permissions>" +
-                permissions + "</Permissions></Task><#>";
-        }
-
-        public static string UsersSharingMessage(string path)
-        {
-            return "<Task=UsersSharing><Path>" + path + "</Path>/Task><#>";
-        }
-
-        public static string SendUsersOrderMessage(string token)
-        {
-            return "<Task=SendUsers><Token>" + token + "</Token></Task><#>";
-        }
         /// <summary>
         /// For Client Usage. Is order to delete from server file of param path.
         /// </summary>
@@ -121,8 +115,6 @@ namespace LocalDatabase_Client
         #endregion
 
         #region message recognizer methods
-
-
 
         /// <summary>
         /// Only for client usage. Client checks if his login parameters are good. If they are, change view to logged user.
@@ -192,59 +184,6 @@ namespace LocalDatabase_Client
             dm.directoryElements.Add(de);
         }
 
-        public static ObservableCollection<User> SendUsersRecognizer(string data)
-        {
-            ObservableCollection<User> users = new ObservableCollection<User>();
-            foreach (var s in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
-            {
-                try
-                {
-                    int isFolderIndexHome = s.IndexOf("<Surname>") + "<Surname>".Length;
-                    int isFolderIndexEnd = s.LastIndexOf("</Surname>");
-                    string surname = s.Substring(isFolderIndexHome, isFolderIndexEnd - isFolderIndexHome);
-
-                    int nameIndexHome = s.IndexOf("<Name>") + "<Name>".Length;
-                    int nameIndexEnd = s.LastIndexOf("</Name>");
-                    string name = s.Substring(nameIndexHome, nameIndexEnd - nameIndexHome);
-
-                    int sizeIndexHome = s.IndexOf("<Token>") + "<Token>".Length;
-                    int sizeIndexEnd = s.LastIndexOf("</Token>");
-                    string token = s.Substring(sizeIndexHome, sizeIndexEnd - sizeIndexHome);
-
-                    users.Add(new User(surname, name, token));
-                }
-                catch (Exception e)
-                {
-
-                }
-            }
-            return users;
-        }
-
-        public static ObservableCollection<User> SharingUsersRecognizer(string data)
-        {
-            ObservableCollection<User> users = new ObservableCollection<User>();
-            foreach (var s in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
-            {
-                try
-                {
-                    int isFolderIndexHome = s.IndexOf("<Surname>") + "<Surname>".Length;
-                    int isFolderIndexEnd = s.LastIndexOf("</Surname>");
-                    string surname = s.Substring(isFolderIndexHome, isFolderIndexEnd - isFolderIndexHome);
-
-                    int nameIndexHome = s.IndexOf("<Name>") + "<Name>".Length;
-                    int nameIndexEnd = s.LastIndexOf("</Name>");
-                    string name = s.Substring(nameIndexHome, nameIndexEnd - nameIndexHome);
-
-                    users.Add(new User(surname, name, "EMPTY"));
-                }
-                catch (Exception e)
-                {
-
-                }
-            }
-            return users;
-        }
 
         /// <summary>
         /// Only For Client usage. Server sends this message and Client has to update his directory by downloading them. 
