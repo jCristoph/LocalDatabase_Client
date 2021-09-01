@@ -20,12 +20,16 @@ namespace LocalDatabase_Client.MessagePanel
     public partial class MessagePanel : Window
     {
         public bool answear = true;
+
+        //this panel is used for two application. It could be message box with decision (two buttons - yes or not) or just informative (one button - ok)
+        //it is controlled by parameter yesNoOK
         public MessagePanel(string content, bool yesNoOK)
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
             message.Text = content;
-            if(!yesNoOK)
+            //if yesNoOK is false then a panel will be just informative. Then one button has to be hidden and other has to have other text
+            if (!yesNoOK)
             {
                 yesButton.Visibility = Visibility.Hidden;
                 yesButton.Visibility = Visibility.Collapsed;
@@ -34,11 +38,13 @@ namespace LocalDatabase_Client.MessagePanel
             DataContext = this;
         }
 
+        //if user clicks yes button then the answear is send to decision part of program and next panel close.
         private void yesButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
+        //if user clicks no or ok button then panel just close.
         private void okNoButton_Click(object sender, RoutedEventArgs e)
         {
             answear = false;

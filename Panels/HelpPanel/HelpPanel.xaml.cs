@@ -24,49 +24,63 @@ namespace LocalDatabase_Client.HelpPanel
 
         public HelpPanel()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
-            loadImages();
-            image.Source =images[0];
+            loadImages(); //loads images with tips
+            image.Source = images[0]; //set source for gui
             page = 0;
             loginButton.IsChecked = true;
         }
 
+        //back button event. Close the panel.
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
+        //in the left of panel we have a list of subjects. This method is a event for first object of the list - logging. sets right page of subject list and changes the source image to right one for the subject.
         private void loginButton_Checked(object sender, RoutedEventArgs e)
         {
             page = 0;
             image.Source = images[page];
         }
 
+        //in the left of panel we have a list of subjects. This method is a event for first object of the list - main window. sets right page of subject list and changes the source image to right one for the subject.
         private void main_windowButton_Checked(object sender, RoutedEventArgs e)
         {
             page = 4;
             image.Source = images[page];
         }
 
+        //in the left of panel we have a list of subjects. This method is a event for first object of the list - changing password. sets right page of subject list and changes the source image to right one for the subject.
         private void change_passwordButton_Checked(object sender, RoutedEventArgs e)
         {
             page = 10;
             image.Source = images[page];
         }
 
+        //in the left of panel we have a list of subjects. This method is a event for first object of the list - creating new folder. sets right page of subject list and changes the source image to right one for the subject.
         private void creating_foldersButton_Checked(object sender, RoutedEventArgs e)
         {
             page = 11;
             image.Source = images[page];
         }
 
+        //in the left of panel we have a list of subjects. This method is a event for first object of the list - sending. sets right page of subject list and changes the source image to right one for the subject.
+        private void send_fileButton_Checked(object sender, RoutedEventArgs e)
+        {
+            page = 12;
+            image.Source = images[page];
+        }
+
+        //in the left of panel we have a list of subjects. This method is a event for first object of the list - sharing - it has to be deleted. sets right page of subject list and changes the source image to right one for the subject.
         private void sharingButton_Checked(object sender, RoutedEventArgs e)
         {
             page = 13;
             image.Source = images[page];
         }
 
+        //first of two navigation buttons - it returns in list 
         private void leftButton_Click(object sender, RoutedEventArgs e)
         {
             if(page > 0)
@@ -99,6 +113,7 @@ namespace LocalDatabase_Client.HelpPanel
             }
         }
 
+        //second of two navigation buttons - it goes forward in list
         private void rightButton_Click(object sender, RoutedEventArgs e)
         {
             if(page < 13)
@@ -131,6 +146,8 @@ namespace LocalDatabase_Client.HelpPanel
             }
 
         }
+
+        //method loads every images to one list. All of them are clearly named
         private void loadImages()
         {
             images = new List<BitmapImage>();
@@ -150,10 +167,6 @@ namespace LocalDatabase_Client.HelpPanel
             images.Add(new BitmapImage(new Uri("/Images/HelpImages/share.png", UriKind.Relative))); // page 13
         }
 
-        private void send_fileButton_Checked(object sender, RoutedEventArgs e)
-        {
-            page = 12;
-            image.Source = images[page];
-        }
+
     }
 }

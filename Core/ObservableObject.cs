@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
+//i dont really know if this class is even needed
 namespace LocalDatabase_Client.Core
 {
     class ObservableObject : INotifyPropertyChanged

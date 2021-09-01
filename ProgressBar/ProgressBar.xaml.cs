@@ -12,11 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+//in progress
+//TODO
 namespace LocalDatabase_Client.ProgressBar
 {
-    /// <summary>
-    /// Logika interakcji dla klasy ProgressBar.xaml
-    /// </summary>
     public partial class ProgressBar : Window
     {
         public int progress { set; get; }
