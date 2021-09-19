@@ -20,6 +20,7 @@ namespace LocalDatabase_Client.ChangePasswordPanel
         ClientConnection cc;
         TcpClient client;
         string token;
+        public bool isDone;
 
         //constructor
         public ChangePasswordPanel(ClientConnection cc, TcpClient client, string token)
@@ -37,7 +38,10 @@ namespace LocalDatabase_Client.ChangePasswordPanel
             if(passwordBox.Password.Equals(passwordBox2.Password)) //condition if new password is the same in both of password boxes.
             {
                 cc.sendMessage(ClientCom.ChangePasswordMessage(passwordBox.Password, token), client); //send message with request to set new password in db
-                cc.readMessage(client); //checks if its done
+                if (cc.readMessage(client) == 404)
+                    isDone = false;
+                else
+                    isDone = true;
                 this.Close();
             }
         }

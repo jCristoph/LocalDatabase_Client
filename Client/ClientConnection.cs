@@ -103,6 +103,8 @@ namespace LocalDatabase_Client
                         limit = Double.Parse(temp[1]);
                         if (token.Equals("ERROR"))
                             return 0;
+                        else if (token.Equals("ERROR1"))
+                            return 2;
                         else
                             return 1;
                     case "Download": //when server sends request of download file by client
@@ -111,13 +113,15 @@ namespace LocalDatabase_Client
                     case "Send": //when server sends request of send file by client
                         sendFile(client, ClientCom.SendRecognizer(data));
                         return 0;
+                    case "SessionExpired":
+                        return 404;
                     case "Response":
                        // MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel(ClientCom.responseRecognizer(data), false);
                         //mp.Show();
                         return 0;
                 }
             }
-            catch
+            catch (Exception e)
             {
 
             }

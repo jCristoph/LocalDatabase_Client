@@ -19,7 +19,6 @@ namespace LocalDatabase_Client
         private double limit;
         private ObservableCollection<DirectoryElement> currentDirectory;
         private DirectoryElement currentFolder;
-        private bool isLogged;
         private string token;
         
         public MainWindow(TcpClient client, ClientConnection cc, bool isPasswordChanged)
@@ -31,7 +30,6 @@ namespace LocalDatabase_Client
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zmień hasło", false);
                 mp.Show();
             }
-            isLogged = true;
             token = cc.token;
             this.client = client;
             this.cc = cc;
@@ -42,8 +40,7 @@ namespace LocalDatabase_Client
             currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
             listView.ItemsSource = currentDirectory;
             DataContext = this;
-            Task t = new Task(() => refreshingList()); //new task is creating to refresh directory list - it will be changed
-            t.Start();
+            refreshingList();
         }
 
         /// <summary>
@@ -52,34 +49,31 @@ namespace LocalDatabase_Client
         /// </summary>
         private void refreshingList()
         {
-            Thread.Sleep(10);
-            while (isLogged)
+            if (client != null)
             {
-                if (client != null)
+                if (!cc.isBusy)
                 {
-                    if(!cc.isBusy)
+                DirectoryRequest: //a label is used istead of loop - i use it when the data from server are broken
+                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), client); //send request to server to send list of directory
+                    cc.getDirectory(client, directoryManager); //special method for reading directory
+                    if (directoryManager.directoryElements != null)
                     {
-                        DirectoryRequest: //a label is used istead of loop - i use it when the data from server are broken
-                        cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), client); //send request to server to send list of directory
-                        cc.getDirectory(client, directoryManager); //special method for reading directory
-                        if(directoryManager.directoryElements != null)
+                        Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
+                        foreach (var a in directoryManager.directoryElements)
                         {
-                            Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
-                            foreach (var a in directoryManager.directoryElements)
-                            {
-                                 if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
-                                    Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
-                            }
-                            Application.Current.Dispatcher.Invoke(new Action(() => { refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now;
-                                                                                     sizeTextBlock.Text = "Zużyto " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB"; }));
+                            if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
+                                Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
                         }
-                        else
-                        {
-                            goto DirectoryRequest;
-                        }
+                        Application.Current.Dispatcher.Invoke(new Action(() => {
+                            refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now;
+                            sizeTextBlock.Text = "Zużyto " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB";
+                        }));
+                    }
+                    else
+                    {
+                        goto DirectoryRequest;
                     }
                 }
-                Thread.Sleep(4*1000); //one refresh for 4 seconds
             }
         }
 
@@ -95,7 +89,15 @@ namespace LocalDatabase_Client
                     {
                         //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
                         cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), client);
-                        cc.downloadFile(client);
+                        if (cc.readMessage(client) == 404)
+                        {
+                            Owner.Show();
+                            MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                            mp1.ShowDialog();
+                            this.Close();
+                        }
+                        else
+                            cc.downloadFile(client);
                     }
                     catch
                     {
@@ -150,8 +152,18 @@ namespace LocalDatabase_Client
                                 if (result == true)
                                 {
                                     cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client);
-                                    cc.readMessage(client);
-                                    cc.sendFile(client, filename);
+                                    if (cc.readMessage(client) == 404)
+                                    {
+                                        Owner.Show();
+                                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                                        mp1.ShowDialog();
+                                        this.Close();
+                                    }
+                                    else
+                                    {
+                                        cc.sendFile(client, filename);
+                                        refreshingList();
+                                    }
                                 }
                                 else
                                 {
@@ -163,8 +175,18 @@ namespace LocalDatabase_Client
                         else if (result == true)
                         {
                             cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client); //client sends request for server to read file
-                            cc.readMessage(client); //client waits for answer
-                            cc.sendFile(client, filename); //client sends bytes of file
+                            if (cc.readMessage(client) == 404) //client waits for answer
+                            {
+                                Owner.Show();
+                                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                                mp1.ShowDialog();
+                                this.Close();
+                            }
+                            else
+                            {
+                                cc.sendFile(client, filename); //client sends bytes of file
+                                refreshingList();
+                            }
                         }
                         else
                         {
@@ -194,7 +216,18 @@ namespace LocalDatabase_Client
                     DirectoryElement temp = (DirectoryElement)btn.DataContext;
                     string deletedElement = temp.path.Replace("Main_Folder", "Main_Folder\\" + token) + temp.name;
                     cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder, token), client); //client sends request to delete file or folder
-                    cc.readMessage(client); //client get a answer if file or folder was deleted
+                    if (cc.readMessage(client) == 404) //client waits for answer
+                    {
+                        Owner.Show();
+                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                        mp1.ShowDialog();
+                        this.Close();
+                    }
+                    else
+                    {
+                        refreshingList();
+                        // TODO: client get a answer if file or folder was deleted
+                    }
                 }
                 catch
                 {
@@ -233,9 +266,8 @@ namespace LocalDatabase_Client
         //log out button event. Right now its just close the window and shows a login window but in the future it will be send a request to logout also in server side.
         private void LogOutButton(object sender, RoutedEventArgs e)
         {
-            //cc.sendMessage(ClientCom.LogoutMessage(), client);
+            cc.sendMessage(ClientCom.LogoutMessage(token), client);
             Owner.Show();
-            isLogged = false;
             this.Close();
         }
 
@@ -249,7 +281,19 @@ namespace LocalDatabase_Client
                 if (client.Connected)
                 {
                     cc.sendMessage(ClientCom.CreateFolderMessage(currentFolder, token, cfp.folderName), client); //client sends request to server to create new folder with name of folderName parameter
-                    cc.readMessage(client); //client checks if its done
+                    if (cc.readMessage(client) == 404) 
+                    {
+                        Owner.Show();
+                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                        mp1.ShowDialog();
+                        this.Close();
+                    }
+                    //else
+                    else
+                    {
+                        refreshingList();
+                    }
+                    // TODO: client checks if its done
                 }
                 else
                 {
@@ -262,7 +306,7 @@ namespace LocalDatabase_Client
         //exit button event. Right now its just close the app but in the future it will be send a request to logout also in server side.
         private void ExitButton(object sender, RoutedEventArgs e)
         {
-            cc.sendMessage(ClientCom.LogoutMessage(), client);
+            cc.sendMessage(ClientCom.LogoutMessage(token), client);
             Owner.Close();
             this.Close();
         }
@@ -271,7 +315,14 @@ namespace LocalDatabase_Client
         private void ChangePasswordButton(object sender, RoutedEventArgs e)
         {
             ChangePasswordPanel.ChangePasswordPanel chp = new ChangePasswordPanel.ChangePasswordPanel(cc, client, token);
-            chp.Show();
+            chp.ShowDialog();
+            if(!chp.isDone)
+            {
+                Owner.Show();
+                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                mp1.ShowDialog();
+                this.Close();
+            }
         }
 
         //help button event. Shows help panel

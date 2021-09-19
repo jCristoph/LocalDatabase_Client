@@ -45,7 +45,11 @@ namespace LocalDatabase_Client
 
         public DirectoryElement(string pathWithoutName, string name, long size, string lwr, string isFolder)
         {
-            //this.path = pathWithoutName.Replace(" ", "");
+            //sometimes the last character of path string is a whitespace and then it has to be deleted but i cant use split (the title of folder could contain whitespaces)
+            if (pathWithoutName[pathWithoutName.Length - 1].Equals(' '))
+                this.path = pathWithoutName.Remove(pathWithoutName.Length - 1);
+            else
+                this.path = pathWithoutName;
             //path is splitted here to separated strings by subfolder names. That means  C:\Directory_test\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(empty)
             pathArray = pathWithoutName.Split('\\').ToList<String>();
             pathArray.RemoveAt(pathArray.Count - 1);

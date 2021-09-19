@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,8 +28,6 @@ namespace LocalDatabase_Client.LoginPanel
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
-            Task t = new Task(() => Connection()); //task that realizing a connection with server
-            t.Start();
         }
 
         private void Connection()
@@ -40,6 +39,9 @@ namespace LocalDatabase_Client.LoginPanel
         //login button event. 
         private void loginButton_Click(object sender, RoutedEventArgs e)
         {
+            Task t = new Task(() => Connection()); //task that realizing a connection with server
+            t.Start();
+            Thread.Sleep(10);
             if (client == null) //condition if server or client is offline
             {
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd połączenia z serwerem", false);
@@ -50,7 +52,8 @@ namespace LocalDatabase_Client.LoginPanel
                 if (client.Connected) //condition if client connects properly
                 {
                     cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, passwordBoxPassword.Password), client); // client sends a request to login with paramteres from texbox and passwordbox
-                    if (cc.readMessage(client) == 1) //condition checks if user logged properly
+                    int answer = cc.readMessage(client);
+                    if (answer == 1) //condition checks if user logged properly
                     {
                         bool isPasswordChanged = false;
                         MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zalogowano", false);
@@ -63,6 +66,11 @@ namespace LocalDatabase_Client.LoginPanel
                         mw.Owner = this;
                         this.Hide(); //panel is allways in background to relogin
                         mw.Show();
+                    }
+                    else if (answer == 2)
+                    {
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Jesteś zalogowany na innym urządzeniu lub twój program przestał działać niespodziewanie.", false);
+                        mp.ShowDialog();
                     }
                     else
                     {

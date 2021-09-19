@@ -32,9 +32,9 @@ namespace LocalDatabase_Client
         /// For client usage. Sent when user ends work.
         /// </summary>
         /// <returns></returns>
-        public static string LogoutMessage()
+        public static string LogoutMessage(string token)
         {
-            return "<Task=Logout></Task><#>";
+            return "<Task=Logout><Token>" + token + "</Token></Task><#>";
         }
 
         /// <summary>
@@ -75,11 +75,11 @@ namespace LocalDatabase_Client
         {
             if (currentFolderPath.path.Equals("\\"))
             {
-                return "<Task=CreateFolder><Path>Main_Folder\\" + token + "\\" + newFolderName + "</Path></Task><#>";
+                return "<Task=CreateFolder><Token>" + token + "</Token><Path>Main_Folder\\" + token + "\\" + newFolderName + "</Path></Task><#>";
             }
             else
             {
-                return "<Task=CreateFolder><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "\\" + newFolderName + "</Path></Task><#>";
+                return "<Task=CreateFolder><Token>" + token + "</Token><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "\\" + newFolderName + "</Path></Task><#>";
             }
         }
         /// <summary>
@@ -132,6 +132,8 @@ namespace LocalDatabase_Client
             string limit = s.Substring(IndexHome, IndexEnd - IndexHome);
             if (token.Equals("ERROR"))
                 return new string[] { "ERROR", "0"};
+            else if (token.Equals("ERROR1"))
+                return new string[] { "ERROR1", "0" };
             else
                 return new string[] { token, limit}; ;
         }
