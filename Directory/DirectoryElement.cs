@@ -20,11 +20,11 @@ namespace LocalDatabase_Client
 
         public DirectoryElement(string path, long size, string lwr, bool isFolder)
         {
-            //pelna sciezka
+            //full path
             this.path = path;
-            //sciezka zostaje podzielona na osobne stringi o nazwach podfolderów w skrócie : C:\Directory_test\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(pusty element)
+            //path is splitted here to separated strings by subfolder names. That means  C:\Directory_test\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(empty)
             pathArray = path.Split('\\').ToList<String>();
-            //nazwe pliku/folderu wrzucamy do zmiennej name i usuwamy ta czesc ze sciezki
+            //name of file or folder put into variable name and delete it from path array
             this.name = pathArray[pathArray.Count - 1];
             pathArray.RemoveAt(pathArray.Count - 1);
             this.path = this.path.Substring(0, path.LastIndexOf(name));
@@ -45,9 +45,9 @@ namespace LocalDatabase_Client
 
         public DirectoryElement(string pathWithoutName, string name, long size, string lwr, string isFolder)
         {
-            this.path = pathWithoutName.Replace(" ", "");
-            //sciezka zostaje podzielona na osobne stringi o nazwach podfolderów w skrócie : C:\Directory_test\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(pusty element)
-            pathArray = path.Split('\\').ToList<String>();
+            //this.path = pathWithoutName.Replace(" ", "");
+            //path is splitted here to separated strings by subfolder names. That means  C:\Directory_test\Folder2\Folder6 -> C:,Directory_test,Folder2,Folder6,(empty)
+            pathArray = pathWithoutName.Split('\\').ToList<String>();
             pathArray.RemoveAt(pathArray.Count - 1);
             this.name = name;
             this.size = size;

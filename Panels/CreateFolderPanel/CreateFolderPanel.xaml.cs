@@ -19,18 +19,24 @@ namespace LocalDatabase_Client.CreateFolderPanel
     /// </summary>
     public partial class CreateFolderPanel : Window
     {
+        //public variable to be visible outside the panel
         public string folderName;
+
+        //constructor
         public CreateFolderPanel()
         {
             InitializeComponent();
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
         }
 
+        //create button event. sets the folder name from text box. Then panel close and outside we can use the folder name
         private void createButton_Click(object sender, RoutedEventArgs e)
         {
             folderName = textBox.Text;
             this.Close();
         }
+
+        //back button event. close the panel
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

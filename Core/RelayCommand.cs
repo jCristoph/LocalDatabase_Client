@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+//i dont really know if this class is even needed
 namespace LocalDatabase_Client.Core
 {
     class RelayCommand : ICommand

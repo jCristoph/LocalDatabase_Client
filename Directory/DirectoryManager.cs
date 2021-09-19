@@ -11,15 +11,18 @@ namespace LocalDatabase_Client
     {
         public ObservableCollection<DirectoryElement> directoryElements { get; set; }
 
+        //Consturctor
         public DirectoryManager()
         {
             directoryElements = new ObservableCollection<DirectoryElement>();
         }
+        //Consturctor
         public DirectoryManager(ObservableCollection<DirectoryElement> directoryElements)
         {
             this.directoryElements = directoryElements;
         }
 
+        //method that finds every element in folder. It look for in every subfolder so this method is recurrent.
         public void ProcessDirectory(string targetDirectory)
         {
 
@@ -38,6 +41,10 @@ namespace LocalDatabase_Client
                 ProcessDirectory(subdirectory);
             }
         }
+
+        /*If server sends message with path, it has to be translate. The message is in kind of xml message.
+         * This method is used to translate it. 
+         */
         public void ProcessPath(string s)
         {
             try
@@ -72,6 +79,8 @@ namespace LocalDatabase_Client
             }
 
         }
+
+        //method where every file in directory is summed and returns a size of data space
         public double usedSpace()
         {
             long usedSpaceCounter = 0;

@@ -16,12 +16,13 @@ namespace LocalDatabase_Client
 {
     public class ClientConnection
     {
-        public bool isBusy { get; set;}
+        public bool isBusy { get; set;} //it will not be needed in the future. i fix it later
         private String serverIP = null;
-        public string token { get; set; }
-        public double limit { get; set; }
+        public string token { get; set; } //token of logged client
+        public double limit { get; set; } //limit of data space
         private int port = 0;
 
+        //constructor
         public ClientConnection(String serverIP)
         {
             isBusy = false;
@@ -29,6 +30,7 @@ namespace LocalDatabase_Client
             this.port = 25000;
         }
 
+        //method starts connection with server
         public TcpClient Start()
         {
             TcpClient client = new TcpClient();
@@ -42,9 +44,11 @@ namespace LocalDatabase_Client
                 {
 
                 }
-            } while (!client.Connected);
+            } while (!client.Connected); //client try to connect until it succeeded
             return client;
         }
+
+        //special version of read message method where directory is downloaded to list in gui
         public void getDirectory(TcpClient client, DirectoryManager directoryManager)
         {
             if(!isBusy)
@@ -81,33 +85,8 @@ namespace LocalDatabase_Client
                 }
             }
         }
-        public ObservableCollection<User> readUsers(TcpClient client)
-        {
-            isBusy = true;
-            var stream = client.GetStream();
-            Byte[] bytes = new Byte[1024];
-            int i;
-            string data = "";
-            //Thread.Sleep(1);
-            do
-            {
-                i = stream.Read(bytes, 0, bytes.Length);
-                data += Encoding.UTF8.GetString(bytes, 0, i);
-                if (!stream.DataAvailable)
-                    Thread.Sleep(1);
-            } while (stream.DataAvailable);
-            isBusy = false;
-            int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
-            int taskIndexEnd = data.IndexOf(">");
-            string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
-            if (task.Equals("SendingUsers"))
-                return ClientCom.SendUsersRecognizer(data);
-            else if (task.Equals("SharingUsers"))
-                return ClientCom.SharingUsersRecognizer(data);
-            else
-                return null;
-        }
-
+        
+        //a very important method where messages from server are recognized and later right method are run.
         public int recognizeMessage(string data, TcpClient client)
         {
             try
@@ -126,10 +105,10 @@ namespace LocalDatabase_Client
                             return 0;
                         else
                             return 1;
-                    case "Download": //kiedy wysylane jest zadanie pobrania pliku
+                    case "Download": //when server sends request of download file by client
                         downloadFile(client);
                         return 0;
-                    case "Send": ////kiedy wysylane jest zadanie wyslania pliku
+                    case "Send": //when server sends request of send file by client
                         sendFile(client, ClientCom.SendRecognizer(data));
                         return 0;
                     case "Response":
@@ -145,6 +124,8 @@ namespace LocalDatabase_Client
 
             return 0;
         }
+
+        //tcp/ip read message method. Reads bytes and translate it to string - it will be changed for ssl connection
         public int readMessage(TcpClient client)
         {
             isBusy = true;
@@ -163,6 +144,8 @@ namespace LocalDatabase_Client
                 isBusy = false;
             return recognizeMessage(data, client);
         }
+
+        //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
         public void sendMessage(string str, TcpClient client)
         {
             isBusy = true;
@@ -180,6 +163,7 @@ namespace LocalDatabase_Client
             isBusy = false;
         }
 
+        //tcp/ip download method. gets bytes and sum it to create a file. From bytes read a name of file. Saves it in path chosed by user.
         public void downloadFile(TcpClient client)
         {
             isBusy = true;
@@ -225,6 +209,8 @@ namespace LocalDatabase_Client
             }
             isBusy = false;
         }
+
+        //tcp/ip send file method. Read the entire file to program then bytes sends by stream.
         public void sendFile(TcpClient client, string path)
         {
             isBusy = true;
