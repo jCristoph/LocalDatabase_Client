@@ -147,7 +147,7 @@ namespace LocalDatabase_Client
                         {
                             MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy na pewno chcesz nadpisać plik?", true);
                             mp.ShowDialog();
-                            if (mp.answear.Equals(true))
+                            if (mp.isAnswered.Equals(true))
                             {
                                 if (result == true)
                                 {
@@ -208,7 +208,7 @@ namespace LocalDatabase_Client
         {
             MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy jesteś pewien, że chcesz usunąć ten element?", true); //ask user if he's sure to delete
             mp.ShowDialog(); 
-            if (client.Connected && mp.answear)
+            if (client.Connected && mp.isAnswered)
             {
                 Button btn = ((Button)sender);
                 try
