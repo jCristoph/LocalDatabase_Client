@@ -175,15 +175,12 @@ namespace LocalDatabase_Client
         public static void SendDirectoryRecognizer(string data, DirectoryManager directoryManager)
         {
             DirectoryManager dm = new DirectoryManager();
-           Application.Current.Dispatcher.Invoke(new Action(() => { directoryManager.directoryElements.Clear(); })); 
+            Application.Current.Dispatcher.Invoke(new Action(() => { directoryManager.directoryElements.Clear(); })); 
             foreach (var a in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
             {
                 dm.ProcessPath(a);
                 directoryManager.ProcessPath(a);
             }
-            DirectoryElement de = new DirectoryElement(@"Main_Folder\Udostępnione", 0, "None", true);
-            Application.Current.Dispatcher.Invoke(new Action(() => { directoryManager.directoryElements.Add(de); })); 
-            dm.directoryElements.Add(de);
         }
 
 

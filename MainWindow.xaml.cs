@@ -288,7 +288,6 @@ namespace LocalDatabase_Client
                         mp1.ShowDialog();
                         this.Close();
                     }
-                    //else
                     else
                     {
                         refreshingList();
