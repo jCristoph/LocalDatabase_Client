@@ -184,7 +184,9 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
+                                Thread.Sleep(1000);
                                 cc.sendFile(client, filename); //client sends bytes of file
+                                Thread.Sleep(1000);
                                 refreshingList();
                             }
                         }
