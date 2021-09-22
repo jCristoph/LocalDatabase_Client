@@ -5,7 +5,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +24,8 @@ namespace LocalDatabase_Client
         public string token { get; set; } //token of logged client
         public double limit { get; set; } //limit of data space
         private int port = 0;
+        private static string ServerCertificateName =
+   "MySslSocketCertificate";
 
         //constructor
         public ClientConnection(String serverIP)
@@ -31,13 +36,21 @@ namespace LocalDatabase_Client
         }
 
         //method starts connection with server
-        public TcpClient Start()
+        public SslStream Start()
         {
-            TcpClient client = new TcpClient();
+            SslStream sslStream = null;
+            TcpClient client = null;
             do
             {
                 try
                 {
+                    var clientCertificate = getServerCert();
+                    var clientCertificateCollection = new
+                       X509CertificateCollection(new X509Certificate[]
+                       { clientCertificate });
+                    client = new TcpClient(serverIP, port);
+                    sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
+                    sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
                     client.Connect(serverIP, port);
                 }
                 catch (Exception e)
@@ -45,7 +58,39 @@ namespace LocalDatabase_Client
 
                 }
             } while (!client.Connected); //client try to connect until it succeeded
-            return client;
+            return sslStream;
+        }
+
+        private static X509Certificate getServerCert()
+        {
+            X509Store store = new X509Store(StoreName.My,
+               StoreLocation.CurrentUser);
+            store.Open(OpenFlags.ReadOnly);
+
+            X509Certificate2 foundCertificate = null;
+            foreach (X509Certificate2 currentCertificate
+               in store.Certificates)
+            {
+                if (currentCertificate.IssuerName.Name
+                   != null && currentCertificate.IssuerName.
+                   Name.Equals("CN=MySslSocketCertificate"))
+                {
+                    foundCertificate = currentCertificate;
+                    break;
+                }
+            }
+            return foundCertificate;
+        }
+
+        static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+            { return true; }
+            // ignore chain errors as where self signed
+            if (sslPolicyErrors ==
+               SslPolicyErrors.RemoteCertificateChainErrors)
+            { return true; }
+            return false;
         }
 
         //special version of read message method where directory is downloaded to list in gui
@@ -87,7 +132,7 @@ namespace LocalDatabase_Client
         }
         
         //a very important method where messages from server are recognized and later right method are run.
-        public int recognizeMessage(string data, TcpClient client)
+        public int recognizeMessage(string data, SslStream sslStream)
         {
             try
             {
@@ -108,10 +153,10 @@ namespace LocalDatabase_Client
                         else
                             return 1;
                     case "Download": //when server sends request of download file by client
-                        downloadFile(client);
+                        //downloadFile(client);
                         return 0;
                     case "Send": //when server sends request of send file by client
-                        sendFile(client, ClientCom.SendRecognizer(data));
+                        //sendFile(client, ClientCom.SendRecognizer(data));
                         return 0;
                     case "SessionExpired":
                         return 404;
@@ -130,34 +175,28 @@ namespace LocalDatabase_Client
         }
 
         //tcp/ip read message method. Reads bytes and translate it to string - it will be changed for ssl connection
-        public int readMessage(TcpClient client)
+        public int readMessage(SslStream sslStream)
         {
-            isBusy = true;
-            var stream = client.GetStream();
-            Byte[] bytes = new Byte[1024];
-            int i;
-            string data = "";
-           // Thread.Sleep(10);
-            do
+            var inputBuffer = new byte[4096];
+            var inputBytes = 0;
+            while (inputBytes == 0)
             {
-                i = stream.Read(bytes, 0, bytes.Length);
-                data += Encoding.UTF8.GetString(bytes, 0, i);
-                if(!stream.DataAvailable)
-                    Thread.Sleep(1);
-            } while (stream.DataAvailable) ;
-                isBusy = false;
-            return recognizeMessage(data, client);
+                inputBytes = sslStream.Read(inputBuffer, 0,
+                   inputBuffer.Length);
+            }
+            var inputMessage = Encoding.UTF8.GetString(inputBuffer,
+               0, inputBytes);
+            return recognizeMessage(inputMessage, sslStream);
         }
 
         //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
-        public void sendMessage(string str, TcpClient client)
+        public void sendMessage(string str, SslStream sslStream)
         {
             isBusy = true;
             try
             {
-                var stream = client.GetStream();
-                Byte[] reply = System.Text.Encoding.UTF8.GetBytes(str);
-                stream.Write(reply, 0, reply.Length);
+                var outputBuffer = Encoding.UTF8.GetBytes(str);
+                sslStream.Write(outputBuffer);
             }
             catch (Exception e)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,17 +19,17 @@ namespace LocalDatabase_Client.ChangePasswordPanel
     public partial class ChangePasswordPanel : Window
     {
         ClientConnection cc;
-        TcpClient client;
+        SslStream sslStream;
         string token;
         public bool isDone;
 
         //constructor
-        public ChangePasswordPanel(ClientConnection cc, TcpClient client, string token)
+        public ChangePasswordPanel(ClientConnection cc, SslStream sslStream, string token)
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
             this.cc = cc;
-            this.client = client;
+            this.sslStream = sslStream;
             this.token = token;
         }
 
@@ -37,8 +38,8 @@ namespace LocalDatabase_Client.ChangePasswordPanel
         {
             if(passwordBox.Password.Equals(passwordBox2.Password)) //condition if new password is the same in both of password boxes.
             {
-                cc.sendMessage(ClientCom.ChangePasswordMessage(passwordBox.Password, token), client); //send message with request to set new password in db
-                if (cc.readMessage(client) == 404)
+                cc.sendMessage(ClientCom.ChangePasswordMessage(passwordBox.Password, token), sslStream); //send message with request to set new password in db
+                if (cc.readMessage(sslStream) == 404)
                     isDone = false;
                 else
                     isDone = true;

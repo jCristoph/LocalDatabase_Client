@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace LocalDatabase_Client
 {
     public partial class MainWindow : Window
     {
-        private TcpClient client;
+        private SslStream sslStream;
         private ClientConnection cc;
         private DirectoryManager directoryManager;
         private double limit;
@@ -21,7 +22,7 @@ namespace LocalDatabase_Client
         private DirectoryElement currentFolder;
         private string token;
         
-        public MainWindow(TcpClient client, ClientConnection cc, bool isPasswordChanged)
+        public MainWindow(SslStream sslStream, ClientConnection cc, bool isPasswordChanged)
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is visible in center
             InitializeComponent();
@@ -31,7 +32,7 @@ namespace LocalDatabase_Client
                 mp.Show();
             }
             token = cc.token;
-            this.client = client;
+            this.sslStream = sslStream;
             this.cc = cc;
             this.limit = cc.limit;
             directoryManager = new DirectoryManager();
@@ -49,13 +50,13 @@ namespace LocalDatabase_Client
         /// </summary>
         private void refreshingList()
         {
-            if (client != null)
+            if (sslStream != null)
             {
                 if (!cc.isBusy)
                 {
                 DirectoryRequest: //a label is used istead of loop - i use it when the data from server are broken
-                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), client); //send request to server to send list of directory
-                    cc.getDirectory(client, directoryManager); //special method for reading directory
+                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
+                    //cc.getDirectory(sslStream, directoryManager); //special method for reading directory
                     if (directoryManager.directoryElements != null)
                     {
                         Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
@@ -83,33 +84,33 @@ namespace LocalDatabase_Client
             Button btn = ((Button)sender);
             if (btn.Content.Equals("Pobierz"))
             {
-                if (client.Connected)
-                {
+                //if (client.Connected)
+                //{
                     try
                     {
                         //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
-                        cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), client);
-                        if (cc.readMessage(client) == 404)
+                        cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), sslStream);
+                        if (cc.readMessage(sslStream) == 404)
                         {
                             Owner.Show();
                             MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
                             mp1.ShowDialog();
                             this.Close();
                         }
-                        else
-                            cc.downloadFile(client);
+                       // else
+                            //cc.downloadFile(client);
                     }
                     catch
                     {
-                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Wybierz plik do pobrania", false);
-                        mp.ShowDialog();
+                        MessagePanel.MessagePanel mp2 = new MessagePanel.MessagePanel("Wybierz plik do pobrania", false);
+                        mp2.ShowDialog();
                     }
-                }
-                else
-                {
+                //}
+                //else
+                //{
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
                     mp.ShowDialog();
-                }
+                //}
 
             }
             else if (btn.Content.Equals("Otwórz")) //condition if the object isnt a file - is a folder - we cant download a folder - only one file in the same time. Then the button is a open button which opens a subfolder and list it
@@ -134,8 +135,8 @@ namespace LocalDatabase_Client
         //event for send file button
         private void SendFileButton(object sender, RoutedEventArgs e)
         {
-           if (client.Connected)
-           {
+           //if (sslStream.Connected)
+           //{
                 Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog(); //special Windows panel for file browsing
                 Nullable<bool> result = dlg.ShowDialog();
                 string filename = dlg.FileName;
@@ -151,8 +152,8 @@ namespace LocalDatabase_Client
                             {
                                 if (result == true)
                                 {
-                                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client);
-                                    if (cc.readMessage(client) == 404)
+                                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream);
+                                    if (cc.readMessage(sslStream) == 404)
                                     {
                                         Owner.Show();
                                         MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
@@ -161,7 +162,7 @@ namespace LocalDatabase_Client
                                     }
                                     else
                                     {
-                                        cc.sendFile(client, filename);
+                                        //cc.sendFile(client, filename);
                                         refreshingList();
                                     }
                                 }
@@ -174,8 +175,8 @@ namespace LocalDatabase_Client
                         }
                         else if (result == true)
                         {
-                            cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), client); //client sends request for server to read file
-                            if (cc.readMessage(client) == 404) //client waits for answer
+                            cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream); //client sends request for server to read file
+                            if (cc.readMessage(sslStream) == 404) //client waits for answer
                             {
                                 Owner.Show();
                                 MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
@@ -185,7 +186,7 @@ namespace LocalDatabase_Client
                             else
                             {
                                 Thread.Sleep(1000);
-                                cc.sendFile(client, filename); //client sends bytes of file
+                               // cc.sendFile(client, filename); //client sends bytes of file
                                 Thread.Sleep(1000);
                                 refreshingList();
                             }
@@ -202,7 +203,7 @@ namespace LocalDatabase_Client
                         mp.Show();
                     }
                 }
-            }
+            //}
         }
 
         //delete button event
@@ -210,15 +211,15 @@ namespace LocalDatabase_Client
         {
             MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy jesteś pewien, że chcesz usunąć ten element?", true); //ask user if he's sure to delete
             mp.ShowDialog(); 
-            if (client.Connected && mp.answear)
-            {
+            //if (client.Connected && mp.answear)
+            //{
                 Button btn = ((Button)sender);
                 try
                 {
                     DirectoryElement temp = (DirectoryElement)btn.DataContext;
                     string deletedElement = temp.path.Replace("Main_Folder", "Main_Folder\\" + token) + temp.name;
-                    cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder, token), client); //client sends request to delete file or folder
-                    if (cc.readMessage(client) == 404) //client waits for answer
+                    cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder, token), sslStream); //client sends request to delete file or folder
+                    if (cc.readMessage(sslStream) == 404) //client waits for answer
                     {
                         Owner.Show();
                         MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
@@ -236,12 +237,12 @@ namespace LocalDatabase_Client
                     mp = new MessagePanel.MessagePanel("Coś poszło nie tak, spróbuj jeszcze raz.", false);
                     mp.Show();
                 }
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 mp = new MessagePanel.MessagePanel("Błąd", false);
                 mp.Show();
-            }
+            //}
         }
 
         //event for return button. It returns in directory paths. Change actual current folder.
@@ -268,7 +269,7 @@ namespace LocalDatabase_Client
         //log out button event. Right now its just close the window and shows a login window but in the future it will be send a request to logout also in server side.
         private void LogOutButton(object sender, RoutedEventArgs e)
         {
-            cc.sendMessage(ClientCom.LogoutMessage(token), client);
+            cc.sendMessage(ClientCom.LogoutMessage(token), sslStream);
             Owner.Show();
             this.Close();
         }
@@ -280,10 +281,10 @@ namespace LocalDatabase_Client
             cfp.ShowDialog();
             if(cfp.folderName != null) //condition if the new folder name isnt empty
             {
-                if (client.Connected)
-                {
-                    cc.sendMessage(ClientCom.CreateFolderMessage(currentFolder, token, cfp.folderName), client); //client sends request to server to create new folder with name of folderName parameter
-                    if (cc.readMessage(client) == 404) 
+                //if (client.Connected)
+                //{
+                    cc.sendMessage(ClientCom.CreateFolderMessage(currentFolder, token, cfp.folderName), sslStream); //client sends request to server to create new folder with name of folderName parameter
+                    if (cc.readMessage(sslStream) == 404) 
                     {
                         Owner.Show();
                         MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
@@ -295,19 +296,19 @@ namespace LocalDatabase_Client
                         refreshingList();
                     }
                     // TODO: client checks if its done
-                }
-                else
-                {
+                //}
+                //else
+                //{
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
                     mp.ShowDialog();
-                }
+                //}
             }
         }
 
         //exit button event. Right now its just close the app but in the future it will be send a request to logout also in server side.
         private void ExitButton(object sender, RoutedEventArgs e)
         {
-            cc.sendMessage(ClientCom.LogoutMessage(token), client);
+            cc.sendMessage(ClientCom.LogoutMessage(token), sslStream);
             Owner.Close();
             this.Close();
         }
@@ -315,7 +316,7 @@ namespace LocalDatabase_Client
         //change password button event. Shows panel where user can change the password
         private void ChangePasswordButton(object sender, RoutedEventArgs e)
         {
-            ChangePasswordPanel.ChangePasswordPanel chp = new ChangePasswordPanel.ChangePasswordPanel(cc, client, token);
+            ChangePasswordPanel.ChangePasswordPanel chp = new ChangePasswordPanel.ChangePasswordPanel(cc, sslStream, token);
             chp.ShowDialog();
             if(!chp.isDone)
             {
