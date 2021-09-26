@@ -70,6 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Client\FileTransporter.cs" />
     <Compile Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
     </Compile>

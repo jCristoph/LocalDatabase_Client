@@ -41,39 +41,48 @@ namespace LocalDatabase_Client
             currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
             listView.ItemsSource = currentDirectory;
             DataContext = this;
-            refreshingList();
+            refreshList();
         }
 
         /// <summary>
         /// TODO
         /// refreshing method. Works in other thread (asynchronous) but we have to do it synchronous.
         /// </summary>
-        private void refreshingList()
+        private void refreshList()
         {
             if (sslStream != null)
             {
                 if (!cc.isBusy)
                 {
-                DirectoryRequest: //a label is used istead of loop - i use it when the data from server are broken
-                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
-                    //cc.getDirectory(sslStream, directoryManager); //special method for reading directory
-                    if (directoryManager.directoryElements != null)
+                    do
                     {
+                        cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
+                        string data = null;
+                        try
+                        {
+                            data = cc.readMessage(sslStream);
+                        } 
+                        catch
+                        {
+                            var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                            mp.ShowDialog();
+                            Owner.Show();
+                            this.Close();
+                        }
+                        directoryManager.directoryElements.Clear();
+                        ClientCom.SendDirectoryRecognizer(data, directoryManager);
                         Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
                         foreach (var a in directoryManager.directoryElements)
                         {
                             if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
                                 Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
                         }
-                        Application.Current.Dispatcher.Invoke(new Action(() => {
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
                             refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now;
                             sizeTextBlock.Text = "Zużyto " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB";
                         }));
-                    }
-                    else
-                    {
-                        goto DirectoryRequest;
-                    }
+                    } while (directoryManager.directoryElements == null);
                 }
             }
         }
@@ -84,34 +93,40 @@ namespace LocalDatabase_Client
             Button btn = ((Button)sender);
             if (btn.Content.Equals("Pobierz"))
             {
-                //if (client.Connected)
-                //{
-                    try
+                try
+                {
+                    //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
+                    cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), sslStream);
+                    int answer = cc.readMessage(sslStream);
+                    if (answer == -1)
                     {
-                        //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
-                        cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), sslStream);
-                        if (cc.readMessage(sslStream) == 404)
-                        {
-                            Owner.Show();
-                            MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
-                            mp1.ShowDialog();
-                            this.Close();
-                        }
-                       // else
-                            //cc.downloadFile(client);
+                        var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                        mp.ShowDialog();
+                        Owner.Show();
+                        this.Close();
                     }
-                    catch
+                    else if (answer == 404)
                     {
-                        MessagePanel.MessagePanel mp2 = new MessagePanel.MessagePanel("Wybierz plik do pobrania", false);
-                        mp2.ShowDialog();
+                        Owner.Show();
+                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                        mp1.ShowDialog();
+                        this.Close();
                     }
-                //}
-                //else
-                //{
-                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
-                    mp.ShowDialog();
-                //}
+                    else
+                    {
+                        var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name);
+                        fileTransporter.connectAsClient();
+                        fileTransporter.recieveFile();
+                    }
 
+                }
+                catch
+                {
+                    var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                    mp.ShowDialog();
+                    Owner.Show();
+                    this.Close();
+                }
             }
             else if (btn.Content.Equals("Otwórz")) //condition if the object isnt a file - is a folder - we cant download a folder - only one file in the same time. Then the button is a open button which opens a subfolder and list it
             {
@@ -142,41 +157,24 @@ namespace LocalDatabase_Client
                 string filename = dlg.FileName;
                 if(!filename.Equals(""))
                 {
-                    if (new FileInfo(filename).Length < 1100000000) //condition for 1gb limit file
+                if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
+                {
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy na pewno chcesz nadpisać plik?", true);
+                    mp.ShowDialog();
+                    if (mp.answear.Equals(true))
                     {
-                        if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
+                        if (result == true)
                         {
-                            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy na pewno chcesz nadpisać plik?", true);
-                            mp.ShowDialog();
-                            if (mp.answear.Equals(true))
+                            cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream);
+                            int answer = cc.readMessage(sslStream);
+                            if (answer == -1)
                             {
-                                if (result == true)
-                                {
-                                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream);
-                                    if (cc.readMessage(sslStream) == 404)
-                                    {
-                                        Owner.Show();
-                                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
-                                        mp1.ShowDialog();
-                                        this.Close();
-                                    }
-                                    else
-                                    {
-                                        //cc.sendFile(client, filename);
-                                        refreshingList();
-                                    }
-                                }
-                                else
-                                {
-                                    mp = new MessagePanel.MessagePanel("Błąd", false);
-                                    mp.Show();
-                                }
+                                mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                                mp.ShowDialog();
+                                Owner.Show();
+                                this.Close();
                             }
-                        }
-                        else if (result == true)
-                        {
-                            cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream); //client sends request for server to read file
-                            if (cc.readMessage(sslStream) == 404) //client waits for answer
+                            else if (answer == 404)
                             {
                                 Owner.Show();
                                 MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
@@ -185,41 +183,29 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
-                                Thread.Sleep(1000);
-                               // cc.sendFile(client, filename); //client sends bytes of file
-                                Thread.Sleep(1000);
-                                refreshingList();
+                                //cc.sendFile(client, filename);
+                                refreshList();
                             }
                         }
                         else
                         {
-                            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                            mp = new MessagePanel.MessagePanel("Błąd", false);
                             mp.Show();
                         }
                     }
-                    else
-                    {
-                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Plik musi być mniejszy niż 1GB", false);
-                        mp.Show();
-                    }
                 }
-            //}
-        }
-
-        //delete button event
-        private void DeleteFileButton(object sender, RoutedEventArgs e)
-        {
-            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy jesteś pewien, że chcesz usunąć ten element?", true); //ask user if he's sure to delete
-            mp.ShowDialog(); 
-            //if (client.Connected && mp.answear)
-            //{
-                Button btn = ((Button)sender);
-                try
+                else if (result == true)
                 {
-                    DirectoryElement temp = (DirectoryElement)btn.DataContext;
-                    string deletedElement = temp.path.Replace("Main_Folder", "Main_Folder\\" + token) + temp.name;
-                    cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder, token), sslStream); //client sends request to delete file or folder
-                    if (cc.readMessage(sslStream) == 404) //client waits for answer
+                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream); //client sends request for server to read file
+                    int answer = cc.readMessage(sslStream);
+                    if (answer == -1)
+                    {
+                        var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                        mp.ShowDialog();
+                        Owner.Show();
+                        this.Close();
+                    }
+                    else if (answer == 404) //client waits for answer
                     {
                         Owner.Show();
                         MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
@@ -228,21 +214,58 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        refreshingList();
-                        // TODO: client get a answer if file or folder was deleted
+                        var fileTransporter = new FileTransporter("127.0.0.1", filename);
+                        fileTransporter.connectAsClient();
+                        fileTransporter.sendFile();
+                        //refreshList();
                     }
                 }
-                catch
+                else
                 {
-                    mp = new MessagePanel.MessagePanel("Coś poszło nie tak, spróbuj jeszcze raz.", false);
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
                     mp.Show();
                 }
+            }
             //}
-            //else
-            //{
-                mp = new MessagePanel.MessagePanel("Błąd", false);
+        }
+
+        //delete button event
+        private void DeleteFileButton(object sender, RoutedEventArgs e)
+        {
+            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy jesteś pewien, że chcesz usunąć ten element?", true); //ask user if he's sure to delete
+            mp.ShowDialog();
+            Button btn = ((Button)sender);
+            try
+            {
+                DirectoryElement temp = (DirectoryElement)btn.DataContext;
+                string deletedElement = temp.path.Replace("Main_Folder", "Main_Folder\\" + token) + temp.name;
+                cc.sendMessage(ClientCom.DeleteMessage(deletedElement, ((DirectoryElement)btn.DataContext).isFolder, token), sslStream); //client sends request to delete file or folder
+                int answer = cc.readMessage(sslStream);
+                if (answer == -1)
+                {
+                    mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                    mp.ShowDialog();
+                    Owner.Show();
+                    this.Close();
+                }
+                else if (answer == 404) //client waits for answer
+                {
+                    Owner.Show();
+                    MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                    mp1.ShowDialog();
+                    this.Close();
+                }
+                else
+                {
+                    refreshList();
+                    // TODO: client get a answer if file or folder was deleted
+                }
+            }
+            catch (Exception ex)
+            {
+                mp = new MessagePanel.MessagePanel("Coś poszło nie tak, spróbuj jeszcze raz.", false);
                 mp.Show();
-            //}
+            }
         }
 
         //event for return button. It returns in directory paths. Change actual current folder.
@@ -281,27 +304,27 @@ namespace LocalDatabase_Client
             cfp.ShowDialog();
             if(cfp.folderName != null) //condition if the new folder name isnt empty
             {
-                //if (client.Connected)
-                //{
-                    cc.sendMessage(ClientCom.CreateFolderMessage(currentFolder, token, cfp.folderName), sslStream); //client sends request to server to create new folder with name of folderName parameter
-                    if (cc.readMessage(sslStream) == 404) 
-                    {
-                        Owner.Show();
-                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
-                        mp1.ShowDialog();
-                        this.Close();
-                    }
-                    else
-                    {
-                        refreshingList();
-                    }
-                    // TODO: client checks if its done
-                //}
-                //else
-                //{
-                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                cc.sendMessage(ClientCom.CreateFolderMessage(currentFolder, token, cfp.folderName), sslStream); //client sends request to server to create new folder with name of folderName parameter
+                int answer = cc.readMessage(sslStream);
+                if (answer == -1)
+                {
+                    var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
                     mp.ShowDialog();
-                //}
+                    Owner.Show();
+                    this.Close();
+                }
+                else if (answer == 404)
+                {
+                    Owner.Show();
+                    MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                    mp1.ShowDialog();
+                    this.Close();
+                }
+                else
+                {
+                    refreshList();
+                }
+                    // TODO: client checks if its done
             }
         }
 

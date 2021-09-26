@@ -93,53 +93,17 @@ namespace LocalDatabase_Client
             return false;
         }
 
-        //special version of read message method where directory is downloaded to list in gui
-        public void getDirectory(TcpClient client, DirectoryManager directoryManager)
-        {
-            if(!isBusy)
-            {
-                isBusy = true;
-                var stream = client.GetStream();
-                Byte[] bytes = new Byte[1024];
-                int i;
-                string data = "";
-                Thread.Sleep(1000);
-                do
-                {
-                    i = stream.Read(bytes, 0, bytes.Length);
-                    data += Encoding.UTF8.GetString(bytes, 0, i);
-                    if (!stream.DataAvailable)
-                        Thread.Sleep(1);
-                } while (stream.DataAvailable);
-                isBusy = false;
-                int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
-                int taskIndexEnd = data.IndexOf(">");
-                if (taskIndexEnd - taskIndexHome <= 0)
-                {
-                    
-                }
-                else
-                {
-                    string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
-                    DirectoryManager dm;
-                    Application.Current.Dispatcher.Invoke(new Action(() => { directoryManager.directoryElements.Clear(); })); 
-                    if (task.Equals("SendingDir"))
-                    {
-                        ClientCom.SendDirectoryRecognizer(data, directoryManager);
-                    }
-                }
-            }
-        }
         
         //a very important method where messages from server are recognized and later right method are run.
-        public int recognizeMessage(string data, SslStream sslStream)
+        public dynamic recognizeMessage(string data)
         {
             try
             {
+                FileTransporter fileTransporter = null;
+                    
                 int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
                 int taskIndexEnd = data.IndexOf(">");
                 string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
-                DirectoryManager dm;
                 switch (task)
                 {
                     case "CheckLogin":
@@ -152,12 +116,20 @@ namespace LocalDatabase_Client
                             return 2;
                         else
                             return 1;
-                    case "Download": //when server sends request of download file by client
+                    case "Download": //when server sends request to download file by client
+                        //fileTransporter = new FileTransporter("127.0.0.1", );
+                        //fileTransporter.connectAsClient();
+                        //fileTransporter.recieveFile();
                         //downloadFile(client);
                         return 0;
-                    case "Send": //when server sends request of send file by client
+                    case "Send": //when server sends request to send file by client
+                        fileTransporter = new FileTransporter("127.0.0.1", ClientCom.SendRecognizer(data));
+                        fileTransporter.connectAsClient();
+                        fileTransporter.sendFile();
                         //sendFile(client, ClientCom.SendRecognizer(data));
                         return 0;
+                    case "SendingDir":
+                        return data;
                     case "SessionExpired":
                         return 404;
                     case "Response":
@@ -175,18 +147,25 @@ namespace LocalDatabase_Client
         }
 
         //tcp/ip read message method. Reads bytes and translate it to string - it will be changed for ssl connection
-        public int readMessage(SslStream sslStream)
+        public dynamic readMessage(SslStream sslStream)
         {
             var inputBuffer = new byte[4096];
             var inputBytes = 0;
             while (inputBytes == 0)
             {
-                inputBytes = sslStream.Read(inputBuffer, 0,
-                   inputBuffer.Length);
+                try
+                {
+                    inputBytes = sslStream.Read(inputBuffer, 0, inputBuffer.Length);
+                }
+                catch {
+                    return -1;
+                }
+
             }
             var inputMessage = Encoding.UTF8.GetString(inputBuffer,
                0, inputBytes);
-            return recognizeMessage(inputMessage, sslStream);
+            sslStream.Flush();
+            return recognizeMessage(inputMessage);
         }
 
         //tcp/ip send message method. translate string to bytes and send it to client by stream  - it will be changed for ssl connection
@@ -203,6 +182,7 @@ namespace LocalDatabase_Client
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
                 mp.ShowDialog();
             }
+            sslStream.Flush();
             isBusy = false;
         }
 
@@ -224,7 +204,7 @@ namespace LocalDatabase_Client
                     lock (this)
                     {
                         string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
-                        handlerSocket.Receive(dataByte);
+                        //handlerSocket.recieve(dataByte);
                         int fileNameLen = BitConverter.ToInt32(dataByte, 0);
                         fileName = Encoding.UTF8.GetString(dataByte, 4, fileNameLen);
                         Stream fileStream = File.OpenWrite(folderPath + fileName);
