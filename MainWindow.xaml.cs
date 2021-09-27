@@ -46,29 +46,19 @@ namespace LocalDatabase_Client
 
         /// <summary>
         /// TODO
-        /// refreshing method. Works in other thread (asynchronous) but we have to do it synchronous.
+        /// method that refreshes a container of files
         /// </summary>
         private void refreshList()
         {
             if (sslStream != null)
             {
-                if (!cc.isBusy)
+                do
                 {
-                    do
+                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
+                    string data = null;
+                    try
                     {
-                        cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
-                        string data = null;
-                        try
-                        {
-                            data = cc.readMessage(sslStream);
-                        } 
-                        catch
-                        {
-                            var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
-                            mp.ShowDialog();
-                            Owner.Show();
-                            this.Close();
-                        }
+                        data = cc.readMessage(sslStream);
                         directoryManager.directoryElements.Clear();
                         ClientCom.SendDirectoryRecognizer(data, directoryManager);
                         Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
@@ -82,8 +72,16 @@ namespace LocalDatabase_Client
                             refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now;
                             sizeTextBlock.Text = "Zużyto " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB";
                         }));
-                    } while (directoryManager.directoryElements == null);
-                }
+                    }
+                    catch (Exception e)
+                    {
+                        
+                        var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                        mp.ShowDialog();
+                        Owner.Show();
+                        this.Close();
+                    }
+                } while (directoryManager.directoryElements == null);
             }
         }
 
@@ -116,7 +114,7 @@ namespace LocalDatabase_Client
                     {
                         var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name);
                         fileTransporter.connectAsClient();
-                        fileTransporter.recieveFile();
+                        fileTransporter.recieveFile(refreshList);
                     }
 
                 }
@@ -216,7 +214,7 @@ namespace LocalDatabase_Client
                     {
                         var fileTransporter = new FileTransporter("127.0.0.1", filename);
                         fileTransporter.connectAsClient();
-                        fileTransporter.sendFile();
+                        fileTransporter.sendFile(refreshList);
                         //refreshList();
                     }
                 }

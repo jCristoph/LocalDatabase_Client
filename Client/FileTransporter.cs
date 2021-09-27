@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LocalDatabase_Client
@@ -14,6 +15,7 @@ namespace LocalDatabase_Client
         private string ip;
         private FileInfo file;
         private string fileName;
+        Action refresh;
         Socket socket;
 
         public FileTransporter(string ip, string fileName)
@@ -40,8 +42,9 @@ namespace LocalDatabase_Client
         }
 
         #region recieve File Asynchronous
-        public void recieveFile()
+        public void recieveFile(Action refresh)
         {
+            this.refresh = refresh;
             var recieveFile_bg = new BackgroundWorker();
             recieveFile_bg.DoWork += new DoWorkEventHandler(recieveFile_bg_DoWork);
             recieveFile_bg.RunWorkerCompleted += new RunWorkerCompletedEventHandler(recieveFile_bg_RunWorkerCompleted);
@@ -89,10 +92,6 @@ namespace LocalDatabase_Client
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (e.Error != null)
-            {
-                Console.WriteLine(e.Error.ToString());
-            }
             if (e.Cancelled)
                 Console.WriteLine("Stopped by button");
             else
@@ -101,8 +100,10 @@ namespace LocalDatabase_Client
         #endregion
 
         #region Send File Asynchronous
-        public void sendFile()
+        public void sendFile(Action refresh)
         {
+            this.refresh = refresh;
+
             var sendFile_bg = new BackgroundWorker();
             sendFile_bg.DoWork += new DoWorkEventHandler(sendFile_bg_DoWork);
             sendFile_bg.RunWorkerCompleted += new RunWorkerCompletedEventHandler(sendFile_bg_RunWorkerCompleted);
@@ -137,6 +138,7 @@ namespace LocalDatabase_Client
                         catch (Exception ex)
                         {
                             Console.WriteLine(ex.ToString());
+                            return;
                         }
 
                     }
@@ -152,10 +154,7 @@ namespace LocalDatabase_Client
         }
         private void sendFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (e.Error != null)
-            {
-                Console.WriteLine(e.Error.ToString());
-            }
+            refresh();
             if (e.Cancelled)
                 Console.WriteLine("Stopped by button");
             else
