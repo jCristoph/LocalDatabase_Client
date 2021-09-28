@@ -138,7 +138,6 @@ namespace LocalDatabase_Client
         //tcp/ip read message method. Reads bytes and translate it to string - it will be changed for ssl connection
         public dynamic readMessage(SslStream sslStream)
         {
-            //sslStream.Flush();
             var inputBuffer = new byte[4096];
             StringBuilder messageData = new StringBuilder();
             var inputBytes = -1;
