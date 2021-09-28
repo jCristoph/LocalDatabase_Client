@@ -20,12 +20,12 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static string LoginMessage(string login, string password)
         {
-            return "<Task=Login><Login>" + login + "</Login><Pass>" + password + "</Pass></Task><#>";
+            return "<Task=Login><Login>" + login + "</Login><Pass>" + password + "</Pass></Task><EOM>";
         }
 
         public static string ChangePasswordMessage(string newPassword, string token)
         {
-            return "<Task=ChngPass><NewPass>" + newPassword + "</NewPass><Token>" + token + "</Token></Task>";
+            return "<Task=ChngPass><NewPass>" + newPassword + "</NewPass><Token>" + token + "</Token></Task><EOM>";
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static string LogoutMessage(string token)
         {
-            return "<Task=Logout><Token>" + token + "</Token></Task><#>";
+            return "<Task=Logout><Token>" + token + "</Token></Task><EOM>";
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static string SendOrderMessage(string path, string token)
         {
-            return "<Task=Send><Path>" + path + "</Path><Token>" + token + "</Token></Task><#>";
+            return "<Task=Send><Path>" + path + "</Path><Token>" + token + "</Token></Task><EOM>";
         }
 
         /// <summary>
@@ -56,11 +56,11 @@ namespace LocalDatabase_Client
         {
             if (currentFolderPath.path.Equals("\\"))
             {
-                return "<Task=ReadOrder><Path>Main_Folder\\" + token + "</Path><Token>" + token + "</Token><Name>" + filename + "</Name></Task><#>";
+                return "<Task=ReadOrder><Path>Main_Folder\\" + token + "</Path><Token>" + token + "</Token><Name>" + filename + "</Name></Task><EOM>";
             }
             else
             {
-                return "<Task=ReadOrder><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "</Path><Token>" + token + "</Token><Name>" + filename + "</Name></Task><#>";
+                return "<Task=ReadOrder><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "</Path><Token>" + token + "</Token><Name>" + filename + "</Name></Task><EOM>";
             }
         }
 
@@ -75,11 +75,11 @@ namespace LocalDatabase_Client
         {
             if (currentFolderPath.path.Equals("\\"))
             {
-                return "<Task=CreateFolder><Token>" + token + "</Token><Path>Main_Folder\\" + token + "\\" + newFolderName + "</Path></Task><#>";
+                return "<Task=CreateFolder><Token>" + token + "</Token><Path>Main_Folder\\" + token + "\\" + newFolderName + "</Path></Task><EOM>";
             }
             else
             {
-                return "<Task=CreateFolder><Token>" + token + "</Token><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "\\" + newFolderName + "</Path></Task><#>";
+                return "<Task=CreateFolder><Token>" + token + "</Token><Path>" + currentFolderPath.path.Replace("Main_Folder", "Main_Folder\\" + token) + "\\" + currentFolderPath.name + "\\" + newFolderName + "</Path></Task><EOM>";
             }
         }
         /// <summary>
@@ -88,7 +88,7 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static string SendDirectoryOrderMessage(string token)
         {
-            return "<Task=SendDir><Token>" + token + "</Token></Task><#>";
+            return "<Task=SendDir><Token>" + token + "</Token></Task><EOM>";
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static string DeleteMessage(string path, bool isFolder, string token)
         {
-            return "<Task=Delete><Path>" + path + "</Path><isFolder>" + isFolder.ToString() + "</isFolder><Token>" + token + "</Token></Task><#>";
+            return "<Task=Delete><Path>" + path + "</Path><isFolder>" + isFolder.ToString() + "</isFolder><Token>" + token + "</Token></Task><EOM>";
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static string ResponseMessage(bool goesWrong, string content)
         {
-            return "<Task=Response><Content>" + content + "</Content></Task><#>";
+            return "<Task=Response><Content>" + content + "</Content></Task><EOM>";
         }
         #endregion
 
@@ -174,11 +174,8 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static void SendDirectoryRecognizer(string data, DirectoryManager directoryManager)
         {
-            DirectoryManager dm = new DirectoryManager();
-            Application.Current.Dispatcher.Invoke(new Action(() => { directoryManager.directoryElements.Clear(); })); 
             foreach (var a in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
             {
-                dm.ProcessPath(a);
                 directoryManager.ProcessPath(a);
             }
         }

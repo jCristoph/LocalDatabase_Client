@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -21,7 +22,7 @@ namespace LocalDatabase_Client.LoginPanel
     /// </summary>
     public partial class LoginPanel : Window
     {
-        private TcpClient client;
+        private SslStream sslStream;
         private ClientConnection cc;
 
         public LoginPanel()
@@ -33,7 +34,7 @@ namespace LocalDatabase_Client.LoginPanel
         private void Connection()
         {
             cc = new ClientConnection("127.0.0.1");
-            client = cc.Start();
+            sslStream = cc.Start();
         }
 
         //login button event. 
@@ -41,18 +42,18 @@ namespace LocalDatabase_Client.LoginPanel
         {
             Task t = new Task(() => Connection()); //task that realizing a connection with server
             t.Start();
-            Thread.Sleep(10);
-            if (client == null) //condition if server or client is offline
+            Thread.Sleep(100); 
+            if (sslStream == null) //condition if server or client is offline
             {
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd połączenia z serwerem", false);
                 mp.ShowDialog();
             }
             else
             {
-                if (client.Connected) //condition if client connects properly
-                {
-                    cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, passwordBoxPassword.Password), client); // client sends a request to login with paramteres from texbox and passwordbox
-                    int answer = cc.readMessage(client);
+                //if (client.Connected) //condition if client connects properly
+                //{
+                    cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, passwordBoxPassword.Password), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
+                    int answer = cc.readMessage(sslStream);
                     if (answer == 1) //condition checks if user logged properly
                     {
                         bool isPasswordChanged = false;
@@ -60,7 +61,7 @@ namespace LocalDatabase_Client.LoginPanel
                         mp.ShowDialog();
                         if (cc.token.Equals(passwordBoxPassword.Password)) //condition checks if user changed default password
                             isPasswordChanged = true;
-                        MainWindow mw = new MainWindow(client, cc, isPasswordChanged);
+                        MainWindow mw = new MainWindow(sslStream, cc, isPasswordChanged);
                         textBoxLogin.Text = ""; //data form textbox is cleared to relogin
                         passwordBoxPassword.Password = ""; //data form passwordbox is cleared to relogin
                         mw.Owner = this;
@@ -77,7 +78,7 @@ namespace LocalDatabase_Client.LoginPanel
                         MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Złe hasło lub nazwa użytkownika", false);
                         mp.ShowDialog();
                     }
-                }
+                //}
             }
         }
 
