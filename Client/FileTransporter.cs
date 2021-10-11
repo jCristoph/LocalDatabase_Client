@@ -1,10 +1,11 @@
-﻿using System;
+﻿
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace LocalDatabase_Client
 {
@@ -15,14 +16,21 @@ namespace LocalDatabase_Client
         private string ip;
         private FileInfo file;
         private string fileName;
+
+        System.Windows.Controls.ProgressBar progressBar;
+        long size;
         Action refresh;
         Socket socket;
 
-        public FileTransporter(string ip, string fileName)
+        public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar)
         {
             this.ip = ip;
             this.fileName = fileName;
             file = new FileInfo(fileName);
+            this.size = size;
+            this.progressBar = progressBar;
+
+            this.progressBar.Visibility = System.Windows.Visibility.Visible;
         }
 
         public void connectAsServer()
@@ -73,29 +81,26 @@ namespace LocalDatabase_Client
                     {
                         readed = networkStream.Read(buffer, 0, buffer.Length);
                         fileStream.Write(buffer, 0, readed);
-                        helperBW.ReportProgress(i++);
+                        i = i + BUFFER_SIZE;
+                        helperBW.ReportProgress((int)Math.Round((float)i / (float)size * 100));
                     }
-                    catch
+                    catch (SocketException se)
                     {
                         readed = 0;
                     }
                     //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                    //Thread.Sleep(1);
+                    Thread.Sleep(1);
                 } while (readed > (BUFFER_SIZE - 1));
-                networkStream.Close();
+                //networkStream.Close();
             }
-            e.Result = "zwracany typ";
         }
         private void recieveFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Console.WriteLine(e.ProgressPercentage.ToString());
+            progressBar.Value = e.ProgressPercentage;
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (e.Cancelled)
-                Console.WriteLine("Stopped by button");
-            else
-                Console.WriteLine("Stopped by the end of operation");
+            progressBar.Visibility = System.Windows.Visibility.Hidden;
         }
         #endregion
 
@@ -131,36 +136,33 @@ namespace LocalDatabase_Client
                         try
                         {
                             networkStream.Write(buffer, 0, readed);
-                            helperBW.ReportProgress(i++);
+                            i = i + BUFFER_SIZE;
+                            helperBW.ReportProgress((int)Math.Round((float)i / (float)size * 100));
                             //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                            //Thread.Sleep(1);
+                            Thread.Sleep(1);
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(ex.ToString());
                             return;
                         }
-
                     }
                 }
                 buffer = new byte[BUFFER_SIZE];
-                networkStream.Close();
+                //networkStream.Close();
             }
-            e.Result = "zwracany typ";
         }
         private void sendFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Console.WriteLine(e.ProgressPercentage.ToString());
+            progressBar.Value = e.ProgressPercentage;
         }
         private void sendFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            progressBar.Visibility = System.Windows.Visibility.Hidden;
             refresh();
-            if (e.Cancelled)
-                Console.WriteLine("Stopped by button");
-            else
-                Console.WriteLine("Stopped by the end of operation");
         }
         #endregion
+
 
     }
 }
