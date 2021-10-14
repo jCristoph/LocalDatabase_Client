@@ -182,6 +182,12 @@ namespace LocalDatabase_Client
                                 mp1.ShowDialog();
                                 this.Close();
                             }
+                            else if (answer == 101)
+                            {
+                                Owner.Show();
+                                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Oooppsss! You don't have enough space. Contact your admin.", false);
+                                mp1.ShowDialog();
+                            }
                             else
                             {
                                 var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar);
@@ -213,6 +219,12 @@ namespace LocalDatabase_Client
                         MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
                         mp1.ShowDialog();
                         this.Close();
+                    }
+                    else if (answer == 101)
+                    {
+                        Owner.Show();
+                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Oooppsss! You don't have enough space. Contact your admin.", false);
+                        mp1.ShowDialog();
                     }
                     else
                     {

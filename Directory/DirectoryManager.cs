@@ -80,7 +80,7 @@ namespace LocalDatabase_Client
 
         }
 
-        //method where every file in directory is summed and returns a size of data space
+        //method where every file in directory is summed and returns a size of data space in GigaBytes
         public double usedSpace()
         {
             long usedSpaceCounter = 0;

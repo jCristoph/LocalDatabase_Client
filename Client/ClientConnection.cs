@@ -120,9 +120,10 @@ namespace LocalDatabase_Client
                     case "SessionExpired":
                         return 404;
                     case "Response":
-                       // MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel(ClientCom.responseRecognizer(data), false);
-                        //mp.Show();
-                        return 0;
+                        if (ClientCom.responseRecognizer(data).Equals("It's ok"))
+                            return 0;
+                        else
+                            return 101;
                 }
             }
             catch (Exception e)

@@ -101,6 +101,7 @@ namespace LocalDatabase_Client
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             progressBar.Visibility = System.Windows.Visibility.Hidden;
+            System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
         }
         #endregion
 
