@@ -96,8 +96,6 @@ namespace LocalDatabase_Client
         {
             try
             {
-                FileTransporter fileTransporter = null;
-                    
                 int taskIndexHome = data.IndexOf("<Task=") + "<Task=".Length;
                 int taskIndexEnd = data.IndexOf(">");
                 string task = data.Substring(taskIndexHome, taskIndexEnd - taskIndexHome);
@@ -122,16 +120,15 @@ namespace LocalDatabase_Client
                     case "SessionExpired":
                         return 404;
                     case "Response":
-                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel(ClientCom.responseRecognizer(data), false);
-                        mp.Show();
+                       // MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel(ClientCom.responseRecognizer(data), false);
+                        //mp.Show();
                         return 0;
                 }
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(data + "/n" + e.ToString());
             }
-
             return 0;
         }
 

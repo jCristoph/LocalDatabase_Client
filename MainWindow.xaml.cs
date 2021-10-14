@@ -31,6 +31,10 @@ namespace LocalDatabase_Client
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zmień hasło", false);
                 mp.Show();
             }
+
+            progressBar.Maximum = 100;
+            progressBar.Minimum = 0;
+
             token = cc.token;
             this.sslStream = sslStream;
             this.cc = cc;
@@ -45,7 +49,6 @@ namespace LocalDatabase_Client
         }
 
         /// <summary>
-        /// TODO
         /// method that refreshes a container of files
         /// </summary>
         private void refreshList()
@@ -112,7 +115,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name);
+                        var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar);
                         fileTransporter.connectAsClient();
                         fileTransporter.recieveFile(refreshList);
                     }
@@ -181,8 +184,9 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
-                                //cc.sendFile(client, filename);
-                                refreshList();
+                                var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar);
+                                fileTransporter.connectAsClient();
+                                fileTransporter.sendFile(refreshList);
                             }
                         }
                         else
@@ -212,10 +216,9 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter("127.0.0.1", filename);
+                        var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar);
                         fileTransporter.connectAsClient();
                         fileTransporter.sendFile(refreshList);
-                        //refreshList();
                     }
                 }
                 else

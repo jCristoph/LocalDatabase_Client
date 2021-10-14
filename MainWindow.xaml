@@ -30,6 +30,7 @@
                 <Button Content="Utwórz folder"  Grid.Column="1" Grid.Row="1" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="CreateFolderButton"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom">
+                <ProgressBar Name="progressBar" Style="{StaticResource ProgressBarStyle}" Width="180" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10,10,10,40" Visibility="Hidden"/>
                 <Button Content="Pomoc" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="HelpButton"/>
                 <Button Content="Wyloguj" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="LogOutButton"/>
                 <Button Content="Wyjdź" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="ExitButton"/>
