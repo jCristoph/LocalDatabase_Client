@@ -73,13 +73,6 @@ namespace LocalDatabase_Client.HelpPanel
             image.Source = images[page];
         }
 
-        //in the left of panel we have a list of subjects. This method is a event for first object of the list - sharing - it has to be deleted. sets right page of subject list and changes the source image to right one for the subject.
-        private void sharingButton_Checked(object sender, RoutedEventArgs e)
-        {
-            page = 13;
-            image.Source = images[page];
-        }
-
         //first of two navigation buttons - it returns in list 
         private void leftButton_Click(object sender, RoutedEventArgs e)
         {
@@ -103,9 +96,6 @@ namespace LocalDatabase_Client.HelpPanel
                     case 12:
                         send_fileButton.IsChecked = true;
                         break;
-                    case 13:
-                        sharingButton.IsChecked = true;
-                        break;
                     default:
                         image.Source = images[page];
                         break;
@@ -116,7 +106,7 @@ namespace LocalDatabase_Client.HelpPanel
         //second of two navigation buttons - it goes forward in list
         private void rightButton_Click(object sender, RoutedEventArgs e)
         {
-            if(page < 13)
+            if(page < 12)
             {
                 page++;
                 switch (page)
@@ -135,9 +125,6 @@ namespace LocalDatabase_Client.HelpPanel
                         break;
                     case 12:
                         send_fileButton.IsChecked = true;
-                        break;
-                    case 13:
-                        sharingButton.IsChecked = true;
                         break;
                     default:
                         image.Source = images[page];
@@ -164,7 +151,6 @@ namespace LocalDatabase_Client.HelpPanel
             images.Add(new BitmapImage(new Uri("/Images/HelpImages/change_password.png", UriKind.Relative))); // page 10
             images.Add(new BitmapImage(new Uri("/Images/HelpImages/new_folder.png", UriKind.Relative))); // page 11
             images.Add(new BitmapImage(new Uri("/Images/HelpImages/send_file.png", UriKind.Relative))); // page 12
-            images.Add(new BitmapImage(new Uri("/Images/HelpImages/share.png", UriKind.Relative))); // page 13
         }
 
 

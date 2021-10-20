@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -12,6 +13,7 @@ namespace LocalDatabase_Client
         public List<string> pathArray { get; set; }
         public string name { get; set; }
         public long size { get; set; }
+        public string sizeText { get; set; }
         public string lwr { get; set; }
         public bool isFolder { get; set; }
         public string buttonName { get; set; }
@@ -33,14 +35,15 @@ namespace LocalDatabase_Client
             this.isFolder = isFolder;
             if (isFolder)
             {
-                buttonName = "Otwórz";
+                buttonName = "Open";
                 image = @"Images\folder_icon.png";
             }
             else
             {
-                buttonName = "Pobierz";
+                buttonName = "Download";
                 image = @"Images\file_icon.png";
             }
+            sizeText = convertNumber(size);
         }
 
         public DirectoryElement(string pathWithoutName, string name, long size, string lwr, string isFolder)
@@ -59,15 +62,33 @@ namespace LocalDatabase_Client
             if (isFolder.Equals("True"))
             {
                 this.isFolder = true;
-                buttonName = "Otwórz";
+                buttonName = "Open";
                 image = @"Images\folder_icon.png";
             }
             else
             {
                 this.isFolder = false;
-                buttonName = "Pobierz";
+                buttonName = "Download";
                 image = @"Images\file_icon.png";
             }
+            sizeText = convertNumber(size);
+        }
+
+        private string convertNumber(long number)
+        {
+            if (number > 1000 & number < 1000000) //kilobytes
+            {
+                return (Math.Round(number / 1024.0, 2) + " kB");
+            }
+            else if (number > 1000000 & number < 1000000000) //megabytes
+            {
+                return (Math.Round(number / 1048576.0, 2) + " MB");
+            }
+            else if (number > 1000000000 & number < 1000000000000) //gigabytes
+            {
+                return (Math.Round(number / 1073741824.0, 2) + " GB");
+            }
+            return (number + " B"); //bytes
         }
 
         public override string ToString()

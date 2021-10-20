@@ -25,19 +25,19 @@
                 <RowDefinition Height="5*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Column="1" Grid.Row="1">
-                <Button Content="Wyślij plik" Name="sendFileButton" Click="SendFileButton"  Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,0,10,0"/>
-                <Button Content="Zmień hasło"  Grid.Column="1" Grid.Row="1" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="ChangePasswordButton"/>
-                <Button Content="Utwórz folder"  Grid.Column="1" Grid.Row="1" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="CreateFolderButton"/>
+                <Button Content="Send file" Name="sendFileButton" Click="SendFileButton"  Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,0,10,0"/>
+                <Button Content="Change password"  Grid.Column="1" Grid.Row="1" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="ChangePasswordButton"/>
+                <Button Content="Create folder"  Grid.Column="1" Grid.Row="1" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="CreateFolderButton"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom">
                 <ProgressBar Name="progressBar" Style="{StaticResource ProgressBarStyle}" Width="180" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10,10,10,40" Visibility="Hidden"/>
-                <Button Content="Pomoc" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="HelpButton"/>
-                <Button Content="Wyloguj" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="LogOutButton"/>
-                <Button Content="Wyjdź" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="ExitButton"/>
+                <Button Content="Help" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="HelpButton"/>
+                <Button Content="Log out" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="LogOutButton"/>
+                <Button Content="Exit" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="ExitButton"/>
             </StackPanel>
-            <TextBlock Text="Zużyto: ..." Name="sizeTextBlock" Foreground="White" FontFamily="Lucida Sans" Margin="0,5,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Grid.Column="1" Grid.Row="1" FontSize="18"/>
-            <TextBlock Width="263" Grid.Column="0" Grid.Row="0" Foreground="White" Text="Filebase.local" FontSize="36" HorizontalAlignment="Left" Margin="10,10,0,0" FontFamily="Lucida Sans" />
-            <TextBlock Text="Ostatnie odświeżenie: " Name="refreshTextBlock" Width="263" Grid.Column="0" Grid.Row="2" Foreground="White" FontFamily="Lucida Sans" Margin="0,5,0,0"/>
+            <TextBlock Text="Used space: ..." Name="sizeTextBlock" Foreground="White" FontFamily="Lucida Sans" Margin="0,5,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Grid.Column="1" Grid.Row="1" FontSize="18"/>
+            <TextBlock Width="263" Grid.Column="0" Grid.Row="0" Foreground="White" FontSize="36" HorizontalAlignment="Left" Margin="10,10,0,0" FontFamily="Lucida Sans" ><Run Text="Filebase."/><Run Text="safe"/></TextBlock>
+            <TextBlock Text="Last refresh: " Name="refreshTextBlock" Width="263" Grid.Column="0" Grid.Row="2" Foreground="White" FontFamily="Lucida Sans" Margin="0,5,0,0"/>
             <Grid Grid.Column="0" Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -48,8 +48,8 @@
                 </Grid.RowDefinitions>
                 <Border Background="Aquamarine" CornerRadius="5" Margin="10,0,0,0"/>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                    <Button Margin="15,3,10,3" Content="Cofnij"  Width="80" HorizontalAlignment="Left" Click="ReturnButton" Style="{StaticResource MenuButtonTheme}" FontSize="12"/>
-                    <TextBlock Text="Obecna lokalizacja: " Name="currentFolderTextBlock" Width="679" Foreground="#353340" FontFamily="Lucida Sans" Margin="10,4,0,4" VerticalAlignment="Center" FontSize="16"/>
+                    <Button Margin="15,3,10,3" Content="Return"  Width="80" HorizontalAlignment="Left" Click="ReturnButton" Style="{StaticResource MenuButtonTheme}" FontSize="12"/>
+                    <TextBlock x:Name="currentFolderTextBlock" Width="679" Foreground="#353340" FontFamily="Lucida Sans" Margin="10,4,0,4" VerticalAlignment="Center" FontSize="16"><Run Text="Path"/><Run Text=": "/></TextBlock>
                 </StackPanel>
                 <ListView Margin="10,10,0,0" Grid.Column="0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                     <ListView.View>
@@ -61,15 +61,15 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Nazwa"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Ostatnia edycja"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=size}" Header="Rozmiar"/>
-                            <GridViewColumn Header="Akcja">
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size"/>
+                            <GridViewColumn Header="Action">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
                                             <Button Content="{Binding Path=buttonName}" Click="DownloadOrOpenButton" Margin="10" Height="20" Style="{StaticResource MenuButtonTheme}" Width="80"/>
-                                            <Button Content="Usuń" Click="DeleteFileButton" Margin="10" Width="80" Height="20" Style="{StaticResource MenuButtonTheme}"/>
+                                            <Button Content="Delete" Click="DeleteFileButton" Margin="10" Width="80" Height="20" Style="{StaticResource MenuButtonTheme}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>

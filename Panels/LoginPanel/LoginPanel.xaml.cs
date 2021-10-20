@@ -45,7 +45,7 @@ namespace LocalDatabase_Client.LoginPanel
             Thread.Sleep(100); 
             if (sslStream == null) //condition if server or client is offline
             {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd połączenia z serwerem", false);
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Error. Cannot connect with server!", false);
                 mp.ShowDialog();
             }
             else
@@ -57,7 +57,7 @@ namespace LocalDatabase_Client.LoginPanel
                     if (answer == 1) //condition checks if user logged properly
                     {
                         bool isPasswordChanged = false;
-                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zalogowano", false);
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Logged in!", false);
                         mp.ShowDialog();
                         if (cc.token.Equals(passwordBoxPassword.Password)) //condition checks if user changed default password
                             isPasswordChanged = true;
@@ -70,12 +70,12 @@ namespace LocalDatabase_Client.LoginPanel
                     }
                     else if (answer == 2)
                     {
-                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Jesteś zalogowany na innym urządzeniu lub twój program przestał działać niespodziewanie.", false);
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("You are logged in other device or your app stopped unexpectedly. Cool down and go back for 15 minutes!", false);
                         mp.ShowDialog();
                     }
                     else
                     {
-                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Złe hasło lub nazwa użytkownika", false);
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Wrong password or login.", false);
                         mp.ShowDialog();
                     }
                 //}

@@ -18,19 +18,18 @@
                 <RowDefinition Height="86*"/>
                 <RowDefinition Height="7*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="Okno Pomocy" Foreground="White" FontSize="36" HorizontalAlignment="Center" FontFamily="Lucida Sans" Margin="0,10,0,0"/>
+            <TextBlock Grid.Row="0" Text="Help window" Foreground="White" FontSize="36" HorizontalAlignment="Center" FontFamily="Lucida Sans" Margin="0,10,0,0"/>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="15*"/>
                     <ColumnDefinition Width="85*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Margin="10" >
-                    <RadioButton Name="loginButton" Content="Logowanie" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="loginButton_Checked"/>
-                    <RadioButton Name="main_windowButton" Content="Główne okno" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="main_windowButton_Checked"/>
-                    <RadioButton Name="change_passwordButton" Content="Zmiana hasła" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="change_passwordButton_Checked"/>
-                    <RadioButton Name="creating_foldersButton" Content="Tworzenie folderów" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="creating_foldersButton_Checked"/>
-                    <RadioButton Name="send_fileButton" Content="Wysyłanie plików" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="send_fileButton_Checked"/>
-                    <RadioButton Name="sharingButton" Content="Udostępnianie" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="sharingButton_Checked"/>
+                    <RadioButton Name="loginButton" Content="Logging" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="loginButton_Checked"/>
+                    <RadioButton Name="main_windowButton" Content="Main window" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="main_windowButton_Checked"/>
+                    <RadioButton Name="change_passwordButton" Content="Password changing" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="change_passwordButton_Checked"/>
+                    <RadioButton Name="creating_foldersButton" Content="Folder creation" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="creating_foldersButton_Checked"/>
+                    <RadioButton Name="send_fileButton" Content="File sending" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="send_fileButton_Checked"/>
                 </StackPanel>
                 <Grid Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="1" Width="1150">
                     <Grid.ColumnDefinitions>
@@ -44,7 +43,7 @@
                     <Image Name="image" Width="1150" Height="650" />
                 </Border>
             </Grid>
-            <Button Grid.Row="2" Content="Powrót" HorizontalAlignment="Right" VerticalAlignment="Center" Width="120" Height="30" Name="backButton" Click="backButton_Click"  Style="{StaticResource MenuButtonTheme}" Margin="10,10,60,10"/>
+            <Button Grid.Row="2" Content="Retunr" HorizontalAlignment="Right" VerticalAlignment="Center" Width="120" Height="30" Name="backButton" Click="backButton_Click"  Style="{StaticResource MenuButtonTheme}" Margin="10,10,60,10"/>
         </Grid>
     </Border>
 </Window>

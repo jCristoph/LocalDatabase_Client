@@ -28,7 +28,7 @@ namespace LocalDatabase_Client
             InitializeComponent();
             if (isPasswordChanged) //condition if password was changed from first (when account is created the password is the same as token so user should change it)
             {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Zmień hasło", false);
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Change password!", false);
                 mp.Show();
             }
 
@@ -72,14 +72,14 @@ namespace LocalDatabase_Client
                         }
                         Application.Current.Dispatcher.Invoke(new Action(() =>
                         {
-                            refreshTextBlock.Text = "Ostatnie odświeżenie: " + DateTime.Now;
-                            sizeTextBlock.Text = "Zużyto " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB";
+                            refreshTextBlock.Text = "Last refresh: " + DateTime.Now;
+                            sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB";
                         }));
                     }
                     catch (Exception e)
                     {
                         
-                        var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                        var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                         mp.ShowDialog();
                         Owner.Show();
                         this.Close();
@@ -92,7 +92,7 @@ namespace LocalDatabase_Client
         private void DownloadOrOpenButton(object sender, RoutedEventArgs e)
         {
             Button btn = ((Button)sender);
-            if (btn.Content.Equals("Pobierz"))
+            if (btn.Content.Equals("Download"))
             {
                 try
                 {
@@ -101,7 +101,7 @@ namespace LocalDatabase_Client
                     int answer = cc.readMessage(sslStream);
                     if (answer == -1)
                     {
-                        var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                        var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                         mp.ShowDialog();
                         Owner.Show();
                         this.Close();
@@ -109,7 +109,7 @@ namespace LocalDatabase_Client
                     else if (answer == 404)
                     {
                         Owner.Show();
-                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
                         mp1.ShowDialog();
                         this.Close();
                     }
@@ -123,13 +123,13 @@ namespace LocalDatabase_Client
                 }
                 catch
                 {
-                    var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                    var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                     mp.ShowDialog();
                     Owner.Show();
                     this.Close();
                 }
             }
-            else if (btn.Content.Equals("Otwórz")) //condition if the object isnt a file - is a folder - we cant download a folder - only one file in the same time. Then the button is a open button which opens a subfolder and list it
+            else if (btn.Content.Equals("Open")) //condition if the object isnt a file - is a folder - we cant download a folder - only one file in the same time. Then the button is a open button which opens a subfolder and list it
             {
                 currentFolder = ((DirectoryElement)btn.DataContext);
                 currentDirectory.Clear();
@@ -142,7 +142,7 @@ namespace LocalDatabase_Client
             }
             else
             {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Unknown error", false);
                 mp.ShowDialog();
             }
            
@@ -160,7 +160,7 @@ namespace LocalDatabase_Client
                 {
                 if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
                 {
-                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy na pewno chcesz nadpisać plik?", true);
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to overwrite this file?", true);
                     mp.ShowDialog();
                     if (mp.answear.Equals(true))
                     {
@@ -170,7 +170,7 @@ namespace LocalDatabase_Client
                             int answer = cc.readMessage(sslStream);
                             if (answer == -1)
                             {
-                                mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                                mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                                 mp.ShowDialog();
                                 Owner.Show();
                                 this.Close();
@@ -178,7 +178,7 @@ namespace LocalDatabase_Client
                             else if (answer == 404)
                             {
                                 Owner.Show();
-                                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
                                 mp1.ShowDialog();
                                 this.Close();
                             }
@@ -197,7 +197,7 @@ namespace LocalDatabase_Client
                         }
                         else
                         {
-                            mp = new MessagePanel.MessagePanel("Błąd", false);
+                            mp = new MessagePanel.MessagePanel("Unknown error", false);
                             mp.Show();
                         }
                     }
@@ -208,7 +208,7 @@ namespace LocalDatabase_Client
                     int answer = cc.readMessage(sslStream);
                     if (answer == -1)
                     {
-                        var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                        var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                         mp.ShowDialog();
                         Owner.Show();
                         this.Close();
@@ -216,7 +216,7 @@ namespace LocalDatabase_Client
                     else if (answer == 404) //client waits for answer
                     {
                         Owner.Show();
-                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
                         mp1.ShowDialog();
                         this.Close();
                     }
@@ -235,7 +235,7 @@ namespace LocalDatabase_Client
                 }
                 else
                 {
-                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Unknown error", false);
                     mp.Show();
                 }
             }
@@ -245,7 +245,7 @@ namespace LocalDatabase_Client
         //delete button event
         private void DeleteFileButton(object sender, RoutedEventArgs e)
         {
-            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Czy jesteś pewien, że chcesz usunąć ten element?", true); //ask user if he's sure to delete
+            MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to delete this element?", true); //ask user if he's sure to delete
             mp.ShowDialog();
             Button btn = ((Button)sender);
             try
@@ -256,7 +256,7 @@ namespace LocalDatabase_Client
                 int answer = cc.readMessage(sslStream);
                 if (answer == -1)
                 {
-                    mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                    mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                     mp.ShowDialog();
                     Owner.Show();
                     this.Close();
@@ -264,7 +264,7 @@ namespace LocalDatabase_Client
                 else if (answer == 404) //client waits for answer
                 {
                     Owner.Show();
-                    MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                    MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
                     mp1.ShowDialog();
                     this.Close();
                 }
@@ -276,7 +276,7 @@ namespace LocalDatabase_Client
             }
             catch (Exception ex)
             {
-                mp = new MessagePanel.MessagePanel("Coś poszło nie tak, spróbuj jeszcze raz.", false);
+                mp = new MessagePanel.MessagePanel("Something goes wrong. Try one more time", false);
                 mp.Show();
             }
         }
@@ -296,7 +296,7 @@ namespace LocalDatabase_Client
             }
             else
             {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Jesteś w głównym folderze", false);
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("You are in main folder", false);
                 mp.ShowDialog();
             }
             currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
@@ -321,7 +321,7 @@ namespace LocalDatabase_Client
                 int answer = cc.readMessage(sslStream);
                 if (answer == -1)
                 {
-                    var mp = new MessagePanel.MessagePanel("Utracono połączenie z serwerem, zaloguj się jeszcze raz", false);
+                    var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                     mp.ShowDialog();
                     Owner.Show();
                     this.Close();
@@ -329,7 +329,7 @@ namespace LocalDatabase_Client
                 else if (answer == 404)
                 {
                     Owner.Show();
-                    MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                    MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
                     mp1.ShowDialog();
                     this.Close();
                 }
@@ -357,7 +357,7 @@ namespace LocalDatabase_Client
             if(!chp.isDone)
             {
                 Owner.Show();
-                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Sesja wygasła. Zaloguj się ponownie", false);
+                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
                 mp1.ShowDialog();
                 this.Close();
             }
