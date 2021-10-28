@@ -64,6 +64,7 @@ namespace LocalDatabase_Client
                         data = cc.readMessage(sslStream);
                         directoryManager.directoryElements.Clear();
                         ClientCom.SendDirectoryRecognizer(data, directoryManager);
+                        directoryManager.setFoldersSize();
                         Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
                         foreach (var a in directoryManager.directoryElements)
                         {
