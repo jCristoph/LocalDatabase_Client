@@ -107,7 +107,8 @@ namespace LocalDatabase_Client
             long usedSpaceCounter = 0;
             for(int i = 0; i < directoryElements.Count; i++)
             {
-                usedSpaceCounter += directoryElements[i].size;
+                if(!directoryElements[i].isFolder)
+                    usedSpaceCounter += directoryElements[i].size;
             }
             return (double)(usedSpaceCounter / 1000000000.0);
         }
