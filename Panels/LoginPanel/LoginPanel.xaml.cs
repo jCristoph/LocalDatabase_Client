@@ -14,8 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Security.Cryptography;
-using System.Text;
+
 
 namespace LocalDatabase_Client.LoginPanel
 {
@@ -33,14 +32,7 @@ namespace LocalDatabase_Client.LoginPanel
             InitializeComponent();
         }
 
-        //password encryption method SHA256
-        public static string encryption256(string password)
-        {
-            Byte[] passBytes = Encoding.UTF8.GetBytes(password);
-            Byte[] hashBytes = new SHA256CryptoServiceProvider().ComputeHash(passBytes);
 
-            return BitConverter.ToString(hashBytes);
-        }
 
         private void Connection()
         {
