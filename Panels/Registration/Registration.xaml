@@ -24,13 +24,17 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBox VerticalAlignment="Center" Height="32" Name="surnameTextBox" Grid.Column="1" Grid.Row="1" Margin="10" Style="{StaticResource ModernTextBox}" FontSize="16"/>
-            <TextBox VerticalAlignment="Center" Height="32" Name="nameTextBox" Grid.Column="1" Grid.Row="2" Margin="10" Style="{StaticResource ModernTextBox}" FontSize="16"/>
-            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Firstname" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="20" Foreground="White"/>
-            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Lastname" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="20" Foreground="White"/>
+            <TextBox VerticalAlignment="Center" Height="32" Name="surnameTextBox" Grid.Column="1" Grid.Row="1" Margin="9.8,1.6,6.6,56.8" Style="{StaticResource ModernTextBox}" FontSize="16"/>
+            <TextBox VerticalAlignment="Center" Height="32" Name="nameTextBox" Grid.Column="1" Grid.Row="1" Margin="9.8,56.6,6.6,1.8" Style="{StaticResource ModernTextBox}" FontSize="16"/>
+            <PasswordBox VerticalAlignment="Center" Height="32" Name="passwordBoxPassword1" Grid.Column="1" Grid.Row="2" Margin="7.8,24.2,8.6,33.4" Style="{StaticResource ModernPasswordBox}" FontSize="16"/>
+            <PasswordBox VerticalAlignment="Center" Height="32" Name="passwordBoxPassword2" Grid.Column="1" Grid.Row="2" Margin="7.8,82.2,8.6,65" Style="{StaticResource ModernPasswordBox}" FontSize="16" Grid.RowSpan="2"/>
+            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Surname" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="20" Foreground="White" Margin="0,1.6,8.2,61.8"/>
+            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="20" Foreground="White" Margin="0,55.6,14.2,7.8"><Run Text="N"/><Run Text="ame"/></TextBlock>
             <TextBlock Width="263" Grid.Column="0" Grid.Row="0" Foreground="White" FontSize="36" HorizontalAlignment="Left" Margin="20,20,0,0" FontFamily="Lucida Sans" ><Run Text="Filebase."/><Run Text="safe"/></TextBlock>
-            <Button Content="Create account" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Name="loginButton" Click="createButton_Click" Grid.Column="1" Grid.Row="3" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
+            <Button Content="Create account" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Name="loginButton" Click="createButton_Click" Grid.Column="1" Grid.Row="3" Style="{StaticResource MenuButtonTheme}" FontSize="20" Margin="47.8,59.6,48.6,69.6" Grid.RowSpan="2"/>
             <Button Content="Return" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Name="backButton" Click="backButton_Click" Grid.Column="2" Grid.Row="4" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
+            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="20" Foreground="White" Margin="0,26.2,14.2,36.4" Text="Password"/>
+            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="20" Foreground="White" Margin="0,84.2,13.2,68" Grid.RowSpan="2"><Run Text="Co"/><Run Text="n"/><Run Text="firm "/><Run Text="Password"/></TextBlock>
         </Grid>
     </Border>
 </Window>

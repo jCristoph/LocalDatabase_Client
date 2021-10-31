@@ -47,20 +47,48 @@ namespace LocalDatabase_Client.Registration
 
 
             MessagePanel.MessagePanel mp;
-            
-            if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
+
+            ////////////
+            Task t = new Task(() => Connection()); //task that realizing a connection with server
+            t.Start();
+            Thread.Sleep(100);
+            if (sslStream == null) //condition if server or client is offline
             {
-               
-                mp = new MessagePanel.MessagePanel("Registration success", false);
+                mp = new MessagePanel.MessagePanel("Error. Cannot connect with server!", false);
                 mp.ShowDialog();
-                this.Close();
             }
             else
             {
-                mp = new MessagePanel.MessagePanel("Data is not valid", false);
-                mp.ShowDialog();
+
+                string password;
+
+                if (passwordBoxPassword1.Password == passwordBoxPassword2.Password)
+                    password = passwordBoxPassword1.Password;
+                else
+                    mp = new MessagePanel.MessagePanel("Passwords are different!", false);
+
+                if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
+                {
+                    cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, /*dodać haslo*/nameTextBox.Text), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
+                    int answer = cc.readMessage(sslStream);
+                    if (answer == 1)
+                    {
+                        mp = new MessagePanel.MessagePanel("Registration success", true);
+                    }
+                    else
+                    {
+                        mp = new MessagePanel.MessagePanel("Registration error", false);
+                    }
+                    mp.ShowDialog();
+                    this.Close();
+                }
+                else
+                {
+                    mp = new MessagePanel.MessagePanel("Data is not valid", false);
+                    mp.ShowDialog();
+                }
+
             }
-                
         }
 
         //if user clicks back button then panel just close.
