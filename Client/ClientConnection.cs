@@ -37,24 +37,23 @@ namespace LocalDatabase_Client
         {
             SslStream sslStream = null;
             TcpClient client = null;
-            do
-            {
-                try
-                {
-                    var clientCertificate = getServerCert();
-                    var clientCertificateCollection = new
-                       X509CertificateCollection(new X509Certificate[]
-                       { clientCertificate });
-                    client = new TcpClient(serverIP, port);
-                    sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
-                    sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
-                    client.Connect(serverIP, port);
-                }
-                catch (Exception e)
-                {
 
-                }
-            } while (!client.Connected); //client try to connect until it succeeded
+            try
+            {
+                var clientCertificate = getServerCert();
+                var clientCertificateCollection = new
+                   X509CertificateCollection(new X509Certificate[]
+                   { clientCertificate });
+                client = new TcpClient(serverIP, port);
+                sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
+                sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
+                client.Connect(serverIP, port);
+            }
+            catch (Exception e)
+            {
+
+            }
+
             return sslStream;
         }
 
@@ -90,7 +89,7 @@ namespace LocalDatabase_Client
             return false;
         }
 
-        
+
         //a very important method where messages from server are recognized and later right method are run.
         public dynamic recognizeMessage(string data)
         {
@@ -122,6 +121,8 @@ namespace LocalDatabase_Client
                     case "Response":
                         if (ClientCom.responseRecognizer(data).Equals("It's ok"))
                             return 0;
+                        else if (ClientCom.responseRecognizer(data).Equals("Registration success"))
+                            return 3;
                         else
                             return 101;
                 }

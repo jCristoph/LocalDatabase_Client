@@ -15,7 +15,7 @@ namespace LocalDatabase_Client.Client
         {
             Byte[] passBytes = Encoding.UTF8.GetBytes(password);
             Byte[] hashBytes = new SHA256CryptoServiceProvider().ComputeHash(passBytes);
-
+            int lenght = BitConverter.ToString(hashBytes).Length;
             return BitConverter.ToString(hashBytes);
         }
 

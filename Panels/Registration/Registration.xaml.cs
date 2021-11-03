@@ -14,8 +14,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
-
+using LocalDatabase_Client;
+using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client.Registration
 
@@ -60,20 +60,21 @@ namespace LocalDatabase_Client.Registration
             else
             {
 
-                string password;
+                string password = "0";
 
                 if (passwordBoxPassword1.Password == passwordBoxPassword2.Password)
                     password = passwordBoxPassword1.Password;
                 else
                     mp = new MessagePanel.MessagePanel("Passwords are different!", false);
 
+                string password_SHA256 = Encryption.encryption256(password);
                 if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
                 {
-                    cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, /*dodać haslo*/nameTextBox.Text), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
+                    cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, password_SHA256), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
                     int answer = cc.readMessage(sslStream);
-                    if (answer == 1)
+                    if (answer == 3)
                     {
-                        mp = new MessagePanel.MessagePanel("Registration success", true);
+                        mp = new MessagePanel.MessagePanel("Registration success", false);
                     }
                     else
                     {
@@ -95,6 +96,11 @@ namespace LocalDatabase_Client.Registration
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void surnameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
