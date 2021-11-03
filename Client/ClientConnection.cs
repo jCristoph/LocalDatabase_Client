@@ -19,6 +19,10 @@ namespace LocalDatabase_Client
 {
     public class ClientConnection
     {
+        private SslStream sslStream = null;
+        public SslStream SslStream { get => sslStream; }
+        TcpClient client = null;
+
         private String serverIP = null;
         public string token { get; set; } //token of logged client
         public double limit { get; set; } //limit of data space
@@ -33,29 +37,23 @@ namespace LocalDatabase_Client
         }
 
         //method starts connection with server
-        public SslStream Start()
+        public void Start()
         {
-            SslStream sslStream = null;
-            TcpClient client = null;
-            do
+            try
             {
-                try
-                {
-                    var clientCertificate = getServerCert();
-                    var clientCertificateCollection = new
-                       X509CertificateCollection(new X509Certificate[]
-                       { clientCertificate });
-                    client = new TcpClient(serverIP, port);
-                    sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
-                    sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
-                    client.Connect(serverIP, port);
-                }
-                catch (Exception e)
-                {
+                var clientCertificate = getServerCert();
+                var clientCertificateCollection = new
+                   X509CertificateCollection(new X509Certificate[]
+                   { clientCertificate });
+                client = new TcpClient(serverIP, port);
+                sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
+                sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
+                client.Connect(serverIP, port);
+            }
+            catch (Exception e)
+            {
 
-                }
-            } while (!client.Connected); //client try to connect until it succeeded
-            return sslStream;
+            }
         }
 
         private static X509Certificate getServerCert()

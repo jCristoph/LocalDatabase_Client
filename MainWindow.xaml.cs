@@ -55,8 +55,6 @@ namespace LocalDatabase_Client
         {
             if (sslStream != null)
             {
-                do
-                {
                     cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
                     string data = null;
                     try
@@ -85,7 +83,6 @@ namespace LocalDatabase_Client
                         Owner.Show();
                         this.Close();
                     }
-                } while (directoryManager.directoryElements == null);
             }
         }
 
