@@ -19,6 +19,10 @@ namespace LocalDatabase_Client
 {
     public class ClientConnection
     {
+        private SslStream sslStream = null;
+        public SslStream SslStream { get => sslStream; }
+        TcpClient client = null;
+
         private String serverIP = null;
         public string token { get; set; } //token of logged client
         public double limit { get; set; } //limit of data space
@@ -33,11 +37,8 @@ namespace LocalDatabase_Client
         }
 
         //method starts connection with server
-        public SslStream Start()
+        public void Start()
         {
-            SslStream sslStream = null;
-            TcpClient client = null;
-
             try
             {
                 var clientCertificate = getServerCert();
@@ -53,8 +54,6 @@ namespace LocalDatabase_Client
             {
 
             }
-
-            return sslStream;
         }
 
         private static X509Certificate getServerCert()

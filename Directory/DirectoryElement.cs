@@ -74,7 +74,7 @@ namespace LocalDatabase_Client
             sizeText = convertNumber(size);
         }
 
-        private string convertNumber(long number)
+        public string convertNumber(long number)
         {
             if (number > 1000 & number < 1000000) //kilobytes
             {

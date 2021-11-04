@@ -79,14 +79,36 @@ namespace LocalDatabase_Client
             }
 
         }
-
+        public void setFoldersSize()
+        {
+            foreach(var folder in directoryElements)
+            {
+                long folderSize = 0;
+                if(folder.isFolder)
+                {
+                    foreach (var file in directoryElements)
+                    {
+                        if (!file.isFolder)
+                        {
+                            if(file.pathArray.Contains(folder.name))
+                            {
+                                folderSize += file.size;
+                            }
+                        }
+                    }
+                    folder.size = folderSize;
+                    folder.sizeText = folder.convertNumber(folderSize);
+                }
+            }
+        }
         //method where every file in directory is summed and returns a size of data space in GigaBytes
         public double usedSpace()
         {
             long usedSpaceCounter = 0;
             for(int i = 0; i < directoryElements.Count; i++)
             {
-                usedSpaceCounter += directoryElements[i].size;
+                if(!directoryElements[i].isFolder)
+                    usedSpaceCounter += directoryElements[i].size;
             }
             return (double)(usedSpaceCounter / 1000000000.0);
         }

@@ -55,8 +55,6 @@ namespace LocalDatabase_Client
         {
             if (sslStream != null)
             {
-                do
-                {
                     cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
                     string data = null;
                     try
@@ -64,6 +62,7 @@ namespace LocalDatabase_Client
                         data = cc.readMessage(sslStream);
                         directoryManager.directoryElements.Clear();
                         ClientCom.SendDirectoryRecognizer(data, directoryManager);
+                        directoryManager.setFoldersSize();
                         Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
                         foreach (var a in directoryManager.directoryElements)
                         {
@@ -84,7 +83,6 @@ namespace LocalDatabase_Client
                         Owner.Show();
                         this.Close();
                     }
-                } while (directoryManager.directoryElements == null);
             }
         }
 
