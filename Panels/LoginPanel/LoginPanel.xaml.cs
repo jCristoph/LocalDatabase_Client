@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+
 namespace LocalDatabase_Client.LoginPanel
 {
     /// <summary>
@@ -30,6 +31,8 @@ namespace LocalDatabase_Client.LoginPanel
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
             InitializeComponent();
         }
+
+
 
         private void Connection()
         {
@@ -53,7 +56,7 @@ namespace LocalDatabase_Client.LoginPanel
             {
                 //if (client.Connected) //condition if client connects properly
                 //{
-                    cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, passwordBoxPassword.Password), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
+                    cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, Client.Encryption.encryption256(passwordBoxPassword.Password)), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
                     int answer = cc.readMessage(sslStream);
                     if (answer == 1) //condition checks if user logged properly
                     {
@@ -94,6 +97,13 @@ namespace LocalDatabase_Client.LoginPanel
         {
             HelpPanel.HelpPanel hp = new HelpPanel.HelpPanel();
             hp.Show();
+        }
+
+        //shows registration panel -> lets go to Panels/Registration/Registration.xaml.cs
+        private void registrationButton_Click(object sender, RoutedEventArgs e)
+        {
+            Registration.Registration r = new Registration.Registration();
+            r.Show();
         }
     }
 }

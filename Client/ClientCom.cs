@@ -23,6 +23,11 @@ namespace LocalDatabase_Client
             return "<Task=Login><Login>" + login + "</Login><Pass>" + password + "</Pass></Task><EOM>";
         }
 
+        public static string RegistrationMessage(string surname,string name, string password)
+        {
+            return "<Task=Registration><Surname>" + surname + "</Surname><Name>" + name + "</Name><Pass>" + password + "</Pass></Task><EOM>";
+        }
+
         public static string ChangePasswordMessage(string newPassword, string token)
         {
             return "<Task=ChngPass><NewPass>" + newPassword + "</NewPass><Token>" + token + "</Token></Task><EOM>";

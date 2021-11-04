@@ -88,7 +88,7 @@ namespace LocalDatabase_Client
             return false;
         }
 
-        
+
         //a very important method where messages from server are recognized and later right method are run.
         public dynamic recognizeMessage(string data)
         {
@@ -120,6 +120,8 @@ namespace LocalDatabase_Client
                     case "Response":
                         if (ClientCom.responseRecognizer(data).Equals("It's ok"))
                             return 0;
+                        else if (ClientCom.responseRecognizer(data).Equals("Registration success"))
+                            return 3;
                         else
                             return 101;
                 }

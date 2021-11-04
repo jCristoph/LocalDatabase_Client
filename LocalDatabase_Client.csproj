@@ -70,6 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Client\Encryption.cs" />
     <Compile Include="Client\FileTransporter.cs" />
     <Compile Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
@@ -77,7 +78,21 @@
     <Compile Include="Panels\HelpPanel\HelpPanel.xaml.cs">
       <DependentUpon>HelpPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Panels\Registration\Registration.xaml.cs">
+      <DependentUpon>Registration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\Registration\RegistrationResult.xaml.cs">
+      <DependentUpon>RegistrationResult.xaml</DependentUpon>
+    </Compile>
     <Page Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Panels\Registration\Registration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Panels\Registration\RegistrationResult.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

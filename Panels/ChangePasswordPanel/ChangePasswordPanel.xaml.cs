@@ -38,7 +38,7 @@ namespace LocalDatabase_Client.ChangePasswordPanel
         {
             if(passwordBox.Password.Equals(passwordBox2.Password)) //condition if new password is the same in both of password boxes.
             {
-                cc.sendMessage(ClientCom.ChangePasswordMessage(passwordBox.Password, token), sslStream); //send message with request to set new password in db
+                cc.sendMessage(ClientCom.ChangePasswordMessage(Client.Encryption.encryption256(passwordBox.Password), token), sslStream); //send message with request to set new password in db
                 if (cc.readMessage(sslStream) == 404)
                     isDone = false;
                 else
