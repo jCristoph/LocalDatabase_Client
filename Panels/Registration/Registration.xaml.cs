@@ -37,7 +37,8 @@ namespace LocalDatabase_Client.Registration
         private void Connection()
         {
             cc = new ClientConnection("127.0.0.1");
-            sslStream = cc.Start();
+            cc.Start();
+            sslStream = cc.SslStream;
         }
 
         //click button event. If the name and surname are longer than 2 system add new user - > look at Database/DatabaseManager.cs => AddUser()
