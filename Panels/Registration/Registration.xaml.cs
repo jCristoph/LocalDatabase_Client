@@ -68,7 +68,7 @@ namespace LocalDatabase_Client.Registration
                 else
                     mp = new MessagePanel.MessagePanel("Passwords are different!", false);
 
-                string password_SHA256 = Encryption.encryption256(password);
+                string password_SHA256 = Encryption_pass.encryption256(password);
                 if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
                 {
                     cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, password_SHA256), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
