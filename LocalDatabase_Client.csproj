@@ -70,6 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Security\Encryption_file.cs" />
     <Compile Include="Security\Encryption_pass.cs" />
     <Compile Include="Client\FileTransporter.cs" />
     <Compile Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
@@ -84,6 +85,7 @@
     <Compile Include="Panels\Registration\RegistrationResult.xaml.cs">
       <DependentUpon>RegistrationResult.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Security\KeyGenerator.cs" />
     <Page Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

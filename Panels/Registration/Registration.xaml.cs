@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LocalDatabase_Client;
-using LocalDatabase_Client.Client;
+using LocalDatabase_Client.Security;
 
 namespace LocalDatabase_Client.Registration
 

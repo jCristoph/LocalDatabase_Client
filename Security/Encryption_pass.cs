@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 
 
-namespace LocalDatabase_Client.Client
+namespace LocalDatabase_Client.Security
 {
     public static class Encryption_pass
     {
