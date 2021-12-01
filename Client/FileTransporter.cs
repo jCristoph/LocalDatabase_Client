@@ -107,7 +107,6 @@ namespace LocalDatabase_Client
             socket.Close();
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
-            Thread.Sleep(1000);
         }
         #endregion
 
@@ -156,7 +155,7 @@ namespace LocalDatabase_Client
                     }
                 }
                 buffer = new byte[BUFFER_SIZE];
-                //networkStream.Close();
+                networkStream.Close();
             }
         }
         private void sendFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -168,7 +167,6 @@ namespace LocalDatabase_Client
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
-            Thread.Sleep(1000);
             refresh();
         }
         #endregion
