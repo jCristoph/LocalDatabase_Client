@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace LocalDatabase_Client
 {
@@ -23,17 +13,13 @@ namespace LocalDatabase_Client
         public SslStream SslStream { get => sslStream; }
         TcpClient client = null;
 
-        private String serverIP = null;
         public string token { get; set; } //token of logged client
         public double limit { get; set; } //limit of data space
-        private int port = 0;
         private static string ServerCertificateName = "MySslSocketCertificate";
 
-        //constructor
-        public ClientConnection(String serverIP)
+        public ClientConnection()
         {
-            this.serverIP = serverIP;
-            this.port = 25000;
+         
         }
 
         //method starts connection with server
@@ -45,10 +31,10 @@ namespace LocalDatabase_Client
                 var clientCertificateCollection = new
                    X509CertificateCollection(new X509Certificate[]
                    { clientCertificate });
-                client = new TcpClient(serverIP, port);
+                client = new TcpClient(Client.SettingsManager.Instance.GetServerIp(), Client.SettingsManager.Instance.GetPort());
                 sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
                 sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
-                client.Connect(serverIP, port);
+                client.Connect(Client.SettingsManager.Instance.GetServerIp(), Client.SettingsManager.Instance.GetPort());
             }
             catch (Exception e)
             {

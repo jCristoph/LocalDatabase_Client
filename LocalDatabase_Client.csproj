@@ -51,6 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -70,41 +71,43 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Client\Encryption.cs" />
-    <Compile Include="Client\FileTransporter.cs" />
-    <Compile Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
+    <Compile Include="Data\Encryption.cs" />
+    <Compile Include="Data\FileTransporter.cs" />
+    <Compile Include="Data\SettingsManager.cs" />
+    <Compile Include="Ui\CustomClasses\PlaceholderTextBox\PlaceholderTextBox.cs" />
+    <Compile Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Panels\HelpPanel\HelpPanel.xaml.cs">
+    <Compile Include="Ui\Panels\HelpPanel\HelpPanel.xaml.cs">
       <DependentUpon>HelpPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Panels\Registration\Registration.xaml.cs">
+    <Compile Include="Ui\Panels\Registration\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Panels\Registration\RegistrationResult.xaml.cs">
+    <Compile Include="Ui\Panels\Registration\RegistrationResult.xaml.cs">
       <DependentUpon>RegistrationResult.xaml</DependentUpon>
     </Compile>
-    <Page Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml">
+    <Page Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Panels\Registration\Registration.xaml">
+    <Page Include="Ui\Panels\Registration\Registration.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Panels\Registration\RegistrationResult.xaml">
+    <Page Include="Ui\Panels\Registration\RegistrationResult.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Panels\CreateFolderPanel\CreateFolderPanel.xaml">
+    <Page Include="Ui\Panels\CreateFolderPanel\CreateFolderPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Panels\HelpPanel\HelpPanel.xaml">
+    <Page Include="Ui\Panels\HelpPanel\HelpPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Panels\LoginPanel\LoginPanel.xaml">
+    <Page Include="Ui\Panels\LoginPanel\LoginPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -116,80 +119,85 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Client\ClientConnection.cs" />
-    <Compile Include="Client\ClientCom.cs" />
-    <Compile Include="Core\ObservableObject.cs" />
-    <Compile Include="Core\RelayCommand.cs" />
-    <Compile Include="Panels\CreateFolderPanel\CreateFolderPanel.xaml.cs">
+    <Compile Include="Data\Connection\ClientConnection.cs" />
+    <Compile Include="Data\Connection\ClientCom.cs" />
+    <Compile Include="Ui\Panels\CreateFolderPanel\CreateFolderPanel.xaml.cs">
       <DependentUpon>CreateFolderPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Directory\DirectoryElement.cs" />
-    <Compile Include="Directory\DirectoryManager.cs" />
-    <Compile Include="Panels\LoginPanel\LoginPanel.xaml.cs">
+    <Compile Include="Data\Directory\DirectoryElement.cs" />
+    <Compile Include="Data\Directory\DirectoryManager.cs" />
+    <Compile Include="Ui\Panels\LoginPanel\LoginPanel.xaml.cs">
       <DependentUpon>LoginPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Panels\MessagePanel\MessagePanel.xaml">
+    <Page Include="Ui\Panels\MessagePanel\MessagePanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ProgressBar\ProgressBar.xaml">
+    <Page Include="Ui\Panels\SettingsPanel\SettingsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\LeftArrowButtonTheme.xaml">
+    <Page Include="Ui\CustomClasses\ProgressBar\ProgressBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\ProgressBarStyle.xaml">
+    <Page Include="Ui\Themes\LeftArrowButtonTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\RightArrowButtonTheme.xaml">
+    <Page Include="Ui\Themes\ProgressBarStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\ListViewHeaderTheme.xaml">
+    <Page Include="Ui\Themes\RightArrowButtonTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\ListViewItemTheme.xaml">
+    <Page Include="Ui\Themes\ListViewHeaderTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\ListViewTheme.xaml">
+    <Page Include="Ui\Themes\ListViewItemTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\MenuButtonTheme.xaml">
+    <Page Include="Ui\Themes\ListViewTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\PasswordBoxTheme.xaml">
+    <Page Include="Ui\Themes\MenuButtonTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\ScrollBarTheme.xaml">
+    <Page Include="Ui\Themes\PasswordBoxTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\TextBoxTheme.xaml">
+    <Page Include="Ui\Themes\ScrollBarTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\ToggleButtonTheme.xaml">
+    <Page Include="Ui\Themes\TextBoxTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\Themes\ToggleButtonTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Panels\MessagePanel\MessagePanel.xaml.cs">
+    <Compile Include="Ui\Panels\MessagePanel\MessagePanel.xaml.cs">
       <DependentUpon>MessagePanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProgressBar\ProgressBar.xaml.cs">
+    <Compile Include="Ui\Panels\SettingsPanel\SettingsPanel.xaml.cs">
+      <DependentUpon>SettingsPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\CustomClasses\ProgressBar\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -230,44 +238,45 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\file_icon.png" />
-    <Resource Include="Images\folder_icon.png" />
+    <Resource Include="Ui\Images\file_icon.png" />
+    <Resource Include="Ui\Images\folder_icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\login_error.png" />
+    <Resource Include="Ui\Images\HelpImages\login_error.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\change_password.png" />
+    <Resource Include="Ui\Images\HelpImages\change_password.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\login.png" />
+    <Resource Include="Ui\Images\HelpImages\login.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\login_bad.png" />
+    <Resource Include="Ui\Images\HelpImages\login_bad.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\login_ok.png" />
+    <Resource Include="Ui\Images\HelpImages\login_ok.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\new_folder.png" />
+    <Resource Include="Ui\Images\HelpImages\new_folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\send_file.png" />
+    <Resource Include="Ui\Images\HelpImages\send_file.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\share.png" />
+    <Resource Include="Ui\Images\HelpImages\share.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\main_window_1.png" />
+    <Resource Include="Ui\Images\HelpImages\main_window_1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\main_window_2.png" />
+    <Resource Include="Ui\Images\HelpImages\main_window_2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpImages\main_window_3.png" />
-    <Resource Include="Images\HelpImages\main_window_4.png" />
-    <Resource Include="Images\HelpImages\main_window_5.png" />
-    <Resource Include="Images\HelpImages\main_window_6.png" />
+    <Resource Include="Ui\Images\HelpImages\main_window_3.png" />
+    <Resource Include="Ui\Images\HelpImages\main_window_4.png" />
+    <Resource Include="Ui\Images\HelpImages\main_window_5.png" />
+    <Resource Include="Ui\Images\HelpImages\main_window_6.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

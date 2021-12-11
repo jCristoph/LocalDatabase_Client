@@ -3,9 +3,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
-using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -113,7 +110,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar);
+                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar);
                         fileTransporter.connectAsClient();
                         fileTransporter.recieveFile(refreshList);
                     }
@@ -160,7 +157,7 @@ namespace LocalDatabase_Client
                 {
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to overwrite this file?", true);
                     mp.ShowDialog();
-                    if (mp.answear.Equals(true))
+                    if (mp.isAnswered.Equals(true))
                     {
                         if (result == true)
                         {
@@ -188,7 +185,7 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
-                                var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar);
+                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar);
                                 fileTransporter.connectAsClient();
                                 fileTransporter.sendFile(refreshList);
                             }
@@ -226,7 +223,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar);
+                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar);
                         fileTransporter.connectAsClient();
                         fileTransporter.sendFile(refreshList);
                     }

@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Net.Security;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 
 namespace LocalDatabase_Client.LoginPanel
@@ -28,15 +17,14 @@ namespace LocalDatabase_Client.LoginPanel
 
         public LoginPanel()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
         }
 
 
-
         private void Connection()
         {
-            cc = new ClientConnection("127.0.0.1");
+            cc = new ClientConnection();
             cc.Start();
             sslStream = cc.SslStream;
         }
@@ -104,6 +92,12 @@ namespace LocalDatabase_Client.LoginPanel
         {
             Registration.Registration r = new Registration.Registration();
             r.Show();
+        }
+
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Panels.Settings.Settings settings = new Panels.Settings.Settings();
+            settings.Show();
         }
     }
 }

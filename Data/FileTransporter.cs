@@ -12,8 +12,6 @@ namespace LocalDatabase_Client
     public class FileTransporter
     {
         static int BUFFER_SIZE = 4096;
-
-        private string ip;
         private FileInfo file;
         private string fileName;
 
@@ -22,9 +20,8 @@ namespace LocalDatabase_Client
         Action refresh;
         Socket socket;
 
-        public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar)
+        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar)
         {
-            this.ip = ip;
             this.fileName = fileName;
             file = new FileInfo(fileName);
             this.size = size;
@@ -35,7 +32,7 @@ namespace LocalDatabase_Client
 
         public void connectAsServer()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), 25001);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(Client.SettingsManager.Instance.GetServerIp()), Client.SettingsManager.Instance.GetPort() + 1);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(ipe);
             socket.Listen(10);
@@ -44,7 +41,7 @@ namespace LocalDatabase_Client
 
         public void connectAsClient()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), 25001);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(Client.SettingsManager.Instance.GetServerIp()), Client.SettingsManager.Instance.GetPort() + 1);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(ipe);
         }
