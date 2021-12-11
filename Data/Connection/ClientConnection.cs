@@ -108,6 +108,8 @@ namespace LocalDatabase_Client
                             return 0;
                         else if (ClientCom.responseRecognizer(data).Equals("Registration success"))
                             return 3;
+                        else if (ClientCom.responseRecognizer(data).Equals("User already exists"))
+                            return 4;
                         else
                             return 101;
                 }

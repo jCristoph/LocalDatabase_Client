@@ -34,8 +34,6 @@ namespace LocalDatabase_Client.Registration
 
 
             MessagePanel.MessagePanel mp;
-
-            ////////////
             Task t = new Task(() => Connection()); //task that realizing a connection with server
             t.Start();
             Thread.Sleep(100);
@@ -43,51 +41,48 @@ namespace LocalDatabase_Client.Registration
             {
                 mp = new MessagePanel.MessagePanel("Error. Cannot connect with server!", false);
                 mp.ShowDialog();
+                return;
             }
+            string password = "0";
+
+            if (passwordBoxPassword1.Password == passwordBoxPassword2.Password)
+                password = passwordBoxPassword1.Password;
+            else
+                mp = new MessagePanel.MessagePanel("Passwords are different!", false);
+
+            string password_SHA256 = Encryption.encryption256(password);
+
+            if (surnameTextBox.Text.Length < 2 && nameTextBox.Text.Length < 2)
+            {
+                mp = new MessagePanel.MessagePanel("Data is not valid", false);
+                mp.ShowDialog();
+                return;
+            }
+
+            cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, password_SHA256), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
+            int answer = cc.readMessage(sslStream);
+            if (answer == 3)
+            {
+                mp = new MessagePanel.MessagePanel("Registration success", false);
+            }
+
+            else if(answer == 4)
+            {
+                mp = new MessagePanel.MessagePanel("User already exists", false);
+            }
+
             else
             {
-
-                string password = "0";
-
-                if (passwordBoxPassword1.Password == passwordBoxPassword2.Password)
-                    password = passwordBoxPassword1.Password;
-                else
-                    mp = new MessagePanel.MessagePanel("Passwords are different!", false);
-
-                string password_SHA256 = Encryption.encryption256(password);
-                if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
-                {
-                    cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, password_SHA256), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
-                    int answer = cc.readMessage(sslStream);
-                    if (answer == 3)
-                    {
-                        mp = new MessagePanel.MessagePanel("Registration success", false);
-                    }
-                    else
-                    {
-                        mp = new MessagePanel.MessagePanel("Registration error", false);
-                    }
-                    mp.ShowDialog();
-                    this.Close();
-                }
-                else
-                {
-                    mp = new MessagePanel.MessagePanel("Data is not valid", false);
-                    mp.ShowDialog();
-                }
-
+                mp = new MessagePanel.MessagePanel("Registration error", false);
             }
+            mp.ShowDialog();
+            this.Close();
         }
 
         //if user clicks back button then panel just close.
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-        }
-
-        private void surnameTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
         }
     }
 }

@@ -84,18 +84,11 @@
     <Compile Include="Ui\Panels\Registration\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ui\Panels\Registration\RegistrationResult.xaml.cs">
-      <DependentUpon>RegistrationResult.xaml</DependentUpon>
-    </Compile>
     <Page Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Ui\Panels\Registration\Registration.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\Panels\Registration\RegistrationResult.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
