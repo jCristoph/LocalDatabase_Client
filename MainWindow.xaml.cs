@@ -3,11 +3,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
-using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using LocalDatabase_Client.Utils;
 
 
 namespace LocalDatabase_Client
@@ -72,7 +70,7 @@ namespace LocalDatabase_Client
                         Application.Current.Dispatcher.Invoke(new Action(() =>
                         {
                             refreshTextBlock.Text = "Last refresh: " + DateTime.Now;
-                            sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB";
+                            sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + Math.Round(UnitsConverter.ConvertBytesToGigabytes(limit),2) + "GB";
                         }));
                     }
                     catch (Exception e)
@@ -95,7 +93,8 @@ namespace LocalDatabase_Client
                 try
                 {
                     //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
-                    cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), sslStream);
+                    var filePath = (((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name;
+                    cc.sendMessage(ClientCom.SendOrderMessage(filePath, token), sslStream);
                     int answer = cc.readMessage(sslStream);
                     if (answer == -1)
                     {
@@ -113,7 +112,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar);
+                        var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer);
                         fileTransporter.connectAsClient();
                         fileTransporter.recieveFile(refreshList);
                     }
@@ -188,7 +187,7 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
-                                var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar);
+                                var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
                                 fileTransporter.connectAsClient();
                                 fileTransporter.sendFile(refreshList);
                             }
@@ -226,7 +225,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar);
+                        var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
                         fileTransporter.connectAsClient();
                         fileTransporter.sendFile(refreshList);
                     }

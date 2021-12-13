@@ -48,11 +48,12 @@ namespace LocalDatabase_Client
                 client = new TcpClient(serverIP, port);
                 sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
                 sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
+                sslStream.ReadTimeout = 5000; //if server doesn't respond in 5 seconds then client stop connection - it condition to avoid deadlock
                 client.Connect(serverIP, port);
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -117,6 +118,8 @@ namespace LocalDatabase_Client
                         return data;
                     case "SessionExpired":
                         return 404;
+                    case "AcceptTransfer":
+                        return ClientCom.acceptTransferRecognizer(data);
                     case "Response":
                         if (ClientCom.responseRecognizer(data).Equals("It's ok"))
                             return 0;
@@ -155,6 +158,7 @@ namespace LocalDatabase_Client
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     return -1;
                 }
             } while (inputBytes != 0);
@@ -173,6 +177,7 @@ namespace LocalDatabase_Client
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
                 mp.ShowDialog();
             }
