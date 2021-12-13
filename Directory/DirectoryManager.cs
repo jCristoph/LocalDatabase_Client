@@ -75,7 +75,7 @@ namespace LocalDatabase_Client
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.ToString() + " " + s);
             }
 
         }

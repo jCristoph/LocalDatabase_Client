@@ -179,9 +179,11 @@ namespace LocalDatabase_Client
         /// <returns></returns>
         public static void SendDirectoryRecognizer(string data, DirectoryManager directoryManager)
         {
+            data = data.Replace("<EOM>", "");
             foreach (var a in data.Split(new string[] { "</Task>" }, StringSplitOptions.None))
             {
-                directoryManager.ProcessPath(a);
+                if(a.Length > 0)
+                    directoryManager.ProcessPath(a);
             }
         }
 
@@ -193,6 +195,13 @@ namespace LocalDatabase_Client
         public static string UpdateDirectoryOrderRecognizer()
         {
             return "";
+        }
+
+        public static int acceptTransferRecognizer(string s)
+        {
+            int IndexHome = s.IndexOf("<Port>") + "<Port>".Length;
+            int IndexEnd = s.LastIndexOf("</Port>");
+            return Int32.Parse(s.Substring(IndexHome, IndexEnd - IndexHome)); 
         }
 
         /// <summary>
