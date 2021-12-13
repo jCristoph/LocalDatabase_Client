@@ -70,6 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Security\Decryption_file.cs" />
     <Compile Include="Security\Encryption_file.cs" />
     <Compile Include="Security\Encryption_pass.cs" />
     <Compile Include="Client\FileTransporter.cs" />

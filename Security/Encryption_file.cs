@@ -21,11 +21,11 @@ namespace LocalDatabase_Client.Security
             return data;
         }
 
-        private static void AES_Encrypt(string inputFile, string user_key)
+        public static void Encrypt(string inFile, string user_key)
         {
             byte[] salt = RandomSaltGenerator();
             byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(user_key);
-            FileStream fsCrypt = new FileStream(inputFile + ".ENC", FileMode.Create); //zaszyfrowany plik ma rozszerzenie .ENC
+            FileStream fsCrypt = new FileStream(inFile + ".ENC", FileMode.Create); //zaszyfrowany plik ma rozszerzenie .ENC
 
             RijndaelManaged AES = new RijndaelManaged();
 
@@ -39,33 +39,22 @@ namespace LocalDatabase_Client.Security
             fsCrypt.Write(salt, 0, salt.Length);
 
             CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateEncryptor(), CryptoStreamMode.Write);
-            FileStream fsIn = new FileStream(inputFile, FileMode.Open);
+            FileStream fsIn = new FileStream(inFile, FileMode.Open);
 
             byte[] buffer = new byte[1048576];
             int read;
 
-            try
-            {
-                while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)
+        
+            while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)
                     cs.Write(buffer, 0, read);
 
-                fsIn.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("error");
-            }
-            finally
-            {
-                File.Delete(@inputFile);
-                cs.Close();
-                fsCrypt.Close();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("success");
-                Console.ForegroundColor = ConsoleColor.White;
-            }
+           fsIn.Close();
+
+           //File.Delete(inputFile + ".ENC"); //docelowo plik usunięty z dysku po przesłaniu
+           cs.Close();
+           fsCrypt.Close();
+           Console.WriteLine("success");
+         
         }
-
-
     }
 }

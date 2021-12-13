@@ -95,7 +95,9 @@ namespace LocalDatabase_Client
                 try
                 {
                     //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
-                    cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), sslStream);
+                    var filePath = (((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name;
+                    cc.sendMessage(ClientCom.SendOrderMessage(filePath,token), sslStream);
+                    
                     int answer = cc.readMessage(sslStream);
                     if (answer == -1)
                     {
@@ -154,8 +156,13 @@ namespace LocalDatabase_Client
                 Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog(); //special Windows panel for file browsing
                 Nullable<bool> result = dlg.ShowDialog();
                 string filename = dlg.FileName;
-                if(!filename.Equals(""))
+                if (!filename.Equals(""))
                 {
+                //tu następuje zaszyfrowanie pliku
+                string key = "/Yz0I0X7~GLi[9!IL$!t35&$!*O*GmIn";
+                Security.Encryption_file.Encrypt(filename, key);
+                filename = filename + ".ENC";
+
                 if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
                 {
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to overwrite this file?", true);

@@ -65,7 +65,7 @@ namespace LocalDatabase_Client
         private void recieveFile_bg_DoWork(object sender, DoWorkEventArgs e)
         {
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
-            file = new FileInfo(folderPath + fileName);
+            file = new FileInfo(folderPath + fileName + ".ENC");
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
             var readed = -1;
@@ -102,6 +102,8 @@ namespace LocalDatabase_Client
         {
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
+            string key = "/Yz0I0X7~GLi[9!IL$!t35&$!*O*GmIn";
+            Security.Decryption_file.Decrypt(file.FullName, key);
         }
         #endregion
 
