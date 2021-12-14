@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Controls;
 
+
 namespace LocalDatabase_Client
 {
     public class FileTransporter
@@ -16,7 +17,7 @@ namespace LocalDatabase_Client
         private string ip;
         private FileInfo file;
         private string fileName;
-
+        private string extension = ".ENC";
         System.Windows.Controls.ProgressBar progressBar;
         long size;
         Action refresh;
@@ -65,7 +66,7 @@ namespace LocalDatabase_Client
         private void recieveFile_bg_DoWork(object sender, DoWorkEventArgs e)
         {
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
-            file = new FileInfo(folderPath + fileName + ".ENC");
+            file = new FileInfo(folderPath + fileName + extension);
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
             var readed = -1;
@@ -103,7 +104,7 @@ namespace LocalDatabase_Client
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
             string key = "/Yz0I0X7~GLi[9!IL$!t35&$!*O*GmIn";
-            Security.Decryption_file.Decrypt(file.FullName, key);
+            Security.DecryptionFile.Decrypt(file.FullName, key);
         }
         #endregion
 

@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 
 namespace LocalDatabase_Client.Security
 {
-    public class Decryption_file
+    public class DecryptionFile
     {
 
         public static void Decrypt(string inFile, string user_key)

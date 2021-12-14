@@ -21,7 +21,7 @@ namespace LocalDatabase_Client
         private ObservableCollection<DirectoryElement> currentDirectory;
         private DirectoryElement currentFolder;
         private string token;
-        
+        private string extension = ".ENC";
         public MainWindow(SslStream sslStream, ClientConnection cc, bool isPasswordChanged)
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is visible in center
@@ -160,8 +160,8 @@ namespace LocalDatabase_Client
                 {
                 //tu następuje zaszyfrowanie pliku
                 string key = "/Yz0I0X7~GLi[9!IL$!t35&$!*O*GmIn";
-                Security.Encryption_file.Encrypt(filename, key);
-                filename = filename + ".ENC";
+                Security.EncryptionFile.Encrypt(filename, key);
+                filename = filename + extension;
 
                 if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
                 {

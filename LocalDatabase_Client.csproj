@@ -70,9 +70,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Security\Decryption_file.cs" />
-    <Compile Include="Security\Encryption_file.cs" />
-    <Compile Include="Security\Encryption_pass.cs" />
+    <Compile Include="Security\DecryptionFile.cs" />
+    <Compile Include="Security\EncryptionFile.cs" />
+    <Compile Include="Security\EncryptionPass.cs" />
     <Compile Include="Client\FileTransporter.cs" />
     <Compile Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>

@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace LocalDatabase_Client.Security
 {
-    class Encryption_file
+    class EncryptionFile
     {
         private static byte[] RandomSaltGenerator()
         {
