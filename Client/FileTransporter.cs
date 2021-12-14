@@ -15,6 +15,7 @@ namespace LocalDatabase_Client
         static int BUFFER_SIZE = 4096;
 
         private string ip;
+        private int port;
         private FileInfo file;
         private string fileName;
         private string extension = ".ENC";
@@ -23,9 +24,10 @@ namespace LocalDatabase_Client
         Action refresh;
         Socket socket;
 
-        public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar)
+        public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port)
         {
             this.ip = ip;
+            this.port = port;
             this.fileName = fileName;
             file = new FileInfo(fileName);
             this.size = size;
@@ -36,7 +38,7 @@ namespace LocalDatabase_Client
 
         public void connectAsServer()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), 25001);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(ipe);
             socket.Listen(10);
@@ -45,7 +47,7 @@ namespace LocalDatabase_Client
 
         public void connectAsClient()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), 25001);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(ipe);
         }
@@ -87,12 +89,13 @@ namespace LocalDatabase_Client
                     }
                     catch (SocketException se)
                     {
+                        Console.WriteLine(se.ToString());
                         readed = 0;
                     }
                     //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
                     Thread.Sleep(1);
                 } while (readed > (BUFFER_SIZE - 1));
-                //networkStream.Close();
+                networkStream.Close();
             }
         }
         private void recieveFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -101,6 +104,8 @@ namespace LocalDatabase_Client
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
             string key = "/Yz0I0X7~GLi[9!IL$!t35&$!*O*GmIn";
@@ -153,7 +158,7 @@ namespace LocalDatabase_Client
                     }
                 }
                 buffer = new byte[BUFFER_SIZE];
-                //networkStream.Close();
+                networkStream.Close();
             }
         }
         private void sendFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -163,6 +168,8 @@ namespace LocalDatabase_Client
         private void sendFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             progressBar.Visibility = System.Windows.Visibility.Hidden;
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
             refresh();
         }
         #endregion

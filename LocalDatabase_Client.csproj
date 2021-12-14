@@ -87,6 +87,7 @@
       <DependentUpon>RegistrationResult.xaml</DependentUpon>
     </Compile>
     <Compile Include="Security\KeyGenerator.cs" />
+    <Compile Include="Utils\UnitsConverter.cs" />
     <Page Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -121,8 +122,6 @@
     </Compile>
     <Compile Include="Client\ClientConnection.cs" />
     <Compile Include="Client\ClientCom.cs" />
-    <Compile Include="Core\ObservableObject.cs" />
-    <Compile Include="Core\RelayCommand.cs" />
     <Compile Include="Panels\CreateFolderPanel\CreateFolderPanel.xaml.cs">
       <DependentUpon>CreateFolderPanel.xaml</DependentUpon>
     </Compile>
