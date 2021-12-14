@@ -34,7 +34,7 @@ namespace LocalDatabase_Client
                 client = new TcpClient(Client.SettingsManager.Instance.GetServerIp(), Client.SettingsManager.Instance.GetPort());
                 sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
                 sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
-                client.Connect(Client.SettingsManager.Instance.GetServerIp(), Client.SettingsManager.Instance.GetPort());
+                //client.Connect(Client.SettingsManager.Instance.GetServerIp(), Client.SettingsManager.Instance.GetPort());
             }
             catch (Exception e)
             {
@@ -60,7 +60,8 @@ namespace LocalDatabase_Client
                     break;
                 }
             }
-            return foundCertificate;
+            var cert = new X509Certificate2("x509cert.pfx", "MyPassword", X509KeyStorageFlags.MachineKeySet);
+            return cert;
         }
 
         static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
