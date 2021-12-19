@@ -111,7 +111,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer); ;
+                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer); ;
                         fileTransporter.connectAsClient();
                         fileTransporter.recieveFile(refreshList);
                     }
@@ -186,7 +186,7 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
-                                var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
+                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
                                 fileTransporter.connectAsClient();
                                 fileTransporter.sendFile(refreshList);
                             }
@@ -224,7 +224,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
+                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
                         fileTransporter.connectAsClient();
                         fileTransporter.sendFile(refreshList);
                     }

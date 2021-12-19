@@ -24,7 +24,7 @@ namespace LocalDatabase_Client.LoginPanel
 
         private void Connection()
         {
-            cc = new ClientConnection("127.0.0.1");
+            cc = new ClientConnection();
             cc.Start();
             sslStream = cc.SslStream;
         }

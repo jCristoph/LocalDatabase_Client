@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client
 {
@@ -21,9 +22,9 @@ namespace LocalDatabase_Client
         Action refresh;
         Socket socket;
 
-        public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port)
+        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port)
         {
-            this.ip = ip;
+            this.ip = SettingsManager.Instance.GetServerIp();
             this.port = port;
             this.fileName = fileName;
             file = new FileInfo(fileName);

@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using LocalDatabase_Client.Client;
+
 namespace LocalDatabase_Client
 {
     public class ClientConnection
@@ -19,9 +21,9 @@ namespace LocalDatabase_Client
         private static string ServerCertificateName = "MySslSocketCertificate";
 
         //constructor
-        public ClientConnection(string serverIP)
+        public ClientConnection()
         {
-            this.serverIP = serverIP;
+            this.serverIP = SettingsManager.Instance.GetServerIp();
             this.port = 25000;
         }
 
