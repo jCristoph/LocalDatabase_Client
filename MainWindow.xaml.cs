@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LocalDatabase_Client.Data.Utils;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace LocalDatabase_Client
         private SslStream sslStream;
         private ClientConnection cc;
         private DirectoryManager directoryManager;
-        private double limit;
+        private long limit;
         private ObservableCollection<DirectoryElement> currentDirectory;
         private DirectoryElement currentFolder;
         private string token;
@@ -35,7 +36,7 @@ namespace LocalDatabase_Client
             token = cc.token;
             this.sslStream = sslStream;
             this.cc = cc;
-            this.limit = cc.limit;
+            this.limit = (long) cc.limit;
             directoryManager = new DirectoryManager();
             currentDirectory = new ObservableCollection<DirectoryElement>();
             currentFolder = new DirectoryElement("\\Main_Folder", 0, "None", true);
@@ -69,7 +70,7 @@ namespace LocalDatabase_Client
                         Application.Current.Dispatcher.Invoke(new Action(() =>
                         {
                             refreshTextBlock.Text = "Last refresh: " + DateTime.Now;
-                            sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + limit + "GB";
+                            sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + UnitsConverter.ConvertBytesToGigabytes(limit) + "GB";
                         }));
                     }
                     catch (Exception e)
@@ -110,7 +111,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar);
+                        var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer); ;
                         fileTransporter.connectAsClient();
                         fileTransporter.recieveFile(refreshList);
                     }
@@ -185,7 +186,7 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
-                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar);
+                                var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
                                 fileTransporter.connectAsClient();
                                 fileTransporter.sendFile(refreshList);
                             }
@@ -223,7 +224,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar);
+                        var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
                         fileTransporter.connectAsClient();
                         fileTransporter.sendFile(refreshList);
                     }

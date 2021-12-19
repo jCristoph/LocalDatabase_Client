@@ -1,20 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-
 namespace LocalDatabase_Client
 {
     public class ClientConnection
@@ -30,7 +19,7 @@ namespace LocalDatabase_Client
         private static string ServerCertificateName = "MySslSocketCertificate";
 
         //constructor
-        public ClientConnection(String serverIP)
+        public ClientConnection(string serverIP)
         {
             this.serverIP = serverIP;
             this.port = 25000;

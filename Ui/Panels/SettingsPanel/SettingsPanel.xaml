@@ -26,11 +26,8 @@
            
             <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Server Ip" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" FontSize="20" Foreground="White"/>
             <TextBox VerticalAlignment="Center" Height="32" Name="serverIpText" Grid.Column="1" Grid.Row="0" Margin="10" Style="{StaticResource ModernTextBox}" FontSize="16"/>
-            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Port" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="20" Foreground="White"/>
-            <TextBox VerticalAlignment="Center" Height="32" Name="portText" Grid.Column="1" Grid.Row="1" Margin="10" Style="{StaticResource ModernTextBox}" FontSize="16"/>
-
+           
             <Button Content="Change Server Ip" HorizontalAlignment="Center" VerticalAlignment="Center" Width="220" Height="50" Name="changeServerIpBtn" Click="changeServerIpButton_Click" Grid.Column="2" Grid.Row="0" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
-            <Button Content="Change Port" HorizontalAlignment="Center" VerticalAlignment="Center" Width="220" Height="50" Name="changePortBtn" Click="changePortButton_Click" Grid.Column="2" Grid.Row="1" Style="{StaticResource MenuButtonTheme}" FontSize="20"/>
             <Button Content="Close" HorizontalAlignment="Center" VerticalAlignment="Center" Width="170" Height="50" Grid.Column="2" Grid.Row="6" Style="{StaticResource MenuButtonTheme}" FontSize="20" Click="exitButton_Click"/>
         </Grid>
     </Border>

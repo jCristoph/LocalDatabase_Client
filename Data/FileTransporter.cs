@@ -11,6 +11,8 @@ namespace LocalDatabase_Client
     public class FileTransporter
     {
         static int BUFFER_SIZE = 4096;
+        private string ip;
+        private int port;
         private FileInfo file;
         private string fileName;
 
@@ -19,19 +21,20 @@ namespace LocalDatabase_Client
         Action refresh;
         Socket socket;
 
-        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar)
+        public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port)
         {
+            this.ip = ip;
+            this.port = port;
             this.fileName = fileName;
             file = new FileInfo(fileName);
             this.size = size;
             this.progressBar = progressBar;
-
             this.progressBar.Visibility = System.Windows.Visibility.Visible;
         }
 
         public void connectAsServer()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(Client.SettingsManager.Instance.GetServerIp()), Client.SettingsManager.Instance.GetPort() + 1);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(ipe);
             socket.Listen(10);
@@ -40,9 +43,16 @@ namespace LocalDatabase_Client
 
         public void connectAsClient()
         {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(Client.SettingsManager.Instance.GetServerIp()), Client.SettingsManager.Instance.GetPort() + 1);
+            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(ipe);
+            try
+            {
+                socket.Connect(ipe);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         #region recieve File Asynchronous

@@ -74,6 +74,7 @@
     <Compile Include="Data\Encryption.cs" />
     <Compile Include="Data\FileTransporter.cs" />
     <Compile Include="Data\SettingsManager.cs" />
+    <Compile Include="Data\Utils\UnitsConverter.cs" />
     <Compile Include="Ui\CustomClasses\PlaceholderTextBox\PlaceholderTextBox.cs" />
     <Compile Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
@@ -270,6 +271,8 @@
     <Resource Include="Ui\Images\HelpImages\main_window_5.png" />
     <Resource Include="Ui\Images\HelpImages\main_window_6.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Ui\Images\settings.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

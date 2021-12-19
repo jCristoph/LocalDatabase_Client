@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client.Registration
@@ -22,7 +21,7 @@ namespace LocalDatabase_Client.Registration
 
         private void Connection()
         {
-            cc = new ClientConnection();
+            cc = new ClientConnection("127.0.0.1");
             cc.Start();
             sslStream = cc.SslStream;
         }

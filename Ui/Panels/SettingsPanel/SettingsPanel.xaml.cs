@@ -16,7 +16,6 @@ namespace LocalDatabase_Client.Panels.Settings
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
             SetServerHint();
-            SetPort();
         }
 
         private void SetServerHint()
@@ -25,11 +24,6 @@ namespace LocalDatabase_Client.Panels.Settings
             PlaceholderTextBox.Placeholder(serverIpText, serverIp);
         }
 
-        private void SetPort()
-        {
-            string port = SettingsManager.Instance.GetPort().ToString();
-            PlaceholderTextBox.Placeholder(portText, port);
-        }
 
         private void changeServerIpButton_Click(object sender, RoutedEventArgs e)
         {
@@ -68,26 +62,6 @@ namespace LocalDatabase_Client.Panels.Settings
             SetServerHint();
             MessagePanel.MessagePanel messagePanel = new MessagePanel.MessagePanel(message, false);
             messagePanel.ShowDialog();
-        }
-
-        private void changePortButton_Click(object sender, RoutedEventArgs e)
-        {
-            string port = portText.Text;
-            if (string.IsNullOrEmpty(port))
-            {
-                ShowMessagePanel("Value can not be empty");
-                return;
-            }
-
-            if (int.TryParse(port, out int PortInt))
-            {
-                SettingsManager.Instance.SetPort(PortInt);
-                ShowMessagePanel();
-            }
-            else
-            {
-                ShowMessagePanel("Value is not a number");
-            }
         }
     }
 }

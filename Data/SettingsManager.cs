@@ -25,22 +25,7 @@ namespace LocalDatabase_Client.Client
             return GetSetting(ServerIp);
         }
 
-        /// <summary>
-        /// Sets port. Default is 25000
-        /// </summary>
-        /// <param name="port"></param>
-        public void SetPort(int port)
-        {
-            SetSetting(Port, port.ToString());
-        }
-
-        public int GetPort()
-        {
-            return Convert.ToInt16(GetSetting(Port));
-        }
-
         private const string ServerIp = "ServerIp";
-        private const string Port = "Port";
 
         private static string GetSetting(string key)
         {
