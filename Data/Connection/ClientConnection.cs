@@ -1,9 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace LocalDatabase_Client
 {
@@ -13,13 +23,17 @@ namespace LocalDatabase_Client
         public SslStream SslStream { get => sslStream; }
         TcpClient client = null;
 
+        private String serverIP = null;
         public string token { get; set; } //token of logged client
         public double limit { get; set; } //limit of data space
+        private int port = 0;
         private static string ServerCertificateName = "MySslSocketCertificate";
 
-        public ClientConnection()
+        //constructor
+        public ClientConnection(String serverIP)
         {
-         
+            this.serverIP = serverIP;
+            this.port = 25000;
         }
 
         //method starts connection with server
@@ -31,29 +45,37 @@ namespace LocalDatabase_Client
                 var clientCertificateCollection = new
                    X509CertificateCollection(new X509Certificate[]
                    { clientCertificate });
-                client = new TcpClient(Client.SettingsManager.Instance.GetServerIp(), Client.SettingsManager.Instance.GetPort());
+                client = new TcpClient(serverIP, port);
                 sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
                 sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
-                //client.Connect(Client.SettingsManager.Instance.GetServerIp(), Client.SettingsManager.Instance.GetPort());
+                sslStream.ReadTimeout = 5000; //if server doesn't respond in 5 seconds then client stop connection - it condition to avoid deadlock
+                client.Connect(serverIP, port);
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.ToString());
             }
         }
 
         private static X509Certificate getServerCert()
         {
-            //here is needed a x509 cert 
-            //in app folder must be a cert equal to server (copy of it in server and client).
-            //to create cert in your system you have to open power shell as administrator and write some lines:
-            ///New-SelfSignedCertificate -Subject "CN=MySslSocketCertificate" -KeySpec "Signature" -CertStoreLocation "Cert:\CurrentUser\My"
-            ///dir cert:\CurrentUser\My     here you have to copy thumbprint of cert
-            ///$PFXPass = ConvertTo-SecureString -String “MyPassword” -Force -AsPlainText
-            ///Export-PfxCertificate -Cert cert:\CurrentUser\My\___Thumbprint_of_cert____ -Password $PFXPass -FilePath C:\Users\x509cert.pfx
-            var certName = "x509cert.pfx";
-            var certPassword = "MyPassword";
-            return new X509Certificate2(certName, certPassword, X509KeyStorageFlags.MachineKeySet); ;
+            X509Store store = new X509Store(StoreName.My,
+               StoreLocation.CurrentUser);
+            store.Open(OpenFlags.ReadOnly);
+
+            X509Certificate2 foundCertificate = null;
+            foreach (X509Certificate2 currentCertificate
+               in store.Certificates)
+            {
+                if (currentCertificate.IssuerName.Name
+                   != null && currentCertificate.IssuerName.
+                   Name.Equals("CN=MySslSocketCertificate"))
+                {
+                    foundCertificate = currentCertificate;
+                    break;
+                }
+            }
+            return foundCertificate;
         }
 
         static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
@@ -96,13 +118,13 @@ namespace LocalDatabase_Client
                         return data;
                     case "SessionExpired":
                         return 404;
+                    case "AcceptTransfer":
+                        return ClientCom.acceptTransferRecognizer(data);
                     case "Response":
                         if (ClientCom.responseRecognizer(data).Equals("It's ok"))
                             return 0;
                         else if (ClientCom.responseRecognizer(data).Equals("Registration success"))
                             return 3;
-                        else if (ClientCom.responseRecognizer(data).Equals("User already exists"))
-                            return 4;
                         else
                             return 101;
                 }
@@ -136,6 +158,7 @@ namespace LocalDatabase_Client
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     return -1;
                 }
             } while (inputBytes != 0);
@@ -154,6 +177,7 @@ namespace LocalDatabase_Client
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Błąd", false);
                 mp.ShowDialog();
             }
