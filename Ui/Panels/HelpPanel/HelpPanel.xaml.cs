@@ -129,19 +129,19 @@ namespace LocalDatabase_Client.HelpPanel
         private void loadImages()
         {
             images = new List<BitmapImage>();
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/login.png", UriKind.Relative))); // page 0
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/login_ok.png", UriKind.Relative))); // page 1
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/login_bad.png", UriKind.Relative))); // page 2
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/login_error.png", UriKind.Relative))); // page 3
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/main_window_1.png", UriKind.Relative))); // page 4
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/main_window_2.png", UriKind.Relative))); // page 5
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/main_window_3.png", UriKind.Relative))); // page 6
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/main_window_4.png", UriKind.Relative))); // page 7
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/main_window_5.png", UriKind.Relative))); // page 8
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/main_window_6.png", UriKind.Relative))); // page 9
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/change_password.png", UriKind.Relative))); // page 10
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/new_folder.png", UriKind.Relative))); // page 11
-            images.Add(new BitmapImage(new Uri("Ui/Images/HelpImages/send_file.png", UriKind.Relative))); // page 12
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/login.png", UriKind.Relative))); // page 0
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/login_ok.png", UriKind.Relative))); // page 1
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/login_bad.png", UriKind.Relative))); // page 2
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/login_error.png", UriKind.Relative))); // page 3
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_1.png", UriKind.Relative))); // page 4
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_2.png", UriKind.Relative))); // page 5
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_3.png", UriKind.Relative))); // page 6
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_4.png", UriKind.Relative))); // page 7
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_5.png", UriKind.Relative))); // page 8
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_6.png", UriKind.Relative))); // page 9
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/change_password.png", UriKind.Relative))); // page 10
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/new_folder.png", UriKind.Relative))); // page 11
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/send_file.png", UriKind.Relative))); // page 12
         }
     }
 }
