@@ -43,7 +43,7 @@
                     <Image Name="image" Width="1150" Height="650" />
                 </Border>
             </Grid>
-            <Button Grid.Row="2" Content="Retunr" HorizontalAlignment="Right" VerticalAlignment="Center" Width="120" Height="30" Name="backButton" Click="backButton_Click"  Style="{StaticResource MenuButtonTheme}" Margin="10,10,60,10"/>
+            <Button Grid.Row="2" Content="Return" HorizontalAlignment="Right" VerticalAlignment="Center" Width="170" Height="40" Name="backButton" Click="backButton_Click"  Style="{StaticResource MenuButtonTheme}" Margin="10,10,60,10"/>
         </Grid>
     </Border>
 </Window>

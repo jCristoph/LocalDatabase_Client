@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Net.Security;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 
 namespace LocalDatabase_Client.LoginPanel
@@ -28,15 +17,14 @@ namespace LocalDatabase_Client.LoginPanel
 
         public LoginPanel()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is always in center of screen
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
         }
 
 
-
         private void Connection()
         {
-            cc = new ClientConnection("127.0.0.1");
+            cc = new ClientConnection();
             cc.Start();
             sslStream = cc.SslStream;
         }
@@ -58,7 +46,7 @@ namespace LocalDatabase_Client.LoginPanel
                 //{
                     cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, Client.Encryption.encryption256(passwordBoxPassword.Password)), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
                     int answer = cc.readMessage(sslStream);
-                    if (answer == 1) //condition checks if user logged properly
+                    if (answer == (int)LoginResponseCodes.Success) //condition checks if user logged properly
                     {
                         bool isPasswordChanged = false;
                         MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Logged in!", false);
@@ -72,7 +60,7 @@ namespace LocalDatabase_Client.LoginPanel
                         this.Hide(); //panel is allways in background to relogin
                         mw.Show();
                     }
-                    else if (answer == 2)
+                    else if (answer == (int)LoginResponseCodes.AlreadyLogged)
                     {
                         MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("You are logged in other device or your app stopped unexpectedly. Cool down and go back for 15 minutes!", false);
                         mp.ShowDialog();
@@ -104,6 +92,20 @@ namespace LocalDatabase_Client.LoginPanel
         {
             Registration.Registration r = new Registration.Registration();
             r.Show();
+        }
+
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Panels.Settings.Settings settings = new Panels.Settings.Settings();
+            settings.Show();
+        }
+
+        private enum LoginResponseCodes
+        {
+            GeneralError,
+            Success,
+            AlreadyLogged,
+            Not_Exist,
         }
     }
 }
