@@ -5,7 +5,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Windows.Controls;
 
 namespace LocalDatabase_Client
 {
@@ -65,7 +64,7 @@ namespace LocalDatabase_Client
             file = new FileInfo(folderPath + fileName);
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
-            var readed = -1;
+            var read = -1;
             var buffer = new Byte[BUFFER_SIZE];
             int i = 0;
             using (var fileStream = file.OpenWrite())
@@ -76,19 +75,20 @@ namespace LocalDatabase_Client
                 {
                     try
                     {
-                        readed = networkStream.Read(buffer, 0, buffer.Length);
-                        fileStream.Write(buffer, 0, readed);
+                        read = networkStream.Read(buffer, 0, buffer.Length);
+                        fileStream.Write(buffer, 0, read);
                         i = i + BUFFER_SIZE;
                         helperBW.ReportProgress((int)Math.Round((float)i / (float)size * 100));
                     }
                     catch (SocketException se)
                     {
-                        readed = 0;
+                        Console.WriteLine(se.ToString());
+                        read = 0;
                     }
                     //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
                     Thread.Sleep(1);
-                } while (readed > (BUFFER_SIZE - 1));
-                //networkStream.Close();
+                } while (read > (BUFFER_SIZE - 1));
+                networkStream.Close();
             }
         }
         private void recieveFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -97,6 +97,8 @@ namespace LocalDatabase_Client
         }
         private void recieveFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
         }
@@ -120,20 +122,20 @@ namespace LocalDatabase_Client
         {
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
-            var readed = -1;
+            var read = -1;
             int i = 0;
             var buffer = new Byte[BUFFER_SIZE];
             using (var networkStream = new BufferedStream(new NetworkStream(socket, false)))
             using (var fileStream = file.OpenRead())
             {
-                while (readed != 0)
+                while (read != 0)
                 {
-                    readed = fileStream.Read(buffer, 0, buffer.Length);
-                    if (readed != 0)
+                    read = fileStream.Read(buffer, 0, buffer.Length);
+                    if (read != 0)
                     {
                         try
                         {
-                            networkStream.Write(buffer, 0, readed);
+                            networkStream.Write(buffer, 0, read);
                             i = i + BUFFER_SIZE;
                             helperBW.ReportProgress((int)Math.Round((float)i / (float)size * 100));
                             //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
@@ -147,7 +149,7 @@ namespace LocalDatabase_Client
                     }
                 }
                 buffer = new byte[BUFFER_SIZE];
-                //networkStream.Close();
+                networkStream.Close();
             }
         }
         private void sendFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -157,6 +159,8 @@ namespace LocalDatabase_Client
         private void sendFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             progressBar.Visibility = System.Windows.Visibility.Hidden;
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
             refresh();
         }
         #endregion

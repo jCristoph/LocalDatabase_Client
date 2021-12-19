@@ -12,20 +12,6 @@ namespace LocalDatabase_Client.Client
         public static SettingsManager Instance { get { return lazy.Value; } }
 
         /// <summary>
-        /// Sets client Ip. Default is 127.0.0.1
-        /// </summary>
-        /// <param name="clientIp"></param>
-        public void SetClientIp(string serverIp)
-        {
-            SetSetting(ClientIp, serverIp);
-        }
-
-        public string GetClientIp()
-        {
-            return GetSetting(ClientIp);
-        }
-
-        /// <summary>
         /// Sets server Ip. Default is 127.0.0.1
         /// </summary>
         /// <param name="serverIp"></param>
@@ -54,7 +40,6 @@ namespace LocalDatabase_Client.Client
         }
 
         private const string ServerIp = "ServerIp";
-        private const string ClientIp = "ClientIp";
         private const string Port = "Port";
 
         private static string GetSetting(string key)
