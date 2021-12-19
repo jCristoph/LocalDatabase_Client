@@ -23,7 +23,6 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
-                <RowDefinition/>
             </Grid.RowDefinitions>
             <TextBox VerticalAlignment="Center" Height="32" Name="textBoxLogin" Grid.Column="1" Grid.Row="1" Margin="10" Style="{StaticResource ModernTextBox}" FontSize="16"/>
             <PasswordBox VerticalAlignment="Center" Height="32" Name="passwordBoxPassword" Grid.Column="1" Grid.Row="2" Margin="10" Style="{StaticResource ModernPasswordBox}" FontSize="16"/>
