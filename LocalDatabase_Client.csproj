@@ -49,6 +49,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Filebase_safe_client_icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -273,6 +276,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Ui\Images\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Filebase_safe_client_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
