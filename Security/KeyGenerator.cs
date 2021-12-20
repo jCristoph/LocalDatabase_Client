@@ -9,7 +9,7 @@ namespace LocalDatabase_Client.Security
     public static class KeyGenerator
     {
         private static System.Random r = new System.Random();
-        static string Generate()
+        public static string Generate()
         {
             int key_len = 32; //klucz o długości 256 bitów
 

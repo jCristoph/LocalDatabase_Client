@@ -156,7 +156,7 @@ namespace LocalDatabase_Client
                 if (!filename.Equals(""))
                 {
                 //tu następuje zaszyfrowanie pliku
-                string key = "/Yz0I0X7~GLi[9!IL$!t35&$!*O*GmIn";
+                string key = Security.KeyHandling.getKey("ABCDFG");
                 Security.EncryptionFile.Encrypt(filename, key);
                 filename = filename + extension;
 

@@ -108,7 +108,7 @@ namespace LocalDatabase_Client
             socket.Close();
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
-            string key = "/Yz0I0X7~GLi[9!IL$!t35&$!*O*GmIn";
+            string key = Security.KeyHandling.getKey("ABCDFG");
             Security.DecryptionFile.Decrypt(file.FullName, key);
         }
         #endregion

@@ -76,6 +76,9 @@ namespace LocalDatabase_Client.Registration
                     if (answer == 3)
                     {
                         mp = new MessagePanel.MessagePanel("Registration success", false);
+                        string filename = surnameTextBox.Text + nameTextBox.Text;
+                        string key = Security.KeyGenerator.Generate();
+                        Security.KeyHandling.safeKey(filename, key);
                     }
                     else
                     {

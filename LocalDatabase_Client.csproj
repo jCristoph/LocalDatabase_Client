@@ -86,6 +86,7 @@
     <Compile Include="Panels\Registration\RegistrationResult.xaml.cs">
       <DependentUpon>RegistrationResult.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Security\KeyHandling.cs" />
     <Compile Include="Security\KeyGenerator.cs" />
     <Compile Include="Utils\UnitsConverter.cs" />
     <Page Include="Panels\ChangePasswordPanel\ChangePasswordPanel.xaml">
