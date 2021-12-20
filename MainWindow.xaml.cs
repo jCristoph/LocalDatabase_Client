@@ -53,34 +53,30 @@ namespace LocalDatabase_Client
         {
             if (sslStream != null)
             {
-                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
-                    string data = null;
-                    try
+                cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
+                string data = null;
+                try
+                {
+                    data = cc.readMessage(sslStream);
+                    directoryManager.directoryElements.Clear();
+                    ClientCom.SendDirectoryRecognizer(data, directoryManager);
+                    directoryManager.setFoldersSize();
+                    Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
+                    foreach (var a in directoryManager.directoryElements)
                     {
-                        data = cc.readMessage(sslStream);
-                        directoryManager.directoryElements.Clear();
-                        ClientCom.SendDirectoryRecognizer(data, directoryManager);
-                        directoryManager.setFoldersSize();
-                        Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
-                        foreach (var a in directoryManager.directoryElements)
-                        {
-                            if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
-                                Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
-                        }
-                        Application.Current.Dispatcher.Invoke(new Action(() =>
-                        {
-                            refreshTextBlock.Text = "Last refresh: " + DateTime.Now;
-                            sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + UnitsConverter.ConvertBytesToGigabytes(limit) + "GB";
-                        }));
+                        if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
+                            Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
                     }
-                    catch (Exception e)
-                    {
-                        
-                        var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
-                        mp.ShowDialog();
-                        Owner.Show();
-                        this.Close();
-                    }
+                    refreshTextBlock.Text = "Last refresh: " + DateTime.Now;
+                    sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + UnitsConverter.ConvertBytesToGigabytes(limit) + "GB";
+                }
+                catch (Exception e)
+                {
+                    var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
+                    mp.ShowDialog();
+                    Owner.Show();
+                    this.Close();
+                }
             }
         }
 
