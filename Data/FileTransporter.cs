@@ -1,17 +1,15 @@
-﻿
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client
 {
     public class FileTransporter
     {
-        static int BUFFER_SIZE = 4096;
+        const int BUFFER_SIZE = 4096;
         private string ip;
         private int port;
         private FileInfo file;
@@ -33,15 +31,6 @@ namespace LocalDatabase_Client
             this.progressBar.Visibility = System.Windows.Visibility.Visible;
         }
 
-        public void connectAsServer()
-        {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
-            socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.Bind(ipe);
-            socket.Listen(10);
-            socket = socket.Accept();
-        }
-
         public void connectAsClient()
         {
             IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
@@ -50,7 +39,7 @@ namespace LocalDatabase_Client
             {
                 socket.Connect(ipe);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
@@ -96,9 +85,7 @@ namespace LocalDatabase_Client
                         Console.WriteLine(se.ToString());
                         read = 0;
                     }
-                    //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                    Thread.Sleep(1);
-                } while (read > (BUFFER_SIZE - 1));
+                } while (read != 0);
                 networkStream.Close();
             }
         }
@@ -149,8 +136,6 @@ namespace LocalDatabase_Client
                             networkStream.Write(buffer, 0, read);
                             i = i + BUFFER_SIZE;
                             helperBW.ReportProgress((int)Math.Round((float)i / (float)size * 100));
-                            //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                            Thread.Sleep(1);
                         }
                         catch (Exception ex)
                         {
@@ -175,7 +160,6 @@ namespace LocalDatabase_Client
             refresh();
         }
         #endregion
-
 
     }
 }
