@@ -108,6 +108,7 @@ namespace LocalDatabase_Client
             socket.Close();
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
+
             string key = Security.KeyHandling.getKey("ABCDFG");
             Security.DecryptionFile.Decrypt(file.FullName, key);
         }
@@ -171,6 +172,8 @@ namespace LocalDatabase_Client
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             refresh();
+            File.Delete(file.FullName + extension); //delate encryption file after sending
+
         }
         #endregion
 

@@ -14,8 +14,7 @@ namespace LocalDatabase_Client.Security
         public static void safeKey(string name, string userkey)
         {
             string path = "C:\\Users\\Krzemek\\Documents\\" + name + ".dat";
-            FileStream fStream;
-            fStream = new FileStream(path, FileMode.Create);
+            FileStream fStream = new FileStream(path, FileMode.Create);
             BinaryWriter binFile = new BinaryWriter(fStream);
             binFile.Write(userkey);
             binFile.Close();
@@ -26,10 +25,9 @@ namespace LocalDatabase_Client.Security
         public static string getKey(string name)
         {
             string userkey = null;
-            FileStream fStream;
             string path = "C:\\Users\\Krzemek\\Documents\\" + name + ".dat";
             Security.DecryptionFile.Decrypt((path+".ENC"), key);
-            fStream = new FileStream(path, FileMode.Open);
+            FileStream fStream = new FileStream(path, FileMode.Open);
             BinaryReader readBinary = new BinaryReader(fStream);
             userkey = readBinary.ReadString();
             fStream.Close();

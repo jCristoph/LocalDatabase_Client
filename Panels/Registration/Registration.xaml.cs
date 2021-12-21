@@ -72,13 +72,11 @@ namespace LocalDatabase_Client.Registration
                 if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
                 {
                     cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, password_SHA256), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
-                    dynamic answer = cc.readMessage(sslStream);
-                    Console.WriteLine(answer.GetType());
-                    if (answer.GetType().ToString().Equals("System.String"))
+                    int answer = cc.readMessage(sslStream);
+                    if (answer == 3)
                     {
-                        string token = ((string)answer).Replace("New token ", "");
                         mp = new MessagePanel.MessagePanel("Registration success", false);
-                        string filename = surnameTextBox.Text + nameTextBox.Text;
+                        string filename = surnameTextBox.Text +"."+ nameTextBox.Text;
                         string key = Security.KeyGenerator.Generate();
                         Security.KeyHandling.safeKey(filename, key);
                     }

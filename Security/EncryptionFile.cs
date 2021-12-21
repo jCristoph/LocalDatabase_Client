@@ -50,7 +50,7 @@ namespace LocalDatabase_Client.Security
 
            fsIn.Close();
 
-           //File.Delete(inputFile + ".ENC"); //docelowo plik usunięty z dysku po przesłaniu
+           
            cs.Close();
            fsCrypt.Close();
            Console.WriteLine("success");
