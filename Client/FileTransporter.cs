@@ -18,16 +18,18 @@ namespace LocalDatabase_Client
         private int port;
         private FileInfo file;
         private string fileName;
+        private string token;
         private string extension = ".ENC";
         System.Windows.Controls.ProgressBar progressBar;
         long size;
         Action refresh;
         Socket socket;
 
-        public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port)
+        public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port, string token)
         {
             this.ip = ip;
             this.port = port;
+            this.token = token;
             this.fileName = fileName;
             file = new FileInfo(fileName);
             this.size = size;
