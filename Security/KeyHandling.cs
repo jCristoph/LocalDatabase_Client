@@ -13,26 +13,30 @@ namespace LocalDatabase_Client.Security
 
         public static void safeKey(string name, string userkey)
         {
-            string path = "C:\\Users\\Krzemek\\Documents\\" + name + ".dat";
-            FileStream fStream = new FileStream(path, FileMode.Create);
+            
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = folderPath + "\\userKey_" + name + ".dat";
+            FileStream fStream;
+            fStream = new FileStream(filePath, FileMode.Create);
             BinaryWriter binFile = new BinaryWriter(fStream);
             binFile.Write(userkey);
             binFile.Close();
-            Security.EncryptionFile.Encrypt(path, KeyHandling.key);
-            File.Delete(path);
+            Security.EncryptionFile.Encrypt(filePath, KeyHandling.key);
+            File.Delete(filePath);
         }
 
         public static string getKey(string name)
         {
             string userkey = null;
-            string path = "C:\\Users\\Krzemek\\Documents\\" + name + ".dat";
-            Security.DecryptionFile.Decrypt((path+".ENC"), key);
-            FileStream fStream = new FileStream(path, FileMode.Open);
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = folderPath + "\\userKey_" + name + ".dat";
+            Security.DecryptionFile.Decrypt((filePath + ".ENC"), key);
+            FileStream fStream = new FileStream(filePath, FileMode.Open);
             BinaryReader readBinary = new BinaryReader(fStream);
             userkey = readBinary.ReadString();
             fStream.Close();
-            Security.EncryptionFile.Encrypt(path, KeyHandling.key);
-            File.Delete(path);
+            Security.EncryptionFile.Encrypt(filePath, KeyHandling.key);
+            File.Delete(filePath);
             return userkey;
         }
 
