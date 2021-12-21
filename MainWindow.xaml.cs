@@ -1,11 +1,11 @@
-﻿using System;
+﻿using LocalDatabase_Client.Data.Utils;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Windows;
 using System.Windows.Controls;
-using LocalDatabase_Client.Utils;
 
 
 namespace LocalDatabase_Client
@@ -15,7 +15,7 @@ namespace LocalDatabase_Client
         private SslStream sslStream;
         private ClientConnection cc;
         private DirectoryManager directoryManager;
-        private double limit;
+        private long limit;
         private ObservableCollection<DirectoryElement> currentDirectory;
         private DirectoryElement currentFolder;
         private string token;
@@ -36,7 +36,7 @@ namespace LocalDatabase_Client
             token = cc.token;
             this.sslStream = sslStream;
             this.cc = cc;
-            this.limit = cc.limit;
+            this.limit = (long) cc.limit;
             directoryManager = new DirectoryManager();
             currentDirectory = new ObservableCollection<DirectoryElement>();
             currentFolder = new DirectoryElement("\\Main_Folder", 0, "None", true);
@@ -53,34 +53,30 @@ namespace LocalDatabase_Client
         {
             if (sslStream != null)
             {
-                    cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
-                    string data = null;
-                    try
+                cc.sendMessage(ClientCom.SendDirectoryOrderMessage(token), sslStream); //send request to server to send list of directory
+                string data = null;
+                try
+                {
+                    data = cc.readMessage(sslStream);
+                    directoryManager.directoryElements.Clear();
+                    ClientCom.SendDirectoryRecognizer(data, directoryManager);
+                    directoryManager.setFoldersSize();
+                    Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
+                    foreach (var a in directoryManager.directoryElements)
                     {
-                        data = cc.readMessage(sslStream);
-                        directoryManager.directoryElements.Clear();
-                        ClientCom.SendDirectoryRecognizer(data, directoryManager);
-                        directoryManager.setFoldersSize();
-                        Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Clear(); })); //special line for changing data of other thread
-                        foreach (var a in directoryManager.directoryElements)
-                        {
-                            if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
-                                Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
-                        }
-                        Application.Current.Dispatcher.Invoke(new Action(() =>
-                        {
-                            refreshTextBlock.Text = "Last refresh: " + DateTime.Now;
-                            sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + Math.Round(UnitsConverter.ConvertBytesToGigabytes(limit),2) + "GB";
-                        }));
+                        if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
+                            Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
                     }
-                    catch (Exception e)
-                    {
-                        
-                        var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
-                        mp.ShowDialog();
-                        Owner.Show();
-                        this.Close();
-                    }
+                    refreshTextBlock.Text = "Last refresh: " + DateTime.Now;
+                    sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + Math.Round(UnitsConverter.ConvertBytesToGigabytes(limit), 2) + "GB";
+                }
+                catch (Exception e)
+                {
+                    var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
+                    mp.ShowDialog();
+                    Owner.Show();
+                    this.Close();
+                }
             }
         }
 
@@ -93,8 +89,12 @@ namespace LocalDatabase_Client
                 try
                 {
                     //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
+<<<<<<< HEAD
                     var filePath = (((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name;
                     cc.sendMessage(ClientCom.SendOrderMessage(filePath,token), sslStream);
+=======
+                    cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), sslStream);
+>>>>>>> origin/Inż_master
                     int answer = cc.readMessage(sslStream);
                     if (answer == -1)
                     {
@@ -112,7 +112,11 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
+<<<<<<< HEAD
                         var fileTransporter = new FileTransporter("127.0.0.1", ((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer, token);
+=======
+                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer); ;
+>>>>>>> origin/Inż_master
                         fileTransporter.connectAsClient();
                         fileTransporter.recieveFile(refreshList);
                     }
@@ -164,7 +168,7 @@ namespace LocalDatabase_Client
                 {
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to overwrite this file?", true);
                     mp.ShowDialog();
-                    if (mp.answear.Equals(true))
+                    if (mp.isAnswered.Equals(true))
                     {
                         if (result == true)
                         {
@@ -192,7 +196,11 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
+<<<<<<< HEAD
                                 var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar, answer, token);
+=======
+                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
+>>>>>>> origin/Inż_master
                                 fileTransporter.connectAsClient();
                                 fileTransporter.sendFile(refreshList);
                             }
@@ -230,7 +238,11 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
+<<<<<<< HEAD
                         var fileTransporter = new FileTransporter("127.0.0.1", filename, new FileInfo(dlg.FileName).Length, progressBar, answer, token);
+=======
+                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
+>>>>>>> origin/Inż_master
                         fileTransporter.connectAsClient();
                         fileTransporter.sendFile(refreshList);
                     }

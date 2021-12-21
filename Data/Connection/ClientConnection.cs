@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client
 {
@@ -30,9 +21,9 @@ namespace LocalDatabase_Client
         private static string ServerCertificateName = "MySslSocketCertificate";
 
         //constructor
-        public ClientConnection(String serverIP)
+        public ClientConnection()
         {
-            this.serverIP = serverIP;
+            this.serverIP = SettingsManager.Instance.GetServerIp();
             this.port = 25000;
         }
 
@@ -59,23 +50,16 @@ namespace LocalDatabase_Client
 
         private static X509Certificate getServerCert()
         {
-            X509Store store = new X509Store(StoreName.My,
-               StoreLocation.CurrentUser);
-            store.Open(OpenFlags.ReadOnly);
-
-            X509Certificate2 foundCertificate = null;
-            foreach (X509Certificate2 currentCertificate
-               in store.Certificates)
-            {
-                if (currentCertificate.IssuerName.Name
-                   != null && currentCertificate.IssuerName.
-                   Name.Equals("CN=MySslSocketCertificate"))
-                {
-                    foundCertificate = currentCertificate;
-                    break;
-                }
-            }
-            return foundCertificate;
+            //here is needed a x509 cert 
+            //in app folder must be a cert equal to server (copy of it in server and client).
+            //to create cert in your system you have to open power shell as administrator and write some lines:
+            ///New-SelfSignedCertificate -Subject "CN=MySslSocketCertificate" -KeySpec "Signature" -CertStoreLocation "Cert:\CurrentUser\My"
+            ///dir cert:\CurrentUser\My     here you have to copy thumbprint of cert
+            ///$PFXPass = ConvertTo-SecureString -String “MyPassword” -Force -AsPlainText
+            ///Export-PfxCertificate -Cert cert:\CurrentUser\My\___Thumbprint_of_cert____ -Password $PFXPass -FilePath C:\Users\x509cert.pfx
+            var certName = "x509cert.pfx";
+            var certPassword = "MyPassword";
+            return new X509Certificate2(certName, certPassword, X509KeyStorageFlags.MachineKeySet); ;
         }
 
         static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

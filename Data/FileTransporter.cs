@@ -1,19 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Windows.Controls;
+using LocalDatabase_Client.Client;
 
 
 namespace LocalDatabase_Client
 {
     public class FileTransporter
     {
-        static int BUFFER_SIZE = 4096;
-
+        const int BUFFER_SIZE = 4096;
         private string ip;
         private int port;
         private FileInfo file;
@@ -25,33 +22,34 @@ namespace LocalDatabase_Client
         Action refresh;
         Socket socket;
 
+<<<<<<< HEAD:Client/FileTransporter.cs
         public FileTransporter(string ip, string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port, string token)
+=======
+        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port)
+>>>>>>> origin/Inż_master:Data/FileTransporter.cs
         {
-            this.ip = ip;
+            this.ip = SettingsManager.Instance.GetServerIp();
             this.port = port;
             this.token = token;
             this.fileName = fileName;
             file = new FileInfo(fileName);
             this.size = size;
             this.progressBar = progressBar;
-
             this.progressBar.Visibility = System.Windows.Visibility.Visible;
-        }
-
-        public void connectAsServer()
-        {
-            IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
-            socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.Bind(ipe);
-            socket.Listen(10);
-            socket = socket.Accept();
         }
 
         public void connectAsClient()
         {
             IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(ip), port);
             socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(ipe);
+            try
+            {
+                socket.Connect(ipe);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         #region recieve File Asynchronous
@@ -73,7 +71,7 @@ namespace LocalDatabase_Client
             file = new FileInfo(folderPath + fileName + extension);
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
-            var readed = -1;
+            var read = -1;
             var buffer = new Byte[BUFFER_SIZE];
             int i = 0;
             using (var fileStream = file.OpenWrite())
@@ -84,19 +82,17 @@ namespace LocalDatabase_Client
                 {
                     try
                     {
-                        readed = networkStream.Read(buffer, 0, buffer.Length);
-                        fileStream.Write(buffer, 0, readed);
+                        read = networkStream.Read(buffer, 0, buffer.Length);
+                        fileStream.Write(buffer, 0, read);
                         i = i + BUFFER_SIZE;
                         helperBW.ReportProgress((int)Math.Round((float)i / (float)size * 100));
                     }
                     catch (SocketException se)
                     {
                         Console.WriteLine(se.ToString());
-                        readed = 0;
+                        read = 0;
                     }
-                    //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                    Thread.Sleep(1);
-                } while (readed > (BUFFER_SIZE - 1));
+                } while (read != 0);
                 networkStream.Close();
             }
         }
@@ -134,24 +130,22 @@ namespace LocalDatabase_Client
         {
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
-            var readed = -1;
+            var read = -1;
             int i = 0;
             var buffer = new Byte[BUFFER_SIZE];
             using (var networkStream = new BufferedStream(new NetworkStream(socket, false)))
             using (var fileStream = file.OpenRead())
             {
-                while (readed != 0)
+                while (read != 0)
                 {
-                    readed = fileStream.Read(buffer, 0, buffer.Length);
-                    if (readed != 0)
+                    read = fileStream.Read(buffer, 0, buffer.Length);
+                    if (read != 0)
                     {
                         try
                         {
-                            networkStream.Write(buffer, 0, readed);
+                            networkStream.Write(buffer, 0, read);
                             i = i + BUFFER_SIZE;
                             helperBW.ReportProgress((int)Math.Round((float)i / (float)size * 100));
-                            //If you test it on loopback better uncomment line below. Buffer is slower than loopback transfer
-                            Thread.Sleep(1);
                         }
                         catch (Exception ex)
                         {
@@ -178,7 +172,6 @@ namespace LocalDatabase_Client
 
         }
         #endregion
-
 
     }
 }
