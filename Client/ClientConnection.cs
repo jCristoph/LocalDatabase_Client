@@ -123,8 +123,8 @@ namespace LocalDatabase_Client
                     case "Response":
                         if (ClientCom.responseRecognizer(data).Equals("It's ok"))
                             return 0;
-                        else if (ClientCom.responseRecognizer(data).Equals("Registration success"))
-                            return 3;
+                        else if (ClientCom.responseRecognizer(data).Contains("New token "))
+                            return data.Replace("New token ", "");
                         else
                             return 101;
                 }
