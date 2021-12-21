@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LocalDatabase_Client.Data.Utils;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -110,7 +111,7 @@ namespace LocalDatabase_Client
                 if(!directoryElements[i].isFolder)
                     usedSpaceCounter += directoryElements[i].size;
             }
-            return (double)(usedSpaceCounter / 1000000000.0);
+            return UnitsConverter.ConvertBytesToGigabytes(usedSpaceCounter);
         }
     }
 }
