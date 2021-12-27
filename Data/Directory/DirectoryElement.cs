@@ -63,13 +63,13 @@ namespace LocalDatabase_Client
             {
                 this.isFolder = true;
                 buttonName = "Open";
-                image = @"Images\folder_icon.png";
+                image = @"Ui\Images\folder_icon.png";
             }
             else
             {
                 this.isFolder = false;
                 buttonName = "Download";
-                image = @"Images\file_icon.png";
+                image = @"Ui\Images\file_icon.png";
             }
             sizeText = convertNumber(size);
         }

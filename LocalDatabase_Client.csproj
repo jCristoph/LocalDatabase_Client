@@ -49,8 +49,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Filebase_safe_client_icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -70,10 +74,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\Encryption.cs" />
+    <Compile Include="Data\FileTransporter.cs" />
+    <Compile Include="Data\SettingsManager.cs" />
+    <Compile Include="Data\Utils\UnitsConverter.cs" />
     <Compile Include="Security\DecryptionFile.cs" />
     <Compile Include="Security\EncryptionFile.cs" />
-    <Compile Include="Security\EncryptionPass.cs" />
-    <Compile Include="Data\FileTransporter.cs" />
+    <Compile Include="Security\KeyGenerator.cs" />
+    <Compile Include="Security\KeyHandling.cs" />
+    <Compile Include="Ui\CustomClasses\PlaceholderTextBox\PlaceholderTextBox.cs" />
     <Compile Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
     </Compile>
@@ -83,21 +92,11 @@
     <Compile Include="Ui\Panels\Registration\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ui\Panels\Registration\RegistrationResult.xaml.cs">
-      <DependentUpon>RegistrationResult.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Security\KeyHandling.cs" />
-    <Compile Include="Security\KeyGenerator.cs" />
-    <Compile Include="Utils\UnitsConverter.cs" />
     <Page Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Ui\Panels\Registration\Registration.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\Panels\Registration\RegistrationResult.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -136,6 +135,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Ui\Panels\MessagePanel\MessagePanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\Panels\SettingsPanel\SettingsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -191,6 +194,9 @@
   <ItemGroup>
     <Compile Include="Ui\Panels\MessagePanel\MessagePanel.xaml.cs">
       <DependentUpon>MessagePanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\Panels\SettingsPanel\SettingsPanel.xaml.cs">
+      <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ui\CustomClasses\ProgressBar\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
@@ -271,6 +277,12 @@
     <Resource Include="Ui\Images\HelpImages\main_window_4.png" />
     <Resource Include="Ui\Images\HelpImages\main_window_5.png" />
     <Resource Include="Ui\Images\HelpImages\main_window_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ui\Images\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Filebase_safe_client_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
