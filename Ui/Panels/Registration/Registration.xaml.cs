@@ -1,13 +1,10 @@
-﻿using LocalDatabase_Client.Security;
-using System;
+﻿using System;
 using System.Net.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace LocalDatabase_Client.Registration
-
-
 {
     /// <summary>
     /// Logika interakcji dla klasy Registration.xaml
@@ -36,7 +33,6 @@ namespace LocalDatabase_Client.Registration
 
             MessagePanel.MessagePanel mp;
 
-            ////////////
             Task t = new Task(() => Connection()); //task that realizing a connection with server
             t.Start();
             Thread.Sleep(100);
@@ -54,7 +50,7 @@ namespace LocalDatabase_Client.Registration
             else
                 mp = new MessagePanel.MessagePanel("Passwords are different!", false);
 
-            string password_SHA256 = EncryptionPass.encryption256(password);
+            string password_SHA256 = Security.EncryptionPass.encryption256(password);
             if (surnameTextBox.Text.Length < 2 && nameTextBox.Text.Length < 2)
             {
                 mp = new MessagePanel.MessagePanel("Data is not valid", false);
@@ -70,7 +66,7 @@ namespace LocalDatabase_Client.Registration
                 string token = (((string)answer).Replace("<Task=Response><Content>", "")).Replace("</Content></Task><EOM>", "");
                 mp = new MessagePanel.MessagePanel("Registration success", false);
                 string key = Security.KeyGenerator.Generate();
-                Security.KeyHandling.safeKey(token, key);
+                Security.KeyHandling.SaveKey(token, key);
             }
             else
             {
