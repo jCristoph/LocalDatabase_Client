@@ -21,19 +21,20 @@ namespace LocalDatabase_Client.Security
             return data;
         }
 
-        public static void Encrypt(string inFile, string user_key)
+        public static void Encrypt(string inFile, string userKey)
         {
             byte[] salt = RandomSaltGenerator();
-            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(user_key);
+            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(userKey);
+            int iterationsNumber = 50000;
             FileStream fsCrypt = new FileStream(inFile + ".ENC", FileMode.Create); //zaszyfrowany plik ma rozszerzenie .ENC
 
             RijndaelManaged AES = new RijndaelManaged();
 
-            var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
+            var key = new Rfc2898DeriveBytes(passwordBytes, salt, iterationsNumber);
             AES.Key = key.GetBytes(32);
             AES.IV = key.GetBytes(16);
 
-            //Tryb szyfrowania AES: ECB, CBC, CFB, OFB, CTR
+            // CipherMode AES: ECB, CBC, CFB, OFB, CTR
             AES.Mode = CipherMode.CFB;
 
             fsCrypt.Write(salt, 0, salt.Length);
@@ -44,7 +45,6 @@ namespace LocalDatabase_Client.Security
             byte[] buffer = new byte[1048576];
             int read;
 
-        
             while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)
                     cs.Write(buffer, 0, read);
 
@@ -54,7 +54,6 @@ namespace LocalDatabase_Client.Security
            cs.Close();
            fsCrypt.Close();
            Console.WriteLine("success");
-         
         }
     }
 }
