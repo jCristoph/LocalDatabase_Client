@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 
 namespace LocalDatabase_Client.Security
 {
+    //komentarz testowy
     public class DecryptionFile
     {
         public static void Decrypt(string inFile, string userKey)
