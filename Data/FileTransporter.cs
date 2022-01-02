@@ -14,19 +14,22 @@ namespace LocalDatabase_Client
         private int port;
         private FileInfo file;
         private string fileName;
+        private string token;
+        private string extension = ".ENC";
 
         System.Windows.Controls.ProgressBar progressBar;
         long size;
         Action refresh;
         Socket socket;
 
-        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port)
+        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port, string token)
         {
             this.ip = SettingsManager.Instance.GetServerIp();
             this.port = port;
             this.fileName = fileName;
             file = new FileInfo(fileName);
             this.size = size;
+            this.token = token;
             this.progressBar = progressBar;
             this.progressBar.Visibility = System.Windows.Visibility.Visible;
         }
@@ -61,7 +64,7 @@ namespace LocalDatabase_Client
         private void recieveFile_bg_DoWork(object sender, DoWorkEventArgs e)
         {
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
-            file = new FileInfo(folderPath + fileName);
+            file = new FileInfo(folderPath + fileName + extension);
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
             var read = -1;
@@ -99,6 +102,8 @@ namespace LocalDatabase_Client
             socket.Close();
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
+            string key = Security.KeyHandling.GetKey(token);
+            Security.DecryptionFile.Decrypt(file.FullName, key);
         }
         #endregion
 
@@ -158,6 +163,8 @@ namespace LocalDatabase_Client
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             refresh();
+            File.Delete(file.FullName); //delete encryption file after sending
+
         }
         #endregion
 

@@ -19,7 +19,7 @@ namespace LocalDatabase_Client
         private ObservableCollection<DirectoryElement> currentDirectory;
         private DirectoryElement currentFolder;
         private string token;
-        
+        private string extension = ".ENC";
         public MainWindow(SslStream sslStream, ClientConnection cc, bool isPasswordChanged)
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //app is visible in center
@@ -107,7 +107,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer); ;
+                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer, token); ;
                         fileTransporter.connectAsClient();
                         fileTransporter.recieveFile(refreshList);
                     }
@@ -148,8 +148,12 @@ namespace LocalDatabase_Client
                 Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog(); //special Windows panel for file browsing
                 Nullable<bool> result = dlg.ShowDialog();
                 string filename = dlg.FileName;
-                if(!filename.Equals(""))
-                {
+                if (!filename.Equals(""))
+                 {
+                     //tu następuje zaszyfrowanie pliku
+                    string key = Security.KeyHandling.GetKey(token);
+                    Security.EncryptionFile.Encrypt(filename, key);
+                    filename = filename + extension;
                 if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
                 {
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to overwrite this file?", true);
@@ -182,7 +186,7 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
-                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
+                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer, token);
                                 fileTransporter.connectAsClient();
                                 fileTransporter.sendFile(refreshList);
                             }
@@ -220,7 +224,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer);
+                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer, token);
                         fileTransporter.connectAsClient();
                         fileTransporter.sendFile(refreshList);
                     }
