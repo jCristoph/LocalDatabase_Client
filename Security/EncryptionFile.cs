@@ -42,7 +42,7 @@ namespace LocalDatabase_Client.Security
             CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateEncryptor(), CryptoStreamMode.Write);
             FileStream fsIn = new FileStream(inFile, FileMode.Open);
 
-            byte[] buffer = new byte[1048576];
+            byte[] buffer = new byte[4096];
             int read;
 
             while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)

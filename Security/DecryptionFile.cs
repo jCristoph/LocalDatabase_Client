@@ -31,7 +31,7 @@ namespace LocalDatabase_Client.Security
             FileStream fsOut = new FileStream(dirName + "\\" + fileName, FileMode.Create);
 
             int read;
-            byte[] buffer = new byte[1048576];
+            byte[] buffer = new byte[4096];
 
             while ((read = cs.Read(buffer, 0, buffer.Length)) > 0)
                 fsOut.Write(buffer, 0, read);
