@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -16,6 +17,7 @@ namespace LocalDatabase_Client
         private string fileName;
         private string token;
         private string extension = ".ENC";
+        Stopwatch sw;
 
         System.Windows.Controls.ProgressBar progressBar;
         long size;
@@ -32,6 +34,7 @@ namespace LocalDatabase_Client
             this.token = token;
             this.progressBar = progressBar;
             this.progressBar.Visibility = System.Windows.Visibility.Visible;
+            sw = new Stopwatch();
         }
 
         public void connectAsClient()
@@ -70,6 +73,7 @@ namespace LocalDatabase_Client
             var read = -1;
             var buffer = new Byte[BUFFER_SIZE];
             int i = 0;
+            sw.Start();
             using (var fileStream = file.OpenWrite())
             using (var networkStream = new NetworkStream(socket, false))
             {
@@ -101,9 +105,12 @@ namespace LocalDatabase_Client
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             progressBar.Visibility = System.Windows.Visibility.Hidden;
-            System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
             string key = Security.KeyHandling.GetKey(token);
             Security.DecryptionFile.Decrypt(file.FullName, key);
+            System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
+            sw.Stop();
+            Console.WriteLine("Time spend since click button: " + sw.ElapsedMilliseconds);
+            sw.Reset();
         }
         #endregion
 
@@ -128,6 +135,7 @@ namespace LocalDatabase_Client
             var read = -1;
             int i = 0;
             var buffer = new Byte[BUFFER_SIZE];
+            sw.Start();
             using (var networkStream = new BufferedStream(new NetworkStream(socket, false)))
             using (var fileStream = file.OpenRead())
             {
@@ -164,7 +172,9 @@ namespace LocalDatabase_Client
             socket.Close();
             refresh();
             File.Delete(file.FullName); //delete encryption file after sending
-
+            sw.Stop();
+            Console.WriteLine("Time spend since click button: " + sw.ElapsedMilliseconds);
+            sw.Reset();
         }
         #endregion
 
