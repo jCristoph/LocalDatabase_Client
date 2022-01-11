@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client
@@ -170,6 +171,7 @@ namespace LocalDatabase_Client
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
+            Thread.Sleep(200);
             refresh();
             File.Delete(file.FullName); //delete encryption file after sending
             sw.Stop();

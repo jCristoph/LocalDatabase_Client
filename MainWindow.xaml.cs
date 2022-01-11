@@ -68,7 +68,7 @@ namespace LocalDatabase_Client
                             Application.Current.Dispatcher.Invoke(new Action(() => { currentDirectory.Add(a); }));
                     }
                     refreshTextBlock.Text = "Last refresh: " + DateTime.Now;
-                    sizeTextBlock.Text = "Used space " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + Math.Round(UnitsConverter.ConvertBytesToGigabytes(limit), 2) + "GB";
+                    sizeTextBlock.Text = "Used space\n " + Math.Round(directoryManager.usedSpace(), 2) + "GB / " + Math.Round(UnitsConverter.ConvertBytesToGigabytes(limit), 2) + "GB";
                 }
                 catch (Exception e)
                 {
