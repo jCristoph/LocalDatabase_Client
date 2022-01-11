@@ -16,7 +16,7 @@
             CornerRadius="10">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80*"/>
+                <ColumnDefinition Width="85*"/>
                 <ColumnDefinition Width="15*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -61,9 +61,9 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name" Width="200"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit" Width="300"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size" Width="200"/>
                             <GridViewColumn Header="Action">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>

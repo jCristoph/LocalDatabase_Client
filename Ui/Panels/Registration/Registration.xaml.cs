@@ -1,8 +1,8 @@
-﻿using System.Net.Security;
+﻿using System;
+using System.Net.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client.Registration
 {
@@ -31,8 +31,8 @@ namespace LocalDatabase_Client.Registration
         private void createButton_Click(object sender, RoutedEventArgs e)
         {
 
-
             MessagePanel.MessagePanel mp;
+
             Task t = new Task(() => Connection()); //task that realizing a connection with server
             t.Start();
             Thread.Sleep(100);
@@ -42,6 +42,7 @@ namespace LocalDatabase_Client.Registration
                 mp.ShowDialog();
                 return;
             }
+
             string password = "0";
 
             if (passwordBoxPassword1.Password == passwordBoxPassword2.Password)
@@ -49,37 +50,36 @@ namespace LocalDatabase_Client.Registration
             else
                 mp = new MessagePanel.MessagePanel("Passwords are different!", false);
 
-            string password_SHA256 = Encryption.encryption256(password);
-
-            if (surnameTextBox.Text.Length < 2 && nameTextBox.Text.Length < 2)
+            string password_SHA256 = Security.EncryptionPass.encryption256(password);
+            if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
+            {
+                cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, password_SHA256), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
+                dynamic answer = cc.readMessage(sslStream);
+                Console.WriteLine(answer.GetType());
+                if (answer.GetType().ToString().Equals("System.String"))
+                {
+                    string token = (((string)answer).Replace("<Task=Response><Content>", "")).Replace("</Content></Task><EOM>", "");
+                    mp = new MessagePanel.MessagePanel("Registration success", false);
+                    string key = Security.KeyGenerator.Generate();
+                    Security.KeyHandling.SaveKey(token, key);
+                }
+                else
+                {
+                    mp = new MessagePanel.MessagePanel("Registration error", false);
+                }
+                mp.ShowDialog();
+                this.Close();
+            }
+            else
             {
                 mp = new MessagePanel.MessagePanel("Data is not valid", false);
                 mp.ShowDialog();
-                return;
             }
 
-            cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, password_SHA256), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
-            int answer = cc.readMessage(sslStream);
-            if (answer == 3)
-            {
-                mp = new MessagePanel.MessagePanel("Registration success", false);
-            }
-
-            else if(answer == 4)
-            {
-                mp = new MessagePanel.MessagePanel("User already exists", false);
-            }
-
-            else
-            {
-                mp = new MessagePanel.MessagePanel("Registration error", false);
-            }
-            mp.ShowDialog();
-            this.Close();
         }
 
-        //if user clicks back button then panel just close.
-        private void backButton_Click(object sender, RoutedEventArgs e)
+    //if user clicks back button then panel just close.
+    private void backButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
