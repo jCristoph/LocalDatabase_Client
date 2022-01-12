@@ -17,7 +17,8 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80*"/>
-                <ColumnDefinition Width="15*"/>
+                <ColumnDefinition Width="20*"/>
+                
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"/>
@@ -54,17 +55,17 @@
                 <ListView Margin="10,10,0,0" Grid.Column="0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
                     <ListView.View>
                         <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
-                            <GridViewColumn Header="Folder">
+                            <GridViewColumn Header="Icon">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Image Source="{Binding Path=image}" Width="20" Height="20"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size"/>
-                            <GridViewColumn Header="Action">
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name" Width="300"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit" Width="300"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size" Width="300"/>
+                            <GridViewColumn Header="Action" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
