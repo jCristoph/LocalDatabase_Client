@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client
@@ -14,21 +16,26 @@ namespace LocalDatabase_Client
         private int port;
         private FileInfo file;
         private string fileName;
+        private string token;
+        private string extension = ".ENC";
+        Stopwatch sw;
 
         System.Windows.Controls.ProgressBar progressBar;
         long size;
         Action refresh;
         Socket socket;
 
-        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port)
+        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port, string token)
         {
             this.ip = SettingsManager.Instance.GetServerIp();
             this.port = port;
             this.fileName = fileName;
             file = new FileInfo(fileName);
             this.size = size;
+            this.token = token;
             this.progressBar = progressBar;
             this.progressBar.Visibility = System.Windows.Visibility.Visible;
+            sw = new Stopwatch();
         }
 
         public void connectAsClient()
@@ -61,12 +68,13 @@ namespace LocalDatabase_Client
         private void recieveFile_bg_DoWork(object sender, DoWorkEventArgs e)
         {
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
-            file = new FileInfo(folderPath + fileName);
+            file = new FileInfo(folderPath + fileName + extension);
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
             var read = -1;
             var buffer = new Byte[BUFFER_SIZE];
             int i = 0;
+            sw.Start();
             using (var fileStream = file.OpenWrite())
             using (var networkStream = new NetworkStream(socket, false))
             {
@@ -98,7 +106,12 @@ namespace LocalDatabase_Client
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             progressBar.Visibility = System.Windows.Visibility.Hidden;
+            string key = Security.KeyHandling.GetKey(token);
+            Security.DecryptionFile.Decrypt(file.FullName, key);
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
+            sw.Stop();
+            Console.WriteLine("Time spend since click button: " + sw.ElapsedMilliseconds);
+            sw.Reset();
         }
         #endregion
 
@@ -123,6 +136,7 @@ namespace LocalDatabase_Client
             var read = -1;
             int i = 0;
             var buffer = new Byte[BUFFER_SIZE];
+            sw.Start();
             using (var networkStream = new BufferedStream(new NetworkStream(socket, false)))
             using (var fileStream = file.OpenRead())
             {
@@ -157,7 +171,12 @@ namespace LocalDatabase_Client
             progressBar.Visibility = System.Windows.Visibility.Hidden;
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
+            Thread.Sleep(200);
             refresh();
+            File.Delete(file.FullName); //delete encryption file after sending
+            sw.Stop();
+            Console.WriteLine("Time spend since click button: " + sw.ElapsedMilliseconds);
+            sw.Reset();
         }
         #endregion
 

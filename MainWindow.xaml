@@ -18,7 +18,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80*"/>
                 <ColumnDefinition Width="20*"/>
-                
+               
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"/>
@@ -36,7 +36,7 @@
                 <Button Content="Log out" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="LogOutButton"/>
                 <Button Content="Exit" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="ExitButton"/>
             </StackPanel>
-            <TextBlock Text="Used space: ..." Name="sizeTextBlock" Foreground="White" FontFamily="Lucida Sans" Margin="0,5,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Grid.Column="1" Grid.Row="1" FontSize="18"/>
+            <TextBlock Text="Used space: ..." Name="sizeTextBlock" Foreground="White" FontFamily="Lucida Sans" Margin="22.6,332,27,299" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Grid.Column="1" Grid.Row="1" FontSize="18" Width="160" Height="49"/>
             <TextBlock Width="263" Grid.Column="0" Grid.Row="0" Foreground="White" FontSize="36" HorizontalAlignment="Left" Margin="10,10,0,0" FontFamily="Lucida Sans" ><Run Text="Filebase."/><Run Text="safe"/></TextBlock>
             <TextBlock Text="Last refresh: " Name="refreshTextBlock" Width="263" Grid.Column="0" Grid.Row="2" Foreground="White" FontFamily="Lucida Sans" Margin="0,5,0,0"/>
             <Grid Grid.Column="0" Grid.Row="1">
@@ -62,11 +62,13 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            
                             <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name" Width="300"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit" Width="300"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size" Width="300"/>
-                            <GridViewColumn Header="Action" Width="100">
-                                <GridViewColumn.CellTemplate>
+                            
+                                <GridViewColumn Header="Action" Width="100">
+                                    <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >
                                             <Button Content="{Binding Path=buttonName}" Click="DownloadOrOpenButton" Margin="10" Height="20" Style="{StaticResource MenuButtonTheme}" Width="80"/>

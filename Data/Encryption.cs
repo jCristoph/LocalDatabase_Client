@@ -2,10 +2,9 @@
 using System.Text;
 using System.Security.Cryptography;
 
-
-namespace LocalDatabase_Client.Client
+namespace LocalDatabase_Client.Security
 {
-    public static class Encryption
+    public static class EncryptionPass
     {
         //password encryption method SHA256
         public static string encryption256(string password)
