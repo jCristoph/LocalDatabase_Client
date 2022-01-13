@@ -74,7 +74,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\Encryption.cs" />
+    <Compile Include="Security\Encryption.cs" />
     <Compile Include="Data\FileTransporter.cs" />
     <Compile Include="Data\SettingsManager.cs" />
     <Compile Include="Data\Utils\UnitsConverter.cs" />
