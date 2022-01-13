@@ -261,12 +261,6 @@
     <Resource Include="Ui\Images\HelpImages\new_folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Ui\Images\HelpImages\send_file.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Ui\Images\HelpImages\share.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Ui\Images\HelpImages\main_window_1.png" />
   </ItemGroup>
   <ItemGroup>
@@ -276,13 +270,15 @@
     <Resource Include="Ui\Images\HelpImages\main_window_3.png" />
     <Resource Include="Ui\Images\HelpImages\main_window_4.png" />
     <Resource Include="Ui\Images\HelpImages\main_window_5.png" />
-    <Resource Include="Ui\Images\HelpImages\main_window_6.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Ui\Images\settings.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Filebase_safe_client_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ui\Images\HelpImages\send_file.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

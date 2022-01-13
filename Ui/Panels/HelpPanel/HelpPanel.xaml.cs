@@ -46,21 +46,21 @@ namespace LocalDatabase_Client.HelpPanel
         //in the left of panel we have a list of subjects. This method is a event for first object of the list - changing password. sets right page of subject list and changes the source image to right one for the subject.
         private void change_passwordButton_Checked(object sender, RoutedEventArgs e)
         {
-            page = 10;
+            page = 9;
             image.Source = images[page];
         }
 
         //in the left of panel we have a list of subjects. This method is a event for first object of the list - creating new folder. sets right page of subject list and changes the source image to right one for the subject.
         private void creating_foldersButton_Checked(object sender, RoutedEventArgs e)
         {
-            page = 11;
+            page = 10;
             image.Source = images[page];
         }
 
         //in the left of panel we have a list of subjects. This method is a event for first object of the list - sending. sets right page of subject list and changes the source image to right one for the subject.
         private void send_fileButton_Checked(object sender, RoutedEventArgs e)
         {
-            page = 12;
+            page = 11;
             image.Source = images[page];
         }
 
@@ -75,16 +75,16 @@ namespace LocalDatabase_Client.HelpPanel
                     case 3:
                         loginButton.IsChecked = true;
                         break;
-                    case 9:
+                    case 8:
                         main_windowButton.IsChecked = true;
                         break;
-                    case 10:
+                    case 9:
                         change_passwordButton.IsChecked = true;
                         break;
-                    case 11:
+                    case 10:
                         creating_foldersButton.IsChecked = true;
                         break;
-                    case 12:
+                    case 11:
                         send_fileButton.IsChecked = true;
                         break;
                     default:
@@ -97,7 +97,7 @@ namespace LocalDatabase_Client.HelpPanel
         //second of two navigation buttons - it goes forward in list
         private void rightButton_Click(object sender, RoutedEventArgs e)
         {
-            if(page < 12)
+            if(page < 11)
             {
                 page++;
                 switch (page)
@@ -108,13 +108,13 @@ namespace LocalDatabase_Client.HelpPanel
                     case 4:
                         main_windowButton.IsChecked = true;
                         break;
-                    case 10:
+                    case 9:
                         change_passwordButton.IsChecked = true;
                         break;
-                    case 11:
+                    case 10:
                         creating_foldersButton.IsChecked = true;
                         break;
-                    case 12:
+                    case 11:
                         send_fileButton.IsChecked = true;
                         break;
                     default:
@@ -138,10 +138,9 @@ namespace LocalDatabase_Client.HelpPanel
             images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_3.png", UriKind.Relative))); // page 6
             images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_4.png", UriKind.Relative))); // page 7
             images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_5.png", UriKind.Relative))); // page 8
-            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/main_window_6.png", UriKind.Relative))); // page 9
-            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/change_password.png", UriKind.Relative))); // page 10
-            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/new_folder.png", UriKind.Relative))); // page 11
-            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/send_file.png", UriKind.Relative))); // page 12
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/change_password.png", UriKind.Relative))); // page 9
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/new_folder.png", UriKind.Relative))); // page 10
+            images.Add(new BitmapImage(new Uri("/Ui/Images/HelpImages/send_file.png", UriKind.Relative))); // page 11
         }
     }
 }
