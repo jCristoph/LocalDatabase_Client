@@ -53,6 +53,7 @@
                     <TextBlock x:Name="currentFolderTextBlock" Width="679" Foreground="#353340" FontFamily="Lucida Sans" Margin="10,4,0,4" VerticalAlignment="Center" FontSize="16"><Run Text="Path"/><Run Text=": "/></TextBlock>
                 </StackPanel>
                 <ListView Margin="10,10,0,0" Grid.Column="0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
+
                     <ListView.View>
                         <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                             <GridViewColumn Header="Icon">
@@ -62,12 +63,12 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name" Width="500"  />
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit" Width="200"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size" Width="150"/>
                             
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name" Width="300"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit" Width="300"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size" Width="300"/>
-                            
-                                <GridViewColumn Header="Action" Width="100">
+                                <GridViewColumn Header="Action" Width="220">
                                     <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >

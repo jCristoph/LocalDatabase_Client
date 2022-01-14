@@ -74,7 +74,13 @@ namespace LocalDatabase_Client
                 {
                     var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                     mp.ShowDialog();
-                    Owner.Show();
+                    if (Owner.Equals(null))
+                    {
+                        LoginPanel.LoginPanel lp = new LoginPanel.LoginPanel();
+                        lp.Show();
+                    }
+                    else   
+                        Owner.Show();
                     this.Close();
                 }
             }
