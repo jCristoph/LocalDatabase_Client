@@ -74,7 +74,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Security\Encryption.cs" />
     <Compile Include="Data\FileTransporter.cs" />
     <Compile Include="Data\SettingsManager.cs" />
     <Compile Include="Data\Utils\UnitsConverter.cs" />
@@ -82,6 +81,7 @@
     <Compile Include="Security\EncryptionFile.cs" />
     <Compile Include="Security\KeyGenerator.cs" />
     <Compile Include="Security\KeyHandling.cs" />
+    <Compile Include="Security\PasswordEncryption.cs" />
     <Compile Include="Ui\CustomClasses\PlaceholderTextBox\PlaceholderTextBox.cs" />
     <Compile Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
