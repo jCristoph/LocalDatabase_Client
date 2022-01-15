@@ -113,7 +113,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBar, answer, token); ;
+                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBarGrid, answer, token); ;
                         fileTransporter.connectAsClient();
                         fileTransporter.recieveFile(refreshList);
                     }
@@ -156,10 +156,7 @@ namespace LocalDatabase_Client
                 string filename = dlg.FileName;
                 if (!filename.Equals(""))
                  {
-                     //tu następuje zaszyfrowanie pliku
-                    string key = Security.KeyHandling.GetKey(token);
-                    Security.EncryptionFile.Encrypt(filename, key);
-                    filename = filename + extension;
+
                 if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
                 {
                     MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to overwrite this file?", true);
@@ -192,7 +189,7 @@ namespace LocalDatabase_Client
                             }
                             else
                             {
-                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer, token);
+                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBarGrid, answer, token);
                                 fileTransporter.connectAsClient();
                                 fileTransporter.sendFile(refreshList);
                             }
@@ -230,7 +227,7 @@ namespace LocalDatabase_Client
                     }
                     else
                     {
-                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBar, answer, token);
+                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBarGrid, answer, token);
                         fileTransporter.connectAsClient();
                         fileTransporter.sendFile(refreshList);
                     }
@@ -339,7 +336,6 @@ namespace LocalDatabase_Client
                 {
                     refreshList();
                 }
-                    // TODO: client checks if its done
             }
         }
 

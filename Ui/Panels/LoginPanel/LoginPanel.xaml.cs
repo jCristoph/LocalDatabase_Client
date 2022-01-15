@@ -34,7 +34,7 @@ namespace LocalDatabase_Client.LoginPanel
         {
             Task t = new Task(() => Connection()); //task that realizing a connection with server
             t.Start();
-            Thread.Sleep(500); 
+            Thread.Sleep(100); 
             if (sslStream == null) //condition if server or client is offline
             {
                 MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Error. Cannot connect with server!", false);

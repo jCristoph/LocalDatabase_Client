@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Security.Cryptography;
+using System.ComponentModel;
 
 namespace LocalDatabase_Client.Security
 {
     class EncryptionFile
     {
+        const int BUFFER_SIZE = 4096;
+
         private static byte[] RandomSaltGenerator()
         {
             byte[] data = new byte[32];
@@ -21,7 +24,7 @@ namespace LocalDatabase_Client.Security
             return data;
         }
 
-        public static void Encrypt(string inFile, string userKey)
+        public static void Encrypt(string inFile, string userKey, BackgroundWorker helperBW)
         {
             byte[] salt = RandomSaltGenerator();
             byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(userKey);
@@ -42,18 +45,32 @@ namespace LocalDatabase_Client.Security
             CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateEncryptor(), CryptoStreamMode.Write);
             FileStream fsIn = new FileStream(inFile, FileMode.Open);
 
-            byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[BUFFER_SIZE];
             int read;
 
-            while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)
+            long size = fsIn.Length;
+            int i = 0;
+
+            if(helperBW == null)
+            {
+                while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)
+                {
                     cs.Write(buffer, 0, read);
-
+                }
+            }
+            else
+            {
+                while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    cs.Write(buffer, 0, read);
+                    i = i + BUFFER_SIZE;
+                    helperBW.ReportProgress((int)Math.Round((float)i / (float)size * 100));
+                }
+            }
+ 
            fsIn.Close();
-
-           
            cs.Close();
            fsCrypt.Close();
-           Console.WriteLine("success");
         }
     }
 }
