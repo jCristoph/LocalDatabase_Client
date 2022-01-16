@@ -42,7 +42,7 @@ namespace LocalDatabase_Client.LoginPanel
             }
             else
             {
-                cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, Security.EncryptionPass.encryption256(passwordBoxPassword.Password)), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
+                cc.sendMessage(ClientCom.LoginMessage(textBoxLogin.Text, Security.PasswordEncryption.encryption256(passwordBoxPassword.Password)), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
                 int answer = cc.readMessage(sslStream);
                 if (answer == (int)LoginResponseCodes.Success) //condition checks if user logged properly
                 {

@@ -33,6 +33,7 @@ namespace LocalDatabase_Client.Security
             Security.EncryptionFile.Encrypt(filePath, KeyHandling.key, null);
             File.Delete(filePath);
             return userKey;
+
         }
     }
 }

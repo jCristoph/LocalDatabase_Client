@@ -74,7 +74,7 @@ namespace LocalDatabase_Client
                 {
                     var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                     mp.ShowDialog();
-                    if (Owner.Equals(null))
+                    if (Owner == null)
                     {
                         LoginPanel.LoginPanel lp = new LoginPanel.LoginPanel();
                         lp.Show();
@@ -90,57 +90,61 @@ namespace LocalDatabase_Client
         private void DownloadOrOpenButton(object sender, RoutedEventArgs e)
         {
             Button btn = ((Button)sender);
-            if (btn.Content.Equals("Download"))
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = folderPath + "\\userKey_" + token + ".dat.ENC";
+            if(File.Exists(filePath))
             {
-                try
+                if (btn.Content.Equals("Download"))
                 {
-                    //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
-                    cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), sslStream);
-                    int answer = cc.readMessage(sslStream);
-                    if (answer == -1)
+                    try
+                    {
+                        //client sends a message with order to download a file. From button (cast) we know what file should be downloaded.
+                        cc.sendMessage(ClientCom.SendOrderMessage((((DirectoryElement)btn.DataContext).path).Replace("Main_Folder", "Main_Folder\\" + token) + ((DirectoryElement)btn.DataContext).name, token), sslStream);
+                        int answer = cc.readMessage(sslStream);
+                        if (answer == -1)
+                        {
+                            var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
+                            mp.ShowDialog();
+                            Owner.Show();
+                            this.Close();
+                        }
+                        else if (answer == 404)
+                        {
+                            Owner.Show();
+                            MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
+                            mp1.ShowDialog();
+                            this.Close();
+                        }
+                        else
+                        {
+                            var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBarGrid, answer, token); ;
+                            fileTransporter.connectAsClient();
+                            fileTransporter.recieveFile(refreshList);
+                        }
+                    }
+                    catch
                     {
                         var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
                         mp.ShowDialog();
                         Owner.Show();
                         this.Close();
                     }
-                    else if (answer == 404)
-                    {
-                        Owner.Show();
-                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
-                        mp1.ShowDialog();
-                        this.Close();
-                    }
-                    else
-                    {
-                        var fileTransporter = new FileTransporter(((DirectoryElement)btn.DataContext).name, ((DirectoryElement)btn.DataContext).size, progressBarGrid, answer, token); ;
-                        fileTransporter.connectAsClient();
-                        fileTransporter.recieveFile(refreshList);
-                    }
-
                 }
-                catch
+                else if (btn.Content.Equals("Open")) //condition if the object isnt a file - is a folder - we cant download a folder - only one file in the same time. Then the button is a open button which opens a subfolder and list it
                 {
-                    var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
-                    mp.ShowDialog();
-                    Owner.Show();
-                    this.Close();
+                    currentFolder = ((DirectoryElement)btn.DataContext);
+                    currentDirectory.Clear();
+                    foreach (var a in directoryManager.directoryElements)
+                    {
+                        if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
+                            currentDirectory.Add(a);
+                    }
+                    currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
                 }
-            }
-            else if (btn.Content.Equals("Open")) //condition if the object isnt a file - is a folder - we cant download a folder - only one file in the same time. Then the button is a open button which opens a subfolder and list it
-            {
-                currentFolder = ((DirectoryElement)btn.DataContext);
-                currentDirectory.Clear();
-                foreach (var a in directoryManager.directoryElements)
-                {
-                    if (a.pathArray[a.pathArray.Count - 1] == currentFolder.name)
-                        currentDirectory.Add(a);
-                }
-                currentFolderTextBlock.Text = currentFolder.path + currentFolder.name;
             }
             else
             {
-                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Unknown error", false);
+                MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("You do not have permission to do this. Please find your key and put it into My Documents folder", false);
                 mp.ShowDialog();
             }
            
@@ -149,96 +153,97 @@ namespace LocalDatabase_Client
         //event for send file button
         private void SendFileButton(object sender, RoutedEventArgs e)
         {
-           //if (sslStream.Connected)
-           //{
-                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog(); //special Windows panel for file browsing
-                Nullable<bool> result = dlg.ShowDialog();
-                string filename = dlg.FileName;
-                if (!filename.Equals(""))
-                 {
-
-                if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog(); //special Windows panel for file browsing
+            Nullable<bool> result = dlg.ShowDialog();
+            string filename = dlg.FileName;
+            if (!filename.Equals(""))
+            {
+                string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                string filePath = folderPath + "\\userKey_" + token + ".dat.ENC";
+                if (File.Exists(filePath))
                 {
-                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to overwrite this file?", true);
-                    mp.ShowDialog();
-                    if (mp.isAnswered.Equals(true))
+                    if (currentDirectory.Any(x => x.name == dlg.SafeFileName)) //condition if file could be overwrite
                     {
-                        if (result == true)
+                        MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Are you sure you want to overwrite this file?", true);
+                        mp.ShowDialog();
+                        if (mp.isAnswered.Equals(true))
                         {
-                            cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream);
-                            int answer = cc.readMessage(sslStream);
-                            if (answer == -1)
+                            if (result == true)
                             {
-                                mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
-                                mp.ShowDialog();
-                                Owner.Show();
-                                this.Close();
-                            }
-                            else if (answer == 404)
-                            {
-                                Owner.Show();
-                                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
-                                mp1.ShowDialog();
-                                this.Close();
-                            }
-                            else if (answer == 101)
-                            {
-                                Owner.Show();
-                                MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Oooppsss! You don't have enough space. Contact your admin.", false);
-                                mp1.ShowDialog();
+                                cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream);
+                                int answer = cc.readMessage(sslStream);
+                                if (answer == -1)
+                                {
+                                    mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
+                                    mp.ShowDialog();
+                                    Owner.Show();
+                                    this.Close();
+                                }
+                                else if (answer == 404)
+                                {
+                                    Owner.Show();
+                                    MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
+                                    mp1.ShowDialog();
+                                    this.Close();
+                                }
+                                else if (answer == 101)
+                                {
+                                    Owner.Show();
+                                    MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Oooppsss! You don't have enough space. Contact your admin.", false);
+                                    mp1.ShowDialog();
+                                }
+                                else
+                                {
+                                    var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBarGrid, answer, token);
+                                    fileTransporter.connectAsClient();
+                                    fileTransporter.sendFile(refreshList);
+                                }
                             }
                             else
                             {
-                                var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBarGrid, answer, token);
-                                fileTransporter.connectAsClient();
-                                fileTransporter.sendFile(refreshList);
+                                mp = new MessagePanel.MessagePanel("Unknown error", false);
+                                mp.Show();
                             }
+                        }
+                    }
+                    else if (result == true)
+                    {
+                        cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream); //client sends request for server to read file
+                        int answer = cc.readMessage(sslStream);
+                        if (answer == -1)
+                        {
+                            var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
+                            mp.ShowDialog();
+                            Owner.Show();
+                            this.Close();
+                        }
+                        else if (answer == 404) //client waits for answer
+                        {
+                            Owner.Show();
+                            MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
+                            mp1.ShowDialog();
+                            this.Close();
+                        }
+                        else if (answer == 101)
+                        {
+                            Owner.Show();
+                            MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Oooppsss! You don't have enough space. Contact your admin.", false);
+                            mp1.ShowDialog();
                         }
                         else
                         {
-                            mp = new MessagePanel.MessagePanel("Unknown error", false);
-                            mp.Show();
+                            var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBarGrid, answer, token);
+                            fileTransporter.connectAsClient();
+                            fileTransporter.sendFile(refreshList);
                         }
-                    }
-                }
-                else if (result == true)
-                {
-                    cc.sendMessage(ClientCom.ReadOrderMessage(currentFolder, token, dlg.SafeFileName), sslStream); //client sends request for server to read file
-                    int answer = cc.readMessage(sslStream);
-                    if (answer == -1)
-                    {
-                        var mp = new MessagePanel.MessagePanel("Lost connection with server, log in again", false);
-                        mp.ShowDialog();
-                        Owner.Show();
-                        this.Close();
-                    }
-                    else if (answer == 404) //client waits for answer
-                    {
-                        Owner.Show();
-                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Session expired. Log in again", false);
-                        mp1.ShowDialog();
-                        this.Close();
-                    }
-                    else if (answer == 101)
-                    {
-                        Owner.Show();
-                        MessagePanel.MessagePanel mp1 = new MessagePanel.MessagePanel("Oooppsss! You don't have enough space. Contact your admin.", false);
-                        mp1.ShowDialog();
-                    }
-                    else
-                    {
-                        var fileTransporter = new FileTransporter(filename, new FileInfo(dlg.FileName).Length, progressBarGrid, answer, token);
-                        fileTransporter.connectAsClient();
-                        fileTransporter.sendFile(refreshList);
                     }
                 }
                 else
                 {
-                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("Unknown error", false);
+                    MessagePanel.MessagePanel mp = new MessagePanel.MessagePanel("You do not have permission to do this. Please find your key and put it into My Documents folder", false);
                     mp.Show();
                 }
             }
-            //}
         }
 
         //delete button event

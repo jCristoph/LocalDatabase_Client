@@ -115,6 +115,8 @@ namespace LocalDatabase_Client
                 progressBarStatus.Text = "Decryption"; 
             }));
 
+            Console.WriteLine("(Download) Time spend since click button \"Download\": " + sw.ElapsedMilliseconds);
+
             string key = Security.KeyHandling.GetKey(token);
             Security.DecryptionFile.Decrypt(file.FullName, key, helperBW);
             System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
@@ -132,7 +134,7 @@ namespace LocalDatabase_Client
             progressBarGrid.Visibility = System.Windows.Visibility.Hidden;
 
             sw.Stop();
-            Console.WriteLine("Time spend since click button \"Download\": " + sw.ElapsedMilliseconds);
+            Console.WriteLine("(Download+Encryption) Time spend since click button \"Download\": " + sw.ElapsedMilliseconds);
             sw.Reset();
         }
         #endregion
@@ -161,6 +163,8 @@ namespace LocalDatabase_Client
             //tu następuje zaszyfrowanie pliku
             string key = Security.KeyHandling.GetKey(token);
             Security.EncryptionFile.Encrypt(fileName.Replace(extension,""), key, helperBW);
+
+            Console.WriteLine("(Encryption) Time spend since click button \"Upload\": " + sw.ElapsedMilliseconds);
 
             Application.Current.Dispatcher.Invoke(new Action(() => { progressBarStatus.Text = "Upload"; }));
 
@@ -206,7 +210,7 @@ namespace LocalDatabase_Client
             File.Delete(file.FullName); //delete encryption file after sending
 
             sw.Stop();
-            Console.WriteLine("Time spend since click button \"Upload\": " + sw.ElapsedMilliseconds);
+            Console.WriteLine("(Upload+Encryption) Time spend since click button \"Upload\": " + sw.ElapsedMilliseconds);
             sw.Reset();
         }
         #endregion

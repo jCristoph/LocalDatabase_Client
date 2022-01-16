@@ -60,7 +60,7 @@ namespace LocalDatabase_Client.Registration
                 if (answer.GetType().ToString().Equals("System.String"))
                 {
                     string token = (((string)answer).Replace("<Task=Response><Content>", "")).Replace("</Content></Task><EOM>", "");
-                    mp = new MessagePanel.MessagePanel("Registration success", false);
+                    mp = new MessagePanel.MessagePanel("Registration success.\nYour login is " + nameTextBox.Text + "." + surnameTextBox.Text, false);
                     string key = Security.KeyGenerator.Generate();
                     Security.KeyHandling.SaveKey(token, key);
                 }
