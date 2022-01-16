@@ -5,37 +5,49 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Windows;
 using LocalDatabase_Client.Client;
 
 namespace LocalDatabase_Client
 {
     public class FileTransporter
     {
-        const int BUFFER_SIZE = 4096;
+        private const int BUFFER_SIZE = 4096;
+        private const string extension = ".ENC";
+
         private string ip;
         private int port;
+        private string token;
+        Socket socket;
+
         private FileInfo file;
         private string fileName;
-        private string token;
-        private string extension = ".ENC";
+        private long size;
+        
         Stopwatch sw;
 
         System.Windows.Controls.ProgressBar progressBar;
-        long size;
-        Action refresh;
-        Socket socket;
+        System.Windows.Controls.TextBlock progressBarStatus;
+        System.Windows.Controls.Grid progressBarGrid;
 
-        public FileTransporter(string fileName, long size, System.Windows.Controls.ProgressBar progressBar, int port, string token)
+        Action refresh;
+        
+
+        public FileTransporter(string fileName, long size, System.Windows.Controls.Grid progressBarGrid, int port, string token)
         {
+            sw = new Stopwatch();
+            sw.Start();
+            this.fileName = fileName + extension;
             this.ip = SettingsManager.Instance.GetServerIp();
             this.port = port;
-            this.fileName = fileName;
-            file = new FileInfo(fileName);
+            file = new FileInfo(this.fileName);
             this.size = size;
             this.token = token;
-            this.progressBar = progressBar;
-            this.progressBar.Visibility = System.Windows.Visibility.Visible;
-            sw = new Stopwatch();
+
+            progressBarGrid.Visibility = System.Windows.Visibility.Visible;
+            this.progressBarGrid = progressBarGrid;
+            this.progressBar = progressBarGrid.Children[0] as System.Windows.Controls.ProgressBar;
+            this.progressBarStatus = progressBarGrid.Children[1] as System.Windows.Controls.TextBlock;
         }
 
         public void connectAsClient()
@@ -67,14 +79,15 @@ namespace LocalDatabase_Client
 
         private void recieveFile_bg_DoWork(object sender, DoWorkEventArgs e)
         {
+            Application.Current.Dispatcher.Invoke(new Action(() => { progressBarStatus.Text = "Download"; }));
+
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
-            file = new FileInfo(folderPath + fileName + extension);
+            file = new FileInfo(folderPath + fileName);
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
             var read = -1;
             var buffer = new Byte[BUFFER_SIZE];
             int i = 0;
-            sw.Start();
             using (var fileStream = file.OpenWrite())
             using (var networkStream = new NetworkStream(socket, false))
             {
@@ -96,6 +109,16 @@ namespace LocalDatabase_Client
                 } while (read != 0);
                 networkStream.Close();
             }
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                progressBar.Value = 0; 
+                progressBarStatus.Text = "Decryption"; 
+            }));
+
+            string key = Security.KeyHandling.GetKey(token);
+            Security.DecryptionFile.Decrypt(file.FullName, key, helperBW);
+            System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
+            
         }
         private void recieveFile_bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -105,12 +128,11 @@ namespace LocalDatabase_Client
         {
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
-            progressBar.Visibility = System.Windows.Visibility.Hidden;
-            string key = Security.KeyHandling.GetKey(token);
-            Security.DecryptionFile.Decrypt(file.FullName, key);
-            System.Diagnostics.Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\");
+
+            progressBarGrid.Visibility = System.Windows.Visibility.Hidden;
+
             sw.Stop();
-            Console.WriteLine("Time spend since click button: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("Time spend since click button \"Download\": " + sw.ElapsedMilliseconds);
             sw.Reset();
         }
         #endregion
@@ -133,10 +155,19 @@ namespace LocalDatabase_Client
         {
             BackgroundWorker helperBW = sender as BackgroundWorker;
             helperBW.ReportProgress(0);
+
+            Application.Current.Dispatcher.Invoke(new Action(() => { progressBarStatus.Text = "Encryption"; }));
+            
+            //tu następuje zaszyfrowanie pliku
+            string key = Security.KeyHandling.GetKey(token);
+            Security.EncryptionFile.Encrypt(fileName.Replace(extension,""), key, helperBW);
+
+            Application.Current.Dispatcher.Invoke(new Action(() => { progressBarStatus.Text = "Upload"; }));
+
             var read = -1;
             int i = 0;
             var buffer = new Byte[BUFFER_SIZE];
-            sw.Start();
+            
             using (var networkStream = new BufferedStream(new NetworkStream(socket, false)))
             using (var fileStream = file.OpenRead())
             {
@@ -168,14 +199,14 @@ namespace LocalDatabase_Client
         }
         private void sendFile_bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            progressBar.Visibility = System.Windows.Visibility.Hidden;
+            progressBarGrid.Visibility = System.Windows.Visibility.Hidden;
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
-            Thread.Sleep(200);
             refresh();
             File.Delete(file.FullName); //delete encryption file after sending
+
             sw.Stop();
-            Console.WriteLine("Time spend since click button: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("Time spend since click button \"Upload\": " + sw.ElapsedMilliseconds);
             sw.Reset();
         }
         #endregion

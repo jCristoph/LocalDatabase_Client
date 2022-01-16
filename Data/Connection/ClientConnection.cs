@@ -32,13 +32,9 @@ namespace LocalDatabase_Client
         {
             try
             {
-                var clientCertificate = getServerCert();
-                var clientCertificateCollection = new
-                   X509CertificateCollection(new X509Certificate[]
-                   { clientCertificate });
                 client = new TcpClient(serverIP, port);
-                sslStream = new SslStream(client.GetStream(), false, ValidateCertificate);
-                sslStream.AuthenticateAsClient(ServerCertificateName, clientCertificateCollection, SslProtocols.Tls12, false);
+                sslStream = new SslStream(client.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+                sslStream.AuthenticateAsClient(ServerCertificateName);
                 sslStream.ReadTimeout = 5000; //if server doesn't respond in 5 seconds then client stop connection - it condition to avoid deadlock
                 client.Connect(serverIP, port);
             }
@@ -48,21 +44,7 @@ namespace LocalDatabase_Client
             }
         }
 
-        private static X509Certificate getServerCert()
-        {
-            //here is needed a x509 cert 
-            //in app folder must be a cert equal to server (copy of it in server and client).
-            //to create cert in your system you have to open power shell as administrator and write some lines:
-            ///New-SelfSignedCertificate -Subject "CN=MySslSocketCertificate" -KeySpec "Signature" -CertStoreLocation "Cert:\CurrentUser\My"
-            ///dir cert:\CurrentUser\My     here you have to copy thumbprint of cert
-            ///$PFXPass = ConvertTo-SecureString -String “MyPassword” -Force -AsPlainText
-            ///Export-PfxCertificate -Cert cert:\CurrentUser\My\___Thumbprint_of_cert____ -Password $PFXPass -FilePath C:\Users\x509cert.pfx
-            var certName = "x509cert.pfx";
-            var certPassword = "MyPassword";
-            return new X509Certificate2(certName, certPassword, X509KeyStorageFlags.MachineKeySet); ;
-        }
-
-        static bool ValidateCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        static bool ValidateServerCertificate(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             if (sslPolicyErrors == SslPolicyErrors.None)
             { return true; }

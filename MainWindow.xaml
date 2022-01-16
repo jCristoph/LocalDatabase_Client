@@ -31,7 +31,10 @@
                 <Button Content="Create folder"  Grid.Column="1" Grid.Row="1" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="CreateFolderButton"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom">
-                <ProgressBar Name="progressBar" Style="{StaticResource ProgressBarStyle}" Width="180" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10,10,10,40" Visibility="Hidden"/>
+                <Grid Margin="10,10,10,40" Visibility="Hidden" x:Name="progressBarGrid">
+                    <ProgressBar Name="progressBar" Style="{StaticResource ProgressBarStyle}" Width="180" Height="30" HorizontalAlignment="Center" />
+                    <TextBlock Name="progressBarStatus" Foreground="#353340" FontFamily="Lucida Sans" HorizontalAlignment="Center"  Text="Encryption" FontSize="18" Margin="88,4,88,0"/>
+                </Grid>
                 <Button Content="Help" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="HelpButton"/>
                 <Button Content="Log out" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="LogOutButton"/>
                 <Button Content="Exit" Height="40" Style="{StaticResource MenuButtonTheme}" FontSize="16" Margin="10,10,10,0" Click="ExitButton"/>
@@ -53,6 +56,7 @@
                     <TextBlock x:Name="currentFolderTextBlock" Width="679" Foreground="#353340" FontFamily="Lucida Sans" Margin="10,4,0,4" VerticalAlignment="Center" FontSize="16"><Run Text="Path"/><Run Text=": "/></TextBlock>
                 </StackPanel>
                 <ListView Margin="10,10,0,0" Grid.Column="0" Grid.Row="1" Name="listView" Background="Aquamarine" Style="{StaticResource ListViewTheme}" ItemContainerStyle="{StaticResource ContainerStyle}">
+
                     <ListView.View>
                         <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderTheme}">
                             <GridViewColumn Header="Icon">
@@ -62,12 +66,12 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name" Width="500"  />
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit" Width="200"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size" Width="150"/>
                             
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=name}" Header="Name" Width="300"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=lwr}" Header="Last edit" Width="300"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=sizeText}" Header="Size" Width="300"/>
-                            
-                                <GridViewColumn Header="Action" Width="100">
+                                <GridViewColumn Header="Action" Width="220">
                                     <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" >

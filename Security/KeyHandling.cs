@@ -16,7 +16,7 @@ namespace LocalDatabase_Client.Security
             BinaryWriter binFile = new BinaryWriter(fStream);
             binFile.Write(userkey);
             binFile.Close();
-            Security.EncryptionFile.Encrypt(filePath, KeyHandling.key);
+            Security.EncryptionFile.Encrypt(filePath, KeyHandling.key, null);
             File.Delete(filePath);
         }
 
@@ -25,12 +25,12 @@ namespace LocalDatabase_Client.Security
             string userKey = null;
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string filePath = folderPath + "\\userKey_" + name + ".dat";
-            Security.DecryptionFile.Decrypt((filePath + ".ENC"), key);
+            Security.DecryptionFile.Decrypt((filePath + ".ENC"), key, null);
             FileStream fStream = new FileStream(filePath, FileMode.Open);
             BinaryReader readBinary = new BinaryReader(fStream);
             userKey = readBinary.ReadString();
             fStream.Close();
-            Security.EncryptionFile.Encrypt(filePath, KeyHandling.key);
+            Security.EncryptionFile.Encrypt(filePath, KeyHandling.key, null);
             File.Delete(filePath);
             return userKey;
         }
