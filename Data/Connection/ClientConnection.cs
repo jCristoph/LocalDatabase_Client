@@ -24,7 +24,7 @@ namespace LocalDatabase_Client
         public ClientConnection()
         {
             this.serverIP = SettingsManager.Instance.GetServerIp();
-            this.port = 25000;
+            this.port = 25010;
         }
 
         //method starts connection with server
