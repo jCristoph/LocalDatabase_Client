@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace LocalDatabase_Client.Security
 {
-    public static class EncryptionPass
+    public static class PasswordEncryption
     {
         //password encryption method SHA256
         public static string encryption256(string password)

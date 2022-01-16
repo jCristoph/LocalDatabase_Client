@@ -25,11 +25,15 @@ namespace LocalDatabase_Client.ChangePasswordPanel
         {
             if(passwordBox.Password.Equals(passwordBox2.Password)) //condition if new password is the same in both of password boxes.
             {
-                cc.sendMessage(ClientCom.ChangePasswordMessage(Security.EncryptionPass.encryption256(passwordBox.Password), token), sslStream); //send message with request to set new password in db
+                cc.sendMessage(ClientCom.ChangePasswordMessage(Security.PasswordEncryption.encryption256(passwordBox.Password), token), sslStream); //send message with request to set new password in db
                 if (cc.readMessage(sslStream) == 404)
                     isDone = false;
                 else
+                {
                     isDone = true;
+                    var mp = new MessagePanel.MessagePanel("Your password was changed successfully", false);
+                    mp.Show();
+                }
                 this.Close();
             }
         }
@@ -37,6 +41,7 @@ namespace LocalDatabase_Client.ChangePasswordPanel
         //back button event. close the panel
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
+            isDone = true;
             this.Close();
         }
     }

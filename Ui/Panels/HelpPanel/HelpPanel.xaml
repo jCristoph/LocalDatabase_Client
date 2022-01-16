@@ -26,6 +26,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Margin="10" >
                     <RadioButton Name="loginButton" Content="Logging" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="loginButton_Checked"/>
+                    <RadioButton Name="registrationButton" Content="Registration" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="registrationButton_Checked"/>
                     <RadioButton Name="main_windowButton" Content="Main window" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="main_windowButton_Checked"/>
                     <RadioButton Name="change_passwordButton" Content="Password changing" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="change_passwordButton_Checked"/>
                     <RadioButton Name="creating_foldersButton" Content="Folder creation" Style="{StaticResource ToggleButtonTheme}" Height="70" Foreground="White" FontSize="16" FontFamily="Lucida Sans" Checked="creating_foldersButton_Checked"/>

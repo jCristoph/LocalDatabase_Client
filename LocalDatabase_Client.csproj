@@ -74,7 +74,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\Encryption.cs" />
     <Compile Include="Data\FileTransporter.cs" />
     <Compile Include="Data\SettingsManager.cs" />
     <Compile Include="Data\Utils\UnitsConverter.cs" />
@@ -82,6 +81,7 @@
     <Compile Include="Security\EncryptionFile.cs" />
     <Compile Include="Security\KeyGenerator.cs" />
     <Compile Include="Security\KeyHandling.cs" />
+    <Compile Include="Security\PasswordEncryption.cs" />
     <Compile Include="Ui\CustomClasses\PlaceholderTextBox\PlaceholderTextBox.cs" />
     <Compile Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
@@ -257,14 +257,14 @@
   <ItemGroup>
     <Resource Include="Ui\Images\HelpImages\login_ok.png" />
   </ItemGroup>
+   <ItemGroup>
+    <Resource Include="Ui\Images\HelpImages\registration.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ui\Images\HelpImages\registration_success.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Ui\Images\HelpImages\new_folder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Ui\Images\HelpImages\send_file.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Ui\Images\HelpImages\share.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Ui\Images\HelpImages\main_window_1.png" />
@@ -276,13 +276,15 @@
     <Resource Include="Ui\Images\HelpImages\main_window_3.png" />
     <Resource Include="Ui\Images\HelpImages\main_window_4.png" />
     <Resource Include="Ui\Images\HelpImages\main_window_5.png" />
-    <Resource Include="Ui\Images\HelpImages\main_window_6.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Ui\Images\settings.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Filebase_safe_client_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ui\Images\HelpImages\send_file.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

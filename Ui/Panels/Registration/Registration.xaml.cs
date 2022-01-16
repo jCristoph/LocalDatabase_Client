@@ -38,8 +38,9 @@ namespace LocalDatabase_Client.Registration
             Thread.Sleep(100);
             if (sslStream == null) //condition if server or client is offline
             {
+              
                 mp = new MessagePanel.MessagePanel("Error. Cannot connect with server!", false);
-                mp.ShowDialog();
+               mp.ShowDialog();
                 return;
             }
 
@@ -50,7 +51,7 @@ namespace LocalDatabase_Client.Registration
             else
                 mp = new MessagePanel.MessagePanel("Passwords are different!", false);
 
-            string password_SHA256 = Security.EncryptionPass.encryption256(password);
+            string password_SHA256 = Security.PasswordEncryption.encryption256(password);
             if (surnameTextBox.Text.Length > 2 && nameTextBox.Text.Length > 2)
             {
                 cc.sendMessage(ClientCom.RegistrationMessage(surnameTextBox.Text, nameTextBox.Text, password_SHA256), sslStream); // client sends a request to login with paramteres from texbox and passwordbox
@@ -59,7 +60,7 @@ namespace LocalDatabase_Client.Registration
                 if (answer.GetType().ToString().Equals("System.String"))
                 {
                     string token = (((string)answer).Replace("<Task=Response><Content>", "")).Replace("</Content></Task><EOM>", "");
-                    mp = new MessagePanel.MessagePanel("Registration success", false);
+                    mp = new MessagePanel.MessagePanel("Registration success.\nYour login is " + nameTextBox.Text + "." + surnameTextBox.Text, false);
                     string key = Security.KeyGenerator.Generate();
                     Security.KeyHandling.SaveKey(token, key);
                 }
