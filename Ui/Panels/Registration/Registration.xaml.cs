@@ -38,8 +38,9 @@ namespace LocalDatabase_Client.Registration
             Thread.Sleep(100);
             if (sslStream == null) //condition if server or client is offline
             {
+              
                 mp = new MessagePanel.MessagePanel("Error. Cannot connect with server!", false);
-                mp.ShowDialog();
+               mp.ShowDialog();
                 return;
             }
 

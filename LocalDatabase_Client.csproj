@@ -74,7 +74,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Security\Encryption.cs" />
+    <Compile Include="Security\PasswordEncryption.cs" />
     <Compile Include="Data\FileTransporter.cs" />
     <Compile Include="Data\SettingsManager.cs" />
     <Compile Include="Data\Utils\UnitsConverter.cs" />
@@ -256,6 +256,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Ui\Images\HelpImages\login_ok.png" />
+  </ItemGroup>
+   <ItemGroup>
+    <Resource Include="Ui\Images\HelpImages\registration.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ui\Images\HelpImages\registration_success.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Ui\Images\HelpImages\new_folder.png" />
