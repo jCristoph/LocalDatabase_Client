@@ -82,6 +82,7 @@
     <Compile Include="Security\EncryptionFile.cs" />
     <Compile Include="Security\KeyGenerator.cs" />
     <Compile Include="Security\KeyHandling.cs" />
+    <Compile Include="Security\PasswordEncryption.cs" />
     <Compile Include="Ui\CustomClasses\PlaceholderTextBox\PlaceholderTextBox.cs" />
     <Compile Include="Ui\Panels\ChangePasswordPanel\ChangePasswordPanel.xaml.cs">
       <DependentUpon>ChangePasswordPanel.xaml</DependentUpon>
